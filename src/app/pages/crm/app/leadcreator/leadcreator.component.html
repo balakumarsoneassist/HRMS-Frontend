@@ -1,0 +1,52 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Lead Report</div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                <div class="tableContainer rounded mBorder overflow-x-auto">
+                    <table class="table font-w-600 color-initial mb-0">
+                        <th colspan="2" class="color-gray min-w-200 S-R">Search : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th>
+                        <th colspan="2" class="color-white-fix min-w-200 S-R">
+                            <label class="mb-1">From Date :</label>
+
+                            <p-calendar [(ngModel)]="model.Frdt" name="vfr" placeholder="From" [showTime]="false" dateFormat="dd/mm/yy" class="w-100 mBorder bg-color-input color-initial border-header" inputStyleClass="px-1 py-1 rounded"></p-calendar>
+                        </th>
+
+                        <th colspan="2" class="color-white-fix min-w-200 S-R">
+                            <label class="mb-1">To Date :</label>
+
+                            <p-calendar [(ngModel)]="model.Todt" name="vto" placeholder="To" [showTime]="false" dateFormat="dd/mm/yy" class="w-100 mBorder bg-color-input color-initial border-header" inputStyleClass="px-1 py-1 rounded"></p-calendar>
+                        </th>
+
+                        <!-- <th colspan="5" class="color-white-fix min-w-200 S-R">Note : Reassign the records moved to unassigned Contact List. All the tracking details of those records will be deleted.</th>
+                   -->
+                        <th colspan="1" class="color-gray min-w-200 S-R"><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="GetReport()">Get Report</button></th>
+                        <tr class="bg-color-ContHead">
+                            <th class="color-gray min-w-150">Name<br /></th>
+                            <th class="color-gray min-w-150">Total No.of Leads<br /></th>
+                            <th class="color-gray min-w-150">&nbsp;<br /></th>
+
+                            <th class="color-gray min-w-100">&nbsp;<br /></th>
+                            <th class="color-gray min-w-100">&nbsp;<br /></th>
+                        </tr>
+                        <tr *ngFor="let objStatusList of StatusList | searchpipe: searchStr; let i = index">
+                            <td>
+                                {{ objStatusList.Name }}
+                            </td>
+                            <td>
+                                {{ objStatusList.total }}
+                            </td>
+
+                            <td class="text-center">&nbsp;</td>
+                            <td class="text-center">
+                                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="getDetails(objStatusList.empid, objStatusList.Name)">Details</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

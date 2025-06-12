@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div
+                class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Bank List</div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                <div class="tableContainer rounded mBorder overflow-x-auto">
+                    <table class="table font-w-600 color-initial mb-0">
+                        <th colspan="7" class="color-gray min-w-200 S-R">Search : <input type="text"
+                                [(ngModel)]="BankListFilter"
+                                class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" />
+                        </th>
+                        <tr class="bg-color-ContHead">
+                            <th class="color-gray min-w-150">BankName<br /></th>
+                        </tr>
+                        <tr *ngFor="let objBankList of BankList | filterpipe:BankListFilter">
+                            <td>{{objBankList.BankName}}</td>
+                            <td><i class="fas fa-pencil-alt" ></i></td>
+                            <td><i class="fas fa-pencil-alt" (click)='editBank(objBankList)'>
+                            </i></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

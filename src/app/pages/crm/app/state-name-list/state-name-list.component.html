@@ -1,0 +1,48 @@
+
+<!-- assigned contact details - start -->
+<section class="mb-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 align-items-center border-b rounded">
+                    <div class="font-size-19 font-w-600">State Name List</div>
+                    <!-- <div class="align-self-center">
+                      <button class="rounded border-0 py-1 px-3 color-white bg-color-pink font-w-600" (click)="contactsSwitch = 'UnTrackContact'" [hidden]="contactsSwitch == 'UnTrackContact'">UnTrack</button>
+                      <button class="rounded border-0 py-1 px-3 color-white bg-color-blue font-w-600" (click)="contactsSwitch = 'OnTrackContact'" [hidden]="contactsSwitch == 'OnTrackContact'">OnTrack</button>
+                    </div> -->
+                </div>
+                <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                  <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+                    <table class="table font-w-600 color-initial mb-0">
+                        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text" [(ngModel)]="StateListFilter" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th>
+                        <tr class="bg-color-ContHead">
+
+                            <th class="color-gray min-w-200">StateName<br /></th>
+                            <th class="color-gray min-w-200">Action</th>
+                        </tr>
+
+                        <tr class="bg-color-ContHead">
+                            <!-- <td colspan="12"><input [(ngModel)]="LocationListFilter" type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" /></td> -->
+                          </tr>
+                         <tr *ngFor="let S of StateList | filterpipe:StateListFilter">
+                            <td>{{S.StateName}}</td>
+                            <td><i class="fas fa-pencil-alt" (click)='editState(S)'></i></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+                    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing 1 to 10 of 500 Records</div>
+                    <div class="paginationBtnContainer text-center">
+                        <button class="border-header mr-2 bg-color-input color-initial rounded"><i class="fas fa-chevron-left"></i></button>
+                        <input type="text" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"/>
+                        <span class="mr-2 color-initial font-w-600 font-size-14">of 50 pages</span>
+                        <button class="border-header bg-color-input color-initial rounded"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+

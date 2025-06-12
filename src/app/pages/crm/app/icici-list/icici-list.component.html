@@ -1,0 +1,78 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+          <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+              <div class="font-size-19">ICICI List</div>
+          </div>
+
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+              <div class="tableContainer rounded mBorder overflow-x-auto">
+                <table class="table font-w-600 color-initial mb-0">
+                      <tr class="bg-color-ContHead">
+                          <th class="color-gray min-w-200">Name<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-150">Mobile No.<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" onkeypress="return (event.charCode > 46 && event.charCode < 58)" /></th>
+                          <th class="color-gray min-w-150">Loan Type<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-150">D Loan Amt<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-200">Bank<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-250">Assigned To<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-150">Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                          <th class="color-gray min-w-150">Action</th>
+                      </tr>
+                      <tr>
+                          <td>muthu kumaran</td>
+                          <td>1234567890</td>
+                          <td>Personel Loan</td>
+                          <td>10,00,000</td>
+                          <td>Sbi</td>
+                          <td>ICICI</td>
+                          <td class=""><span class="p-2 font-size-14 rounded color-white-fix" data-lead-status="Doc Collection">Doc Collection</span></td>
+                          <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus()">Update</button></td>
+                      </tr>
+                      <tr>
+                          <td>muthu kumaran</td>
+                          <td>1234567890</td>
+                          <td>Personel Loan</td>
+                          <td>10,00,000</td>
+                          <td>Sbi</td>
+                          <td>ICICI</td>
+                          <td><span class="p-2 font-size-14 rounded color-white-fix" data-lead-status="Doc Collection">Doc Collection</span></td>
+                          <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus()">Update</button></td>
+                      </tr>
+                      <tr>
+                          <td>muthu kumaran</td>
+                          <td>1234567890</td>
+                          <td>Personel Loan</td>
+                          <td>10,00,000</td>
+                          <td>Sbi</td>
+                          <td>ICICI</td>
+                          <td><span class="p-2 font-size-14 rounded color-white-fix" [attr.data-lead-status]="leadStatus">Santioned</span></td>
+                          <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus()">Update</button></td>
+                      </tr>
+                      <tr>
+                          <td>muthu kumaran</td>
+                          <td>1234567890</td>
+                          <td>Personel Loan</td>
+                          <td>10,00,000</td>
+                          <td>Sbi</td>
+                          <td>ICICI</td>
+                          <td><span class="p-2 bg-color-logo font-size-14 rounded color-white-fix">Dispersed</span></td>
+                          <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus()">Update</button></td>
+                      </tr>
+                </table>
+            </div>
+            <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+                <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing 1 to 10 of 50 Records</div>
+                <div class="paginationBtnContainer text-center">
+                    <button class="border-header mr-2 bg-color-input color-initial rounded"><i class="fas fa-chevron-left"></i></button>
+                    <input type="text" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center" onkeypress="return (event.charCode > 46 && event.charCode < 58)" />
+                    <span class="mr-2 color-initial font-w-600 font-size-14">of 50 pages</span>
+                    <button class="border-header bg-color-input color-initial rounded"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<app-lead-form-model></app-lead-form-model>

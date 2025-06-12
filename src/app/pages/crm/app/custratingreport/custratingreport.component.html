@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Customer Category Report</div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+
+                <div class="tableContainer rounded mBorder overflow-x-auto">
+                <table class="table font-w-600 color-initial mb-0">
+                    <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th> 
+                        <tr class="bg-color-ContHead">
+                            <th class="color-gray min-w-150" >Category<br /></th>
+                            <!-- <th class="color-gray min-w-150" >Type<br /></th> -->
+                            <th class="color-gray min-w-150" >Total<br /></th>
+                            <th class="color-gray min-w-150" >&nbsp;<br /></th>
+                    
+                        </tr>
+                        <tr *ngFor="let objCategoryList of CategoryList | searchpipe : searchStr; let i = index">
+                        <td>
+                            {{objCategoryList.custsegment}}
+                        </td>
+                        <td>
+                            {{objCategoryList.total}}
+                        </td>
+                     
+                      
+                        <td class="text-center">
+                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="callStatus(objCategoryList.custsegment)">Details</button>
+                        </td>
+                    </tr>
+                </table>
+                </div>        
+            </div>        
+        </div>
+    </div>
+    <!--<app-connector-form-model></app-connector-form-model>-->
+</div>
+            
+            
+            
+        
+    
+
+

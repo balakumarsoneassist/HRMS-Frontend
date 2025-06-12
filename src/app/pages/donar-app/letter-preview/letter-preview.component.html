@@ -1,0 +1,19 @@
+<div #letterRef class="letter-container">
+    <div class="bg-image"  alt="Letter Background" ></div>
+
+    <div class="letter-content">
+      <p class="to-address">
+        {{ userName }}<br />
+        {{ userAddress }}
+      </p>
+
+      <p class="dear-line">
+        Dear {{ userName }},
+      </p>
+
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button pButton type="button" label="Download PDF" (click)="downloadPDF()"></button>
+  </div>

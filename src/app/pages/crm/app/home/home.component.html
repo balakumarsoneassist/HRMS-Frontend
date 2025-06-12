@@ -1,0 +1,353 @@
+<div class="carsSec"  >
+
+    <section class="carsSec mb-3" [hidden]='!objEmployeeModel.IsContactRights'>
+      <div class="container-fluid">
+          <div class="row" hidden="true">
+              <div class="col-md-12">
+                  <div class="d-flex justify-content-between flex-wrap">
+                      <!-- card - start -->
+                      <!-- <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative" hidden>
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-address-book"></i></div>
+                          <div *ngIf="contactCardContent" class="unassContactCountCon align-self-center cardValueCont color-white-fix">
+                              <div class="cardValue font-size-19">100</div>
+                              <div class="cardTitle">Unassigned Contact</div>
+                          </div>
+                          <div *ngIf="!contactCardContent" class="assContactCountCon align-self-center cardValueCont color-white-fix">
+                              <div class="cardValue contactValue font-size-19">80</div>
+                              <div class="cardTitle contactValueTitle">Assigned Contact</div>
+                          </div>
+                          <div class="position-absolute cardDropDownContainer">
+                              <div ngbDropdown class="" placement="bottom-right">
+                                  <button class="bg-color-transperent" id="contactDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                  <div ngbDropdownMenu aria-labelledby="contactDropDown">
+                                      <button ngbDropdownItem class="color-initial myStyle" (click)="contactCardContent = true">Unassigned Contacts</button>
+                                      <button ngbDropdownItem class="color-initial myStyle" (click)="contactCardContent = false">Assigned Contacts</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div> -->
+                      <!-- card - end -->
+                      <!-- card - start -->
+                      <!--<div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative">
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-clipboard"></i></div>
+                          <div class="align-self-center cardValueCont color-white-fix">
+                              <div class="cardValue font-size-19" ng-model="">100</div>
+                              <div class="cardTitle">Assigned Contact</div>
+                          </div>
+                      </div>-->
+                      <!-- card - end -->
+                      <!-- card - start -->
+                      <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative justify-content-between">
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="far fa-id-card"></i></div>
+
+                          <div *ngIf="leadCardContent" class="leadCountMonthCon align-self-center cardValueCont color-white-fix">
+                             <div class="cardTitle">This Month</div>
+                              <div class="cardValue font-size-19" ng-model="">{{cardcount.TotalLeadMonthCount}}</div>
+                              <div class="cardTitle">Lead</div>
+                          </div>
+                          <div  *ngIf="!leadCardContent" class="leadCountDayCon align-self-center cardValueCont color-white-fix">
+                            <div class="cardTitle">This Day</div>
+                              <div class="cardValue font-size-19">{{cardcount.TotalLeadDayCount}}</div>
+                              <div class="cardTitle">Lead</div>
+                          </div>
+                          <div class="position-absolute cardDropDownContainer">
+                              <div ngbDropdown class="" placement="bottom-right">
+                                  <button class="bg-color-transperent" id="leadDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                  <div ngbDropdownMenu aria-labelledby="leadDropDown">
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "leadCardContent = false" >This Day</button>
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "leadCardContent = true">This Month</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- card - end -->
+                      <!-- card - start -->
+                      <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative">
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-calendar-check"></i></div>
+                          <div *ngIf="followUpCardContent" class="followCountMonCont align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Month</div>
+                              <div class="cardValue font-size-19">{{cardcount.PendingCallMonthCount}}</div>
+                              <div class="cardTitle"> Pending follow up</div>
+                          </div>
+                          <div *ngIf="!followUpCardContent" class="followCountToCont align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Day</div>
+                            <div class="cardValue font-size-19" ng-model="">{{cardcount.PendingCallDayCount}}</div>
+                            <div class="cardTitle">Pending follow up</div>
+                          </div>
+                          <div class="position-absolute cardDropDownContainer">
+                              <div ngbDropdown class="" placement="bottom-right">
+                                  <button class="bg-color-transperent" id="followUpDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                  <div ngbDropdownMenu aria-labelledby="followUpDropDown">
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "followUpCardContent = false">This Day</button>
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "followUpCardContent = true">This Month</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- card - end -->
+
+                      <!-- card - start -->
+                      <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative">
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-phone-volume"></i></div>
+                          <div *ngIf="!callsCardContent" class="callToCon align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Day</div>
+                            <div class="cardValue font-size-19"ng-model="">{{cardcount.TotalCallDayCount}}</div>
+                         <div class="cardTitle">Total Calls</div>
+                          </div>
+                          <div *ngIf="callsCardContent" class="callMonCon align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Month</div>
+                             <div class="cardValue font-size-19">{{cardcount.TotalCallMonthCount}}</div>
+                           <div class="cardTitle">Total Calls</div>
+                          </div>
+                          <div class="position-absolute cardDropDownContainer">
+                              <div ngbDropdown class="" placement="bottom-right">
+                                  <button class="bg-color-transperent" id="callsDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                  <div ngbDropdownMenu aria-labelledby="callsDropDown">
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "callsCardContent = false">This Day</button>
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "callsCardContent = true">This Month</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- card - end -->
+                      <!-- card - start -->
+                      <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative" onclick="modelOpen('contactModel')">
+                          <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-phone-volume"></i></div>
+                          <div *ngIf="!notRespondCardContent" class="notRespondToCont align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Day</div>
+                              <div class="cardValue font-size-19"ng-model="">{{cardcount.AttendCallDayCount}}</div>
+                           <div class="cardTitle">Attended calls</div>
+                          </div>
+                          <div *ngIf="notRespondCardContent" class="notRespondMonCont align-self-center cardValueCont color-white-fix">
+                              <div class="cardTitle">This Month</div>
+                              <div class="cardValue font-size-19">{{cardcount.AttendCallMonthCount}}</div>
+                            <div class="cardTitle">Attended calls</div>
+                          </div>
+                          <div class="position-absolute cardDropDownContainer">
+                              <div ngbDropdown class="" placement="bottom-right">
+                                  <button class="bg-color-transperent" id="respondDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                  <div ngbDropdownMenu aria-labelledby="respondDropDown">
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "notRespondCardContent = false">This Day</button>
+                                      <button ngbDropdownItem class="color-initial myStyle" (click) = "notRespondCardContent = true">This Month</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- card - end -->
+
+                       <!-- card - start -->
+                       <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative">
+                        <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-user-tag"></i></div>
+                        <div *ngIf="RejectedCardContent" class="rejectedContactMonCon align-self-center cardValueCont color-white-fix">
+                            <div class="cardTitle">This Month</div>
+                            <div class="cardValue font-size-19">{{cardcount.RejectCallMonthCount}}</div>
+                           <div class="cardTitle">Response calls</div>
+                        </div>
+                        <div *ngIf="!RejectedCardContent" class="rejectedContactToCon align-self-center cardValueCont color-white-fix">
+                            <div class="cardTitle">This Day</div>
+                          <div class="cardValue font-size-19"ng-model="">{{cardcount.RejectCallDayCount}}</div>
+                           <div class="cardTitle">Response calls</div>
+                        </div>
+                        <div class="position-absolute cardDropDownContainer">
+                            <div ngbDropdown class="" placement="bottom-right">
+                                <button class="bg-color-transperent" id="rejectedDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                <div ngbDropdownMenu aria-labelledby="rejectedDropDown">
+                                    <button ngbDropdownItem class="color-initial myStyle" (click) = "RejectedCardContent = false">This Day</button>
+                                    <button ngbDropdownItem class="color-initial myStyle" (click) = "RejectedCardContent = true">This Month</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- card - end -->
+
+                     <!-- card - start -->
+                   <!--  <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative" onclick="modelOpen('contactModel')">
+                        <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-phone-volume"></i></div>
+                        <div *ngIf="!notRespondCardContent" class="notRespondToCont align-self-center cardValueCont color-white-fix">
+                            <div class="cardTitle">This Day</div>
+                            <div class="cardValue font-size-19"ng-model="">{{cardcount.AttendCallDayCount}}</div>
+                          <div class="cardTitle">Contact</div>
+                        </div>
+                        <div *ngIf="notRespondCardContent" class="notRespondMonCont align-self-center cardValueCont color-white-fix">
+                            <div class="cardTitle">This Month</div>
+                            <div class="cardValue font-size-19">{{cardcount.AttendCallMonthCount}}</div>
+                            <div class="cardTitle">Contact</div>
+                        </div>
+                        <div class="position-absolute cardDropDownContainer">
+                            <div ngbDropdown class="" placement="bottom-right">
+                                <button class="bg-color-transperent" id="respondDropDown" ngbDropdownToggle><i class="dropDownBtn fas fa-chevron-down color-white-fix font-size-12 cursor-pointer"></i></button>
+                                <div ngbDropdownMenu aria-labelledby="respondDropDown">
+                                    <button ngbDropdownItem class="color-initial myStyle" (click) = "notRespondCardContent = false">This Day</button>
+                                    <button ngbDropdownItem class="color-initial myStyle" (click) = "notRespondCardContent = true">This Month</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                    <!-- card - end -->
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <router-outlet></router-outlet>
+  </div>
+<div [hidden]="hideOurBank">
+<section class="mb-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="modelContent newContactContainer bg-color-white boxShadow rounded  ">
+                    <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+                        <div>Our Bank Network</div>
+                    </div>
+                    <div class="formContainer d-flex flex-row flex-wrap">
+                 <br/>
+                        <div ><br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-logo " >Need Attention</span><br/>
+                            <br>
+
+                            <table class="table font-w-600 color-initial mb-0" style="border:0px" >
+
+                                <tr *ngFor="let l of DayDiffList" style="border-top: 0px;">
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-blue" >{{l.BankName}}</span> </td>
+                                    <td>- Bank Code Expired in </td>
+                                        <td>   <span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink bg-color-pink1" >{{l.Daydiff}} </span>&nbsp;&nbsp; days....</td>
+                                </tr>
+                            </table>
+                            <br/><br/>
+
+
+                        </div>
+                        </div>
+
+                        <div  style="margin-top: -65px;margin-left: 75%;" [hidden]="hideViewBankList">
+                            <input type="button" value="View Bank List" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"  (click)="OpenBankNetworkDetails();">
+                        </div>
+                        <div  style="margin-top: -35px; margin-left: 75%;" [hidden]="hidehBankList">
+                            <input type="button" value="Hide Bank List" class="leadInputSubmit bg-color-brown color-white border-0 rounded px-4 py-2 font-w-600"  (click)="CloseBankNetworkDetails();">
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+
+<!--OUR BANK LIST START-->
+<div [hidden]="hideOurbankDetails">
+
+<section class="mb-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div
+                    class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 align-items-center border-b rounded">
+                    <div class="font-size-19 font-w-600">Our Bank List</div>
+                    <div style="margin-left: 80%;"><input type="button" value="Add" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"  (click)="AddourBank();">
+                    </div>
+                </div>
+                <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                    <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+                        <table class="table font-w-600 color-initial mb-0">
+
+                            <tr class="bg-color-ContHead">
+                                <th class="color-gray min-w-200">BankName<br /></th>
+                                <th class="color-gray min-w-200">Code</th>
+                                <th class="color-gray min-w-200">Expired Date</th>
+                                <th class="color-gray min-w-200">&nbsp;</th>
+                            </tr>
+                            <tr *ngFor="let l of OurbModel">
+                                <td>{{l.Bankname}}</td>
+                                <td>{{l.Code}}</td>
+                                <td>{{l.Expiredt}}</td>
+                                <td><i class="fas fa-pencil-alt" (click)='editOurBank(l.Id)'></i></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div>
+<!--OUR BANK LIST END-->
+
+
+ <section class="mb-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between flex-row flex-nowrap bg-color-ContHead rounded-top">
+                    <!-- tab buttons - start -->
+                    <div class="contentTabBtnCont d-flex boxShadow1 border-b-header rounded">
+                        <button id="" class="tabBtn assigned font-w-600 px-sm-4 px-1 py-1 bg-color-ContHead color-gray rounded active" *ngIf="objEmployeeModel.IsContactRights" (click)="homeComponents = 'OnReview'"  [class.active]="homeComponents == 'OnReview'">
+                            <i class="fas fa-phone-volume font-size-19" style="font-size: 20px;"></i>&nbsp;&nbsp;
+                            <span class="font-size-12 font-w-600">Review</span>
+                        </button>
+                        <button id="" class="tabBtn assigned font-w-600 px-sm-4 px-1 py-1 bg-color-ContHead color-gray rounded active" *ngIf="objEmployeeModel.IsContactRights" (click)="homeComponents = 'OnTrackContact'" [class.active]="homeComponents == 'OnTrackContact' || homeComponents == 'UnTrackContact'">
+                            <i class="fas fa-phone-volume font-size-19" style="font-size: 20px;"></i>&nbsp;&nbsp;
+                            <span class="font-size-12 font-w-600">Contact</span>
+                        </button>
+
+                        <button class="tabBtn following font-w-600 px-sm-4 px-1 py-1 bg-color-ContHead color-gray rounded" (click)="homeComponents = 'OnTrackLead'" *ngIf="objEmployeeModel.IsLeadRights" [class.active]="homeComponents == 'OnTrackLead' || homeComponents == 'UnTrackLead'||(objEmployeeModel.IsContactRights==false && objEmployeeModel.IsLeadRights==true)">
+                            <i class="fas fa-id-card-alt font-size-19" style="font-size: 20px;"></i>&nbsp;&nbsp;
+                            <span class="font-size-12 font-w-600">Lead</span>
+                        </button>
+                    </div>
+                    <!-- tab buttons - end -->
+                      <!-- <div class="mycard text-center d-flex bg-color-white boxShadow rounded p-2 mb-3 font-w-600 position-relative">
+                        <div class="iconCont rounded-circle d-flex align-self-center align-items-center justify-content-center mr-2 bg-color-white-fix"><i class="fas fa-clipboard"></i></div>
+                        <div class="align-self-center cardValueCont color-white-fix">
+                            <span class="cardValue font-size-19" ng-model="">{{cardcount.AttendCallMonthCount}} </span>
+
+                            <span class="cardTitle"> Assigned Contact</span>
+                        </div>
+                    </div> -->
+
+
+
+                    <div class="contactRouterBtnCont align-self-center mr-3">
+                        <button class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink bg-color-pink1" (click)="homeComponents = 'UnTrackContact'" [hidden]="homeComponents == 'UnTrackContact' || homeComponents == 'UnTrackLead' || homeComponents == 'OnTrackLead' || homeComponents == 'OnReview'">UnTrack</button>
+                        <button class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-blue" (click)="homeComponents = 'OnTrackContact'" [hidden]="homeComponents == 'OnTrackContact' || homeComponents == 'UnTrackLead' || homeComponents == 'OnTrackLead' || homeComponents == 'OnReview'">OnTrack</button>
+                        <button class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-brown" (click)="homeComponents = 'UnTrackLead'" [hidden]="homeComponents == 'UnTrackContact' || homeComponents == 'OnTrackContact' || homeComponents == 'UnTrackLead' || homeComponents == 'OnReview'">UnTrack</button>
+                        <button class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-yellow" (click)="homeComponents = 'OnTrackLead'" [hidden]="homeComponents == 'UnTrackContact' || homeComponents == 'OnTrackContact' || homeComponents == 'OnTrackLead' || homeComponents == 'OnReview'">OnTrack</button>
+                    </div>
+                </div>
+                <div id="contactTble" class="tabContentCont tabcontent bg-color-ContBody1 px-3 py-3 rounded defaultOpen">
+                    <div class="" [ngSwitch]="homeComponents">
+                        <app-onreview  *ngSwitchCase="'OnReview'"></app-onreview>
+                        <app-un-track-contact *ngSwitchCase="'UnTrackContact'"></app-un-track-contact>
+                        <app-on-track-contact *ngSwitchCase="'OnTrackContact'"></app-on-track-contact>
+                        <app-on-track-lead  *ngSwitchCase="'OnTrackLead'"></app-on-track-lead>
+                        <app-un-track-lead *ngSwitchCase="'UnTrackLead'"></app-un-track-lead>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</section>
+
+<app-lead-form-model></app-lead-form-model>
+
+<div class="myModel cibilReportModel1  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+      <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+          <div>Add Our Bank</div>
+          <div (click)="closeModel1()">
+              <i class="fas fa-times cursor-pointer"></i>
+          </div>
+      </div>
+      <app-add-ourbank-form></app-add-ourbank-form>
+    </div>
+</div>
+
+
+

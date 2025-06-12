@@ -1,0 +1,24 @@
+
+<div class="tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+        <tr class="bg-color-ContHead">
+            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
+            <th class="color-gray min-w-200">Name<br /></th>
+            <th class="color-gray min-w-150">Mobile Number<br /></th>
+            <th class="color-gray min-w-150">Loan Date<br /></th>            
+            <th class="color-gray min-w-150">Amount<br /></th> 
+            <th class="color-gray min-w-150">Converter<br /></th> 
+            
+        </tr>
+        <tr *ngFor="let custlist of PWCList; let i= index;">
+            
+            <td>{{custlist.name}}</td>
+            <td>{{custlist.mobilenumber}}</td>  
+            <td>{{custlist.loandate}}</td> 
+            <td>{{custlist.amount}}</td>
+            <td>{{custlist.converter}}</td>
+                   
+        </tr>
+           
+    </table>
+</div>

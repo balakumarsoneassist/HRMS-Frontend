@@ -1,0 +1,77 @@
+<!-- <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+          <div class="bg-color-ContHead d-flex py-2 px-3 font-w-600 border-b rounded">
+            <div class="font-size-19">Our Bank</div>
+          </div>
+          <form class="p-3 bg-color-ContBody1 font-w-600" #addOurBank="ngForm">
+            <div class="formContainer d-flex flex-row flex-wrap">
+              <div class="mb-3 formItem">
+                  <label class="mb-1">Bank Name</label><br>
+                  <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Name" [(ngModel)]="model.Bankname" #name="ngModel" name="Name" required>
+
+                </div>
+
+              <div class="mb-3 formItem">
+                  <label class="mb-1">Code</label><br>
+                  <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Code" name="code"[(ngModel)]="model.Code" #Code="ngModel" >
+
+              </div>
+              <div class="mb-3 formItem">
+                <label class="mb-1">Expired Date</label><br>
+                <input [owlDateTime]="expdt" [owlDateTimeTrigger]="expdt" placeholder="Date Time" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Expired Date" name="expdt"[(ngModel)]="model.Expiredt" #Expdt="ngModel"/>
+                <owl-date-time #expdt pickerType="calendar"></owl-date-time>
+
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end py-2 px-3">
+                <button type="submit" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"  (click)="ourbankSubmit();addOurBank.reset();">Submit</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div> -->
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="bg-color-ContHead d-flex py-2 px-3 font-w-600 border-b rounded">
+        <div class="font-size-19">Our Bank</div>
+      </div>
+
+      <form class="p-3 bg-color-ContBody1 font-w-600" #addOurBank="ngForm">
+        <div class="formContainer d-flex flex-row flex-wrap">
+
+          <div class="mb-3 formItem">
+            <label class="mb-1">Bank Name</label><br>
+            <input type="text" pInputText class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"
+              placeholder="Enter Name" [(ngModel)]="model.Bankname" #name="ngModel" name="Name" required />
+          </div>
+
+          <div class="mb-3 formItem">
+            <label class="mb-1">Code</label><br>
+            <input type="text" pInputText class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"
+              placeholder="Enter Code" name="code" [(ngModel)]="model.Code" #Code="ngModel" />
+          </div>
+
+          <div class="mb-3 formItem">
+            <label class="mb-1">Expired Date</label><br>
+            <p-calendar [(ngModel)]="model.Expiredt" name="expdt" #Expdt="ngModel"
+              class="w-100 mBorder bg-color-input color-initial border-header"
+              dateFormat="dd/mm/yy" placeholder="Select Date" showIcon="true"></p-calendar>
+          </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end py-2 px-3">
+          <button pButton type="submit" label="Submit"
+            class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"
+            (click)="ourbankSubmit(); addOurBank.reset();">
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

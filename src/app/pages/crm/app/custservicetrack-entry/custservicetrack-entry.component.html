@@ -1,0 +1,55 @@
+<form #svForm="ngForm">
+    <!-- <div> <input type="submit" value="Refresh" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" (click)="GetLeadTrack(model.TrackId)"></div> -->
+    <div class="leadInputCategory leadFollDetailIpCont rounded py-2 px-3 bg-color-ContBody1 font-w-600">
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Call Details</span><br/>
+<br>
+<div class="leadIpFlexCont d-flex flex-wrap pt-3">
+
+
+<div class="leadIpFitem1 mb-3">
+    <label class="mb-1">Next call Date</label>
+
+   <p-calendar
+  [(ngModel)]="model.Nextcall"
+  name="nextcall"
+  [minDate]="currentDateTime"
+  [showTime]="true"
+  [showIcon]="true"
+  class="w-100 mBorder bg-color-input color-initial border-header"
+  inputStyleClass="form-control px-2 py-1 rounded">
+</p-calendar>
+
+  </div>
+
+  <div class="leadIpFitem1 mb-3">
+    <label class="mb-1">Whether Call Attended*</label>
+    <select  class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control form-control"  #statusTemVar="ngModel" [(ngModel)]="model.callattend" name="callattend" >
+        <option  value=1>Yes</option>
+        <option  value=0>No</option>
+    </select>
+
+</div>
+<div class="leadIpFitem1 mb-3">
+    <label class="mb-1">Remarks*</label>
+    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Remarks"  name="remarks" #remarks="ngModel">
+
+  </div>
+
+</div>
+
+<div class="leadIpFlexCont d-flex flex-wrap pt-3">
+    <div class="leadIpFitem1 mb-3">&nbsp;</div>
+    <div class="leadIpFitem1 mb-3">&nbsp;</div>
+    <div class="text-right">
+        <input type="submit" value="Save" (click)="SaveHistory();svForm.reset();" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+        &nbsp;&nbsp;
+      </div>
+</div>
+
+
+
+
+</div>
+</form>
+

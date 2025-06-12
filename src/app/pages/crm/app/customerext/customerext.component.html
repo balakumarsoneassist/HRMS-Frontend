@@ -1,0 +1,124 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+          <div class="bg-color-ContHead d-flex py-2 px-3 font-w-600 border-b rounded">
+            <div class="font-size-19">Existing Customers</div>
+          </div>
+          <form class="p-3 bg-color-ContBody1 font-w-600" #addContact="ngForm">
+            <div class="formContainer d-flex flex-row flex-wrap">
+              <div class="mb-3 formItem">
+                  <label class="mb-1">Name</label><br>
+                  <input type="text" disabled="true" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Name" [(ngModel)]="model.Name" #name="ngModel" name="Name" required [class.is-invalid]="name.invalid && name.touched">
+                  <div *ngIf="name.errors && (name.dirty || name.touched)" class="text-danger mt-1">
+                        <div *ngIf="name.errors?.['required']">
+                        Name is required.
+                        </div>
+                   </div>
+              </div>
+              <div class="mb-3 formItem">
+                  <label class="mb-1">Location</label><br>
+                  <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Locatin" name="location"[(ngModel)]="model.location" #Location="ngModel" [class.is-invalid]="Location.invalid && Location.touched">
+                  <div *ngIf="Location.errors && (Location.dirty || Location.touched)" class="text-danger mt-1">
+                        <div *ngIf="Location.errors?.['pattern']">
+                        Location is required.
+                        </div>
+                  </div>
+              </div>
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Loan Date [dd/mm/yyyy] </label><br>
+                   <!-- <label class="mb-1">{{model.loandate}}</label>-->
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Loan Date" name="loandate" maxlength="10"  required="" [(ngModel)]="model.loandate" #loandate="ngModel" >
+
+                  <!--  <input [owlDateTime]="loanDate" [owlDateTimeTrigger]="loanDate" placeholder="Loan Date" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Loan Date" name="dob"[(ngModel)]="model.loandate" #LoanDate="ngModel" [class.is-invalid]="LoanDate.invalid && LoanDate.touched">
+                    <owl-date-time #loanDate pickerType="calendar"></owl-date-time>
+                    <div *ngIf="LoanDate.errors && (LoanDate.dirty || LoanDate.touched)" class="text-danger mt-1">
+                        <div *ngIf="LoanDate.errors?.['pattern']">
+                            LoanDate is required.
+                        </div>
+                    </div>-->
+              </div>
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Mobile Number*</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Mobile No." pattern="[0-9]{10}" name="mobileNo" maxlength="10"  required="" [(ngModel)]="model.mobilenumber" #MobileNumber="ngModel" [class.is-invalid]="MobileNumber.invalid && MobileNumber.touched">
+                    <div *ngIf="MobileNumber.errors && (MobileNumber.dirty || MobileNumber.touched)" class="text-danger mt-1">
+                        <div *ngIf="MobileNumber.errors?.['required']">
+                            Mobile Number is required.
+                        </div>
+                    </div>
+              </div>
+
+            </div>
+
+            <div class="formContainer d-flex flex-row flex-wrap">
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Product</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Product" name="Product"[(ngModel)]="model.product" #Product="ngModel" [class.is-invalid]="Product.invalid && Product.touched">
+                    <div *ngIf="Product.errors && (Product.dirty || Product.touched)" class="text-danger mt-1">
+                        <div *ngIf="Product.errors?.['pattern']">
+                            Product is required.
+                        </div>
+                    </div>
+              </div>
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Email</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Email" name="Email"[(ngModel)]="model.email" #Email="ngModel" [class.is-invalid]="Email.invalid && Email.touched">
+                    <div *ngIf="Email.errors && (Email.dirty || Email.touched)" class="text-danger mt-1">
+                        <div *ngIf="Email.errors?.['pattern']">
+                            Email is required.
+                        </div>
+                    </div>
+              </div>
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Bank</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Bank" name="Bank"[(ngModel)]="model.bank" #Bank="ngModel" [class.is-invalid]="Bank.invalid && Bank.touched">
+                    <div *ngIf="Bank.errors && (Bank.dirty || Bank.touched)" class="text-danger mt-1">
+                        <div *ngIf="Bank.errors?.['pattern']">
+                            Bank is required.
+                        </div>
+                    </div>
+              </div>
+              <div class="mb-3 formItem">
+                    <label class="mb-1">Disbursed Amount</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Disbursed Amount" name="DisburseAmt"[(ngModel)]="model.amount" #DisburseAmt="ngModel" [class.is-invalid]="DisburseAmt.invalid && DisburseAmt.touched">
+                    <div *ngIf="DisburseAmt.errors && (DisburseAmt.dirty || DisburseAmt.touched)" class="text-danger mt-1">
+                        <div *ngIf="DisburseAmt.errors?.['pattern']">
+                            Disburse Amount is required.
+                        </div>
+                    </div>
+              </div>
+            </div>
+
+            <div class="formContainer d-flex flex-row flex-wrap">
+              <div class="mb-3 formItem">
+                    <label class="mb-1">ROI*</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter ROI" pattern="[0-9]{10}" name="roi" maxlength="5"  required="" [(ngModel)]="model.roi" #Roi="ngModel" >
+
+              </div>
+
+              <div class="mb-3 formItem">
+                  <label class="mb-1">Track Number</label><br>
+                  <input type="text" disabled="true" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Track Number"  name="tracknumber" [(ngModel)]="model.tracknumber" #Tracknumber="ngModel" >
+
+              </div>
+              <div class="mb-3 formItem">
+                <label class="mb-1">Notes</label><br>
+                <input type="text"  class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Notes"  name="notes" [(ngModel)]="model.notes" #notes="ngModel" >
+
+            </div>
+              <div class="mb-3 formItem">
+                <div class="d-flex justify-content-end py-2 px-3">
+                    <button type="submit" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"  (click)="updateData();addContact.reset();">Update</button>
+                </div>
+              </div>
+
+            </div>
+
+
+
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- <app-employee-list> </app-employee-list> -->
+

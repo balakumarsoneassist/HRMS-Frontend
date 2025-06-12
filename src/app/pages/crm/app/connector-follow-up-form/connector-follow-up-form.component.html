@@ -1,0 +1,43 @@
+
+<form #leadFollowUpForm="ngForm">
+    <!-- <div> <input type="submit" value="Refresh" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" (click)="GetLeadTrack(model.TrackId)"></div> -->
+    <div class="leadInputCategory leadFollDetailIpCont rounded py-2 px-3 bg-color-ContBody1 font-w-600">
+      <div class="leadIpFlexCont d-flex flex-wrap pt-3">
+        <div class="leadIpFitem mb-3">
+            <label class="mb-1">Connector</label><p></p>
+            <label class="mb-1">{{ConnectorName}}</label>
+
+        </div>
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Next Appoinment Date(If Any)</label>
+
+                <p-calendar
+  [(ngModel)]="model.AppoinmentDate"
+  name="appoinmentDate"
+  [minDate]="currentDateTime"
+  [showIcon]="true"
+  class="w-100 mBorder bg-color-input color-initial border-header"
+  inputStyleClass="form-control px-2 py-1 rounded">
+</p-calendar>
+
+            </div>
+
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Notes*</label>
+                <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Notes" required name="notes" #notes="ngModel">
+
+            </div>
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Remarks</label>
+                <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Remarks"  name="remarks" #remarks="ngModel">
+
+            </div>
+
+        </div>
+        <div class="text-right">
+      <!--      <input type="submit" value="Save" (click)="SaveConnectorTrack(false)" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+          -->  &nbsp;&nbsp;
+            <input type="submit" value="Save&Close" (click)="SaveConnectorTrack(true)" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+        </div>
+    </div>
+</form>

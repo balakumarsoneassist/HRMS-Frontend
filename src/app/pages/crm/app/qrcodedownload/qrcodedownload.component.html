@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>QR Code Download</h2>
+      <button (click)="showQrCode()">Generate QR Code</button>
+    </div>
+  </div>
+
+  <div id="QrDown" [hidden]="forDownload">
+    <div id="table">
+      <h3>Scan the QR Code</h3>
+      <qrcode
+        [qrdata]="myAngularxQrCode"
+        [width]="256"
+        [errorCorrectionLevel]="'M'"
+        (qrCodeURL)="onChangeURL($event)">
+      </qrcode>
+    </div>
+    <button (click)="exportAsPDF()">Download PDF</button>
+  </div>
+</div>

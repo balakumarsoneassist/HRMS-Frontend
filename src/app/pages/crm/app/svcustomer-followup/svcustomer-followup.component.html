@@ -1,0 +1,51 @@
+<div class="col-md-12">
+    <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+        <div class="font-size-19">Customer Followup</div>
+    </div>
+<div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text"  class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
+
+
+        <tr class="bg-color-ContHead">   
+    
+              <th class="color-gray min-w-200 text-center" >Name<br /></th>
+              <th class="color-gray min-w-200 text-center" >Mobile Number<br /></th>
+              <th class="color-gray min-w-200 text-left" >Location<br /></th>
+
+              <th class="color-gray min-w-200 text-left" >Action</th>
+        </tr>
+        <tr *ngFor="let SVCList of SVcustomerList">
+    
+            <td>
+                {{SVCList.Name}}
+            </td>
+            <td>
+                {{SVCList.Mobileno}}
+            </td>
+            <td>
+                {{SVCList.Location}}
+            </td>
+        
+            <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="callStatus(SVCList.Id,SVCList.Name,SVCList.Mobileno)">Follow Up</button>
+            </td>
+        </tr>
+    </table>
+    <app-salesvisit></app-salesvisit>
+</div>
+
+<section>
+    <div class="myModel callHistoryModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+        <div class="modelContent bg-color-white boxShadow rounded">
+          <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+              <div></div>
+              <div (click)="CloseCustomerModel()">
+                  <i class="fas fa-times cursor-pointer"></i>
+              </div>
+          </div>
+          <app-customerext></app-customerext>
+        </div>
+      </div>
+   
+    </section>  

@@ -1,0 +1,56 @@
+<section class="mb-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b rounded">
+                    <div>Unassigned ICICI Details</div>
+                </div>
+                <div class="bg-color-ContBody1 px-3 py-3 rounded">
+<div class="tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+        <tr class="bg-color-ContHead">
+            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
+            <th class="color-gray min-w-200">Name<br /><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-150">Mobile Number<br /><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" onkeypress="return (event.charCode > 46 && event.charCode < 58)" /></th>
+            <th>Occupation<br /><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow"></th>
+            <th>Income Amount<br /><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow"></th>
+            <th class="color-gray min-w-150"><br /><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="openCibilReportModel(0)">Add New</button></th>
+            <th class="color-gray min-w-150"></th>
+        </tr>
+        <tr *ngFor="let objUnassignedLeadList of model.UnassignedLeadList; let i= index;">
+            <td>{{objUnassignedLeadList.Name}}</td>
+            <td>{{objUnassignedLeadList.MobileNumber}}</td>
+            <td>{{objUnassignedLeadList.Occupation}}</td>
+            <td>{{objUnassignedLeadList.IncomeAmount}}</td>
+            <td></td>
+            <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="openCibilReportModel(objUnassignedLeadList.Id)">Assign to Icici</button></td>
+        </tr>
+    </table>
+</div>
+<div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing 1 to 10 of 50 Records</div>
+    <div class="paginationBtnContainer text-center">
+        <button class="border-header mr-2 bg-color-input color-initial rounded"><i class="fas fa-chevron-left"></i></button>
+        <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
+        <input type="text" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center" onkeypress="return (event.charCode > 46 && event.charCode < 58)" />
+        <span class="mr-2 color-initial font-w-600 font-size-14">of 50 pages</span>
+        <button class="border-header bg-color-input color-initial rounded"><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+<div class="myModel cibilReportModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+      <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+          <div>Add Icici Lead</div>
+          <div (click)="closeModel()">
+              <i class="fas fa-times cursor-pointer"></i>
+          </div>
+      </div>
+      <app-add-icici-form></app-add-icici-form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+

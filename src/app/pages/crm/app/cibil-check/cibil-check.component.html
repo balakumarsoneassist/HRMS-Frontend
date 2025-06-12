@@ -1,0 +1,102 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+          <div class="d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+              <div>Check cibil Score</div>
+          </div>
+
+          <div class="bg-color-ContBody1 px-3 py-3 rounded font-w-600" >
+            <form>
+                <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">First Name*</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="firstName" [(ngModel)]="model.FirstName" #FirstName="ngModel" placeholder="Enter First Name" pattern="[A-Za-z]{1,32}">
+                  </div>
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Last Name*</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="lastName" [(ngModel)]="model.LastName" #LastName="ngModel" placeholder="Enter Last Name" pattern="[A-Za-z]{1,32}">
+                  </div>
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1"> Email Id*</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="emailID" [(ngModel)]="model.EmailId" #EmailId="ngModel" placeholder="Enter Email Id">
+                  </div>
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Gender</label><br>
+                    <label class="mr-4">
+                      <input type="radio" name="gender" value="1" class="mr-2" [(ngModel)]="model.Gender" #Gender="ngModel">
+                      <span>Male</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="gender"  value="2" class="mr-2" [(ngModel)]="model.Gender" #Gender="ngModel">
+                      <span>Female</span>
+                    </label>
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">D.O.B</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="dob" [(ngModel)]="model.DateofBirth" #DateofBirth="ngModel" placeholder="Enter Date Of Birth">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Address</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="address" [(ngModel)]="model.Address" #Address="ngModel" placeholder="Enter Address">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Pin Code</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="pinCode" [(ngModel)]="model.PinCode" #PinCode="ngModel" placeholder="Enter Pin Code">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">City</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="city" [(ngModel)]="model.City" #City="ngModel" placeholder="Enter City">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">State</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="state" [(ngModel)]="model.State" #State="ngModel" placeholder="Enter State">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Pan Number</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name=" panNumber" [(ngModel)]="model.PanNumber" #PanNumber="ngModel" placeholder="Enter  Pan Number">
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Mobile Number</label>
+                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  name="mobileNumber" [(ngModel)]="model.MobileNumber" #MobileNumber="ngModel" placeholder="Enter Mobile Number">
+                  </div>
+              </div>
+              <div class="d-flex flex-column justify-content-center">
+                <button class="bg-color-yellow mb-3 px-5 py-2 font-w-600 color-white rounded border-0 cursor-pointer box-shadow align-self-center" (click)="GetOTP()">Get Free Credit Report</button>
+                <div class=" align-self-center">
+                  <div class="d-flex flex-column justify-content-between m-auto" *ngIf="isEnableOTPButton">
+                      <label for="cibilOtp" class="cibilOtpLabel font-weight-600 mb-0">Enter OTP</label>
+                      <input type="text" class="px-1 py-1 rounded mBorder min-w-250 bg-color-input color-initial border-header" name="OTP" #OTP="ngModel" [(ngModel)]="model.OTP"autofocus="" pattern="[1-9]{6}" maxlength="6">
+                      <div class="d-flex justify-content-between flex-wrap flex-row mt-2">
+                          <button class="px-3 py-2 font-w-600 color-white rounded border-0 cursor-pointer bg-color-logo" (click)="GenerateCibilReport()">Enter</button>
+                          <button class="px-3 py-2 font-w-600 color-white rounded border-0 cursor-pointer bg-color-yellow" (click)="GetOTP()">Re-Send Otp</button>
+                      </div>
+                  </div>
+                  <div class="optresponceMsg text-center my-2 font-weight-600"></div>
+                </div>
+              </div>
+            </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt-4">
+  <div class="row">
+      <div class="col-md-12">
+        <div class="bg-color-ContBody1">
+          <div class="d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+            <div>Creidit Score Report</div>
+          </div>
+          <app-cibil-report></app-cibil-report>
+        </div>
+      </div>
+    </div>
+  </div>
+
+

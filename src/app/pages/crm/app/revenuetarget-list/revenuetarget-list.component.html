@@ -1,0 +1,81 @@
+<div class="col-md-12">
+   
+<div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+        <th colspan="2" class="color-white-fix min-w-200 S-R">
+            <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Month</span><br/>
+            </label>
+          
+            <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="pmodel.month" #mon="ngModel" name="mon" >
+                <OPTION VALUE='01'>Jan</OPTION>
+                <OPTION VALUE='02'>Feb</OPTION>
+                <OPTION VALUE='03'>Mar</OPTION>
+                <OPTION VALUE='04'>Apr</OPTION>
+                <OPTION VALUE='05'>May</OPTION>
+                <OPTION VALUE='06'>Jun</OPTION>
+                <OPTION VALUE='07'>Jul</OPTION>
+                <OPTION VALUE='08'>Aug</OPTION>
+                <OPTION VALUE='09'>Sep</OPTION>
+                <OPTION VALUE='10'>Oct</OPTION>
+                <OPTION VALUE='11'>Nov</OPTION>
+                <OPTION VALUE='12'>Dec</OPTION>
+                
+            </select>
+        </th>
+        <th colspan="2" class="color-white-fix min-w-200 S-R">
+            <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Year</span><br/>
+            </label>
+            <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="pmodel.year" #year="ngModel" name="year" >
+                <OPTION VALUE='2020'>2020</OPTION>
+                <OPTION VALUE='2021'>2021</OPTION>
+                <OPTION VALUE='2022'>2022</OPTION>
+                <OPTION VALUE='2023'>2023</OPTION>
+                <OPTION VALUE='2024'>2024</OPTION>
+                <OPTION VALUE='2025'>2025</OPTION>
+                <OPTION VALUE='2026'>2026</OPTION>
+                <OPTION VALUE='2027'>2027</OPTION>
+                <OPTION VALUE='2028'>2028</OPTION>
+                <OPTION VALUE='2029'>2029</OPTION>
+                
+                
+            </select>
+        </th>
+       
+    
+        <th colspan="1" class="color-gray min-w-200 S-R"><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="Getdata()">Get Data</button>
+        </th>
+        
+        <tr class="bg-color-ContHead">   
+    
+              <th class="color-gray min-w-200 text-center" >Name<br /></th>
+              <th class="color-gray min-w-200 text-center" >Revenue Target<br /></th>
+              <th class="color-gray min-w-200 text-left" >Filelogin Target<br /></th>
+
+              <th class="color-gray min-w-200 text-left" >&nbsp;</th>
+              <th class="color-gray min-w-200 text-left" >&nbsp;</th>
+        </tr>
+        <tr *ngFor="let TList of TargetList">
+    
+            <td>
+                {{TList.ename}}
+            </td>
+            <td>
+                {{TList.revtarget}}
+            </td>
+            <td>
+                {{TList.fltarget}}
+            </td>
+            <td>
+                {{TList.eidMY}}
+            </td>
+        
+            <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="EditTarget(TList.Id,TList.ename,TList.revtarget,TList.fltarget,TList.eidMY)">Edit</button>
+            </td>
+        </tr>
+    </table>
+    
+</div>
+</div>
+
+

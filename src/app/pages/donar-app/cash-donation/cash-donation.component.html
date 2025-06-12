@@ -1,0 +1,29 @@
+<div class="flex flex-col gap-4 w-full max-w-md mx-auto p-4 bg-white rounded shadow">
+  <h2 class="text-xl font-semibold mb-4">Donate Now</h2>
+
+  <div class="flex flex-col gap-2">
+    <label for="name">Name</label>
+    <input pInputText id="name" [(ngModel)]="form.name" [disabled]="true" class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="email">Email</label>
+    <input pInputText id="email" [(ngModel)]="form.email" [disabled]="true" class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="contact">Contact</label>
+    <input pInputText id="contact" [(ngModel)]="form.contact" [disabled]="true" class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="amount">Amount (₹)</label>
+    <input pInputText id="amount" type="number" [(ngModel)]="form.amount" placeholder="Enter amount" class="w-full" />
+  </div>
+
+  <div class="flex justify-end mt-4">
+    <button *ngIf="form.amount" pButton type="button" class="p-button-success w-full" (click)="donate()">Donate</button>
+  </div>
+
+  <p-toast />
+</div>

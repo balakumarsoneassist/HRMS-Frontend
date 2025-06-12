@@ -1,0 +1,36 @@
+<div class="tableContainer rounded mBorder overflow-x-auto">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-yellow " >Name : {{name}} ---- {{mno}}</span><br/>
+        <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Earlier Call History</span><br/>
+        <br>
+    <table class="table font-w-600 color-initial mb-0">
+        <tr class="bg-color-ContHead">
+            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
+            <th class="color-gray min-w-200">Last Call Date<br /></th>
+            <th class="color-gray min-w-150">Next Call Date<br /></th>
+            <th class="color-gray min-w-150">Call Attended<br /></th>
+            <th class="color-gray min-w-150">Remarks<br /></th>
+            <th class="color-gray min-w-150">&nbsp;<br /></th>
+        </tr>
+        <tr *ngFor="let objTrack of CustomerTrackList; let i= index;">
+
+            <td>{{objTrack.Calledon}}</td>
+            <td>{{objTrack.Nextcall}}</td>
+
+            <div *ngIf="(objTrack.Callattend == 1) ;then Attended else Nores"> </div>
+                            <ng-template #Attended>
+                            <td ><span>Call Attended</span></td>
+                            </ng-template>
+                             <ng-template #Nores>
+                                <td ><span>Not Attended</span></td>
+                            </ng-template>
+            <td>{{objTrack.Remarks}}</td>
+            <td><span class="py-2 px-3 bg-color-yellow color-white-fix rounded">&nbsp;</span></td>
+
+        </tr>
+
+    </table>
+</div>
+
+
+

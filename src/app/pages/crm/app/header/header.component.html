@@ -1,0 +1,37 @@
+<!-- header section - start -->
+<header class="z-index-3">
+    <div class="headerSec d-flex justify-content-between align-items-center boxShadow mb-3">
+        <div class="d-flex">
+            <div class="logoContainer d-flex justify-content-center align-items-center bg-color-white-fix">
+                <img src="assets/img/logo.png" width="130" height="auto" />
+            </div>
+            <button class="hamburgerBtn border-0 bg-color-white hambtn">
+                <span class="d-block"></span>
+                <span class="d-block"></span>
+                <span class="d-block"></span>
+            </button>       
+        </div>
+        <div class="iconsContainer bg-color-white">
+            <div class="iconsRow align-items-center mr-md-4 mx-md-0 mx-4 h-100  d-flex align-self-center">
+                <!-- <i class="themeChanging fas fa-moon cursor-pointer pr-0 pr-md-5 font-size-19"></i> -->
+                <img src="assets/img/sun.svg" width="20" height="20" class="themeBtn mr-5 align-self-center cursor-pointer">
+                <div>
+                    <div ngbDropdown class="d-inline-block">
+                        <button class="bg-color-transperent" id="profileDropDown"  ngbDropdownToggle><img src="assets/img/dummy-profile.jpg" width="40" height="40" class="dropDownBtn rounded-circle"></button>
+                       
+                        <div ngbDropdownMenu aria-labelledby="profileDropDown" class="spa a_b">
+                            <button ngbDropdownItem class="color-initial myStyle b_c"><i class="fas fa-user pr-3 d-inline font-size-17"></i>User Name:{{Name}}</button>
+                            <button ngbDropdownItem class="color-initial myStyle b_c"><i class="far fa-envelope pr-3 d-inline font-size-17"></i>E-mail Id:{{EmailId}}</button>
+                            <hr style="border:1px solid grey ;">
+                            <button ngbDropdownItem class="color-initial myStyle b_c" (click)="ResetPassword()"><i class="fas fa-key pr-3 d-inline font-size-17"></i><span>Change<span class="pl-1"></span>Password</span></button>
+                            
+                            <button ngbDropdownItem class="color-initial myStyle b_c"><i class="fas fa-user pr-3 d-inline font-size-17"></i><span>Profile</span></button>
+                            <button ngbDropdownItem class="color-initial myStyle b_c" (click)="GoToLogOutPage()"><i class="fas fa-sign-out-alt pr-3 d-inline font-size-17"></i><span>Logout</span></button>
+                        </div>
+                    </div>
+                </div>&nbsp;&nbsp;
+            </div>
+        </div>
+    </div>
+</header>
+<!-- header section - end -->

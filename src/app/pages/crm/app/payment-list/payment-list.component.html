@@ -1,0 +1,80 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Payment List</div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+                    <table class="table font-w-600 color-initial mb-0">
+                        <tr class="bg-color-ContHead">
+                            <th class="color-gray min-w-150" >TrackNumber<br /></th>
+                            <th class="color-gray min-w-200" >FirstName<br /></th>
+                            <th class="color-gray min-w-200" >LastName<br /></th>
+                            <th class="color-gray min-w-150" >Mobile Number<br /></th>
+                            <th class="color-gray min-w-150" >Status<br /></th>
+                            <th class="color-gray min-w-150" >Sanction Amount<br /></th>
+                            <th class="color-gray min-w-150" >PayoutPercent<br /></th>
+                            <th class="color-gray min-w-150" >PayoutAmount<br /></th>
+                            <th class="color-gray min-w-150" >Connector<br /></th>
+                             <!-- <th class="color-gray min-w-200">IsPaid</th> -->
+                                 <!-- <input type="checkbox" (click)="getSel()" >select all<br /> -->
+                            <th class="color-gray min-w-200" >Action<br /></th>
+                        </tr>
+                        <tr *ngFor="let p of paymentList">
+                            <td>
+                                {{p.TrackNumber}}
+                             </td>
+                            <td>
+                               {{p.FirstName}}
+                            </td>
+                            <td>
+                                {{p.LastName}}
+                             </td>
+                             <td>
+                                {{p.MobileNumber}}
+                             </td>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+
+
+
+
+                             
+                             <td>
+                                {{p.Status}}
+                             </td>
+                             <td>
+                                {{p.SanctionValue}}
+                             </td>
+                             <td>
+                                {{p.PayoutPercent}}
+                             </td>
+                             <td>
+                                {{((p.PayoutPercent/100)*p.SanctionValue)| number : '1.2'}}
+                             </td>
+                             <td>
+                                {{p.ConnectorName}}
+                             </td>
+                             <td [hidden]='p.IsPaid==true'>
+                                <button [hidden]='p.Status!="completed"' (click)="updateConnectorPayment(p.Id)" class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix">Pay</button>
+                             </td>
+                             <td [hidden]='p.IsPaid==false'>
+                                Paid
+                             </td>
+                        </tr>
+                    </table>
+                </div> 
+            </div>
+    
+        </div>
+    </div>
+</div>            
+
+                        
+
+                       
+                        
+                        
+                   
+                
+            

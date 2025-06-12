@@ -1,0 +1,76 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Unique Customer Report</div>
+            </div>
+            <div *ngFor="let objList of CategoryList | searchpipe : searchStr; let j = index" >
+                <div *ngIf="j == CategoryList.length - 1" >
+                    No. of Customers : {{objList.total}}<br/>
+                    <!-- {{j}} -- {{CategoryList.length}}<br/> -->
+                    Amount :  {{objList.amount}}<br/>
+                </div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+
+                <div class="tableContainer rounded mBorder overflow-x-auto">
+
+
+                <table class="table font-w-600 color-initial mb-0">
+                    <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th>
+                        <tr class="bg-color-ContHead">
+                            <th class="color-gray min-w-150" >Category<br /></th>
+                            <!-- <th class="color-gray min-w-150" >Type<br /></th> -->
+                            <th class="color-gray min-w-150" >Total<br /></th>
+                            <th class="color-gray min-w-150" >Amount<br /></th>
+                            <th class="color-gray min-w-150" >&nbsp;<br /></th>
+
+                        </tr>
+                        <tr *ngFor="let objCategoryList of CategoryList | searchpipe : searchStr; let i = index" >
+                            <!-- <div *ngIf="i < CategoryList.length - 1" >  -->
+
+                        <td *ngIf="i < CategoryList.length - 1">
+                            {{objCategoryList.product}}
+                        </td>
+                        <td *ngIf="i < CategoryList.length - 1">
+                            {{objCategoryList.total}}
+                        </td>
+
+                        <td  *ngIf="i < CategoryList.length - 1">
+                            {{objCategoryList.amount}}
+                        </td>
+
+                        <td class="text-center" *ngIf="i < CategoryList.length - 1">
+                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="callStatus(objCategoryList.product)">Details</button>
+                        </td>
+                    <!-- </div> -->
+                    </tr>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<app-connector-form-model></app-connector-form-model>-->
+    <!-- <app-existloanwisecustomers></app-existloanwisecustomers> -->
+</div>
+<section>
+    <div class="myModel leadInputModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+        <div class="modelContent bg-color-white boxShadow rounded">
+          <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+              <div></div>
+              <div (click)="closeModel()">
+                  <i class="fas fa-times cursor-pointer"></i>
+              </div>
+          </div>
+          <app-existloanwisecustomers></app-existloanwisecustomers>
+        </div>
+      </div>
+
+    </section>
+
+
+
+
+
+
+

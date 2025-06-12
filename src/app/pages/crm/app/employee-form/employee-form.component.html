@@ -1,0 +1,204 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+        <div class="bg-color-ContHead d-flex py-2 px-3 font-w-600 border-b rounded">
+          <div class="font-size-19">Employee</div>
+        </div>
+        <form class="p-3 bg-color-ContBody1 font-w-600" #addContact="ngForm">
+          <div class="formContainer d-flex flex-row flex-wrap">
+            <div class="mb-3 formItem">
+                <label class="mb-1">Name*</label><br>
+                <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Name" [(ngModel)]="model.Name" #name="ngModel" name="Name" required [class.is-invalid]="name.invalid && name.touched">
+                <div *ngIf="name.errors && (name.dirty || name.touched)" class="text-danger mt-1">
+                  <div *ngIf="name.errors?.['required']">
+                    Name is required.
+                  </div>
+   </div>
+</div>
+            <div class="mb-3 formItem">
+                <label class="mb-1">Qualification</label><br>
+                <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Qualification" name="qualification"[(ngModel)]="model.Qualification" #Qualification="ngModel" [class.is-invalid]="Qualification.invalid && Qualification.touched">
+                <div *ngIf="Qualification.errors && (Qualification.dirty || Qualification.touched)" class="text-danger mt-1">
+                  <div *ngIf="Qualification.errors?.['pattern']">
+                    Qualification is required.
+                  </div>
+                </div>
+            </div>
+           <div class="mb-3 formItem">
+  <label class="mb-1">D.O.B</label><br>
+  <p-calendar
+    [(ngModel)]="model.DateOfBirth"
+    name="dob"
+    #DateOfBirth="ngModel"
+    [showIcon]="true"
+    [showButtonBar]="true"
+    dateFormat="dd/mm/yy"
+    inputClass="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"
+    placeholder="Enter D.O.B"
+    [class.is-invalid]="DateOfBirth.invalid && DateOfBirth.touched"
+  ></p-calendar>
+
+  <div *ngIf="DateOfBirth.errors && (DateOfBirth.dirty || DateOfBirth.touched)" class="text-danger mt-1">
+    <div *ngIf="DateOfBirth.errors?.['pattern']">
+      DOB is required.
+    </div>
+  </div>
+</div>
+
+            <div class="mb-3 formItem">
+  <label class="mb-1">Date of Joining</label><br>
+  <p-calendar
+    [(ngModel)]="model.JoinDate"
+    name="JoinDate"
+    #JoinDate="ngModel"
+    [showIcon]="true"
+    [showButtonBar]="true"
+    dateFormat="dd/mm/yy"
+    inputClass="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"
+    [class.is-invalid]="JoinDate.invalid && JoinDate.touched"
+  ></p-calendar>
+  <div *ngIf="JoinDate.errors && (JoinDate.dirty || JoinDate.touched)" class="text-danger mt-1">
+    <div *ngIf="JoinDate.errors?.['pattern']">
+      Date of Joining is required.
+    </div>
+  </div>
+</div>
+
+            <div class="mb-3 formItem">
+              <label class="mb-1">Department</label><br>
+              <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Dept" name="dept" #deptTem= "ngModel" >
+                <option>Administration</option>
+                <option>Sales</option>
+                <option>Marketting</option>
+                <option>Accounts</option>
+            </select>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Designation</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Designation" name="designation"[(ngModel)]="model.Designation" #designation="ngModel" [class.is-invalid]="designation.invalid && designation.touched">
+              <div *ngIf="designation.errors && (designation.dirty || designation.touched)" class="text-danger mt-1">
+                <div *ngIf="designation.errors?.['pattern']">
+                  Designation is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Present Address</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Present Address" name="presentAddress"[(ngModel)]="model.PresentAddress" #PresentAddress="ngModel" [class.is-invalid]="PresentAddress.invalid && PresentAddress.touched">
+              <div *ngIf="PresentAddress.errors && (PresentAddress.dirty || PresentAddress.touched)" class="text-danger mt-1">
+                <div *ngIf="PresentAddress.errors?.['pattern']">
+                  Present Address is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Permanent Address</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Permanent Address" name="permanentAddress"[(ngModel)]="model.PermanentAddress" #PermanentAddress="ngModel" [class.is-invalid]="PermanentAddress.invalid && PermanentAddress.touched">
+              <div *ngIf="PermanentAddress.errors && (PermanentAddress.dirty || PermanentAddress.touched)" class="text-danger mt-1">
+                <div *ngIf="PermanentAddress.errors?.['pattern']">
+                  Permanent Address is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Mobile Number*</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Mobile No." pattern="[0-9]{10}" name="mobileNo" maxlength="10"  required="" [(ngModel)]="model.MobileNumber" #MobileNumber="ngModel" [class.is-invalid]="MobileNumber.invalid && MobileNumber.touched">
+              <div *ngIf="MobileNumber.errors && (MobileNumber.dirty || MobileNumber.touched)" class="text-danger mt-1">
+                <div *ngIf="MobileNumber.errors?.['required']">
+                  Mobile Number is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem">
+                <label class="mb-1">Email</label><br>
+                <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="email" [(ngModel)]="model.EmailId" #EmailId="ngModel" [class.is-invalid]="EmailId.invalid && EmailId.touched">
+                <span class="errorMsg">*Enter Valid Mail Id</span>
+                <div *ngIf="EmailId.errors && (EmailId.dirty || EmailId.touched)" class="text-danger mt-1">
+                  <div *ngIf="EmailId.errors?.['pattern']">
+                    *Enter Valid Mail Id
+                  </div>
+                </div>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Contact Person</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Contact Person" name="contactPerson"[(ngModel)]="model.ContactPerson" #ContactPerson="ngModel" [class.is-invalid]="ContactPerson.invalid && ContactPerson.touched">
+              <div *ngIf="ContactPerson.errors && (ContactPerson.dirty || ContactPerson.touched)" class="text-danger mt-1">
+                <div *ngIf="ContactPerson.errors?.['pattern']">
+                  Contact Person is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Contact Number*</label><br>
+              <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Contact Person Mobile No." pattern="[0-9]{10}" name="contactPersonMobileNo" maxlength="10"  required="" [(ngModel)]="model.ContactNumber" #ContactNumber="ngModel" [class.is-invalid]="ContactNumber.invalid && ContactNumber.touched">
+              <div *ngIf="ContactNumber.errors && (ContactNumber.dirty || ContactNumber.touched)" class="text-danger mt-1">
+                <div *ngIf="ContactNumber.errors?.['required']">
+                  Mobile Number is required.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 formItem"></div>
+            <div class="mb-3 formItem">
+              <label class="mb-1">Branch</label><br />
+              <tag-input  [(ngModel)]="model.Branch" name="branch"  class="myTagInput myBorder bg-color-trans rounded pl-2" [onlyFromAutocomplete]="true">
+                <tag-input-dropdown  [autocompleteItems]="tagInputList" [showDropdownIfEmpty]="true" [dynamicUpdate]="false"></tag-input-dropdown>
+              </tag-input>
+              <!-- <tag-input [(ngModel)]='model.Branch' name="TestParameters" class="myTagInput myBorder bg-color-trans rounded pl-2" [onlyFromAutocomplete]="true">
+                <tag-input-dropdown [autocompleteItems]="tagInputList" [showDropdownIfEmpty]="true" [dynamicUpdate]="false"></tag-input-dropdown>
+              </tag-input> -->
+            </div>
+            <div class="formItem w-100 d-flex align-items-center">
+            <!-- <div class=""> -->
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsActive"  name="isActive"/>
+                <span class="checkBoxName">Active</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+            <!-- </div>
+            <div class=""> -->
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsAdminRights"  name="IsAdmin"/>
+                <span class="checkBoxName">Admin Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsContactRights"  name="isContactRights"/>
+                <span class="checkBoxName">Contact Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsLeadRights"  name="isLeadRights"/>
+                <span class="checkBoxName">Lead Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsCibilRights"  name="isCibilRights"/>
+                <span class="checkBoxName">Cibil Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsIciciRights"  name="isIciciRights"/>
+                <span class="checkBoxName">Icici Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsSplRights"  name="isSplRights"/>
+                <span class="checkBoxName">Special Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+              <label class="checkboxLabel mb-0 mr-5">
+                <input type="checkbox" [(ngModel)]="model.IsReassignRights"  name="isReassignRights"/>
+                <span class="checkBoxName">Reassign Rights</span>
+                <span class="checkboxCheckmark"></span>
+              </label>
+            <!-- </div> -->
+          </div>
+          </div>
+          <div class="d-flex justify-content-end py-2 px-3">
+              <button type="submit" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" [disabled]="addContact.invalid" (click)="employeeSubmit();addContact.reset();">Submit</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- <app-employee-list> </app-employee-list> -->

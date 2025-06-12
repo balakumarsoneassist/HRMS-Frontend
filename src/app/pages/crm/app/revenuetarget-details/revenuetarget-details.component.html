@@ -1,0 +1,77 @@
+
+<!-- model following status - start -->
+
+
+<div class="myModel callHistoryModel1  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+        <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+            <div>Revenue Generation - {{ename}} - {{finyear}}</div>
+            <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader"></div>
+            <div (click)="closeModel()">
+                <i class="fas fa-times cursor-pointer"></i>
+            </div>
+        </div>
+
+        <div class="bg-color-ContBody1 px-3 py-3 rounded">
+
+            <div class="tableContainer rounded mBorder overflow-x-auto">
+            <table class="table font-w-600 color-initial mb-0">
+                <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th>
+                    <tr class="bg-color-pink">
+                        <th class="color-white min-w-150" >Business<br /></th>
+                        <th class="color-white min-w-150" >Disburse Amount<br /></th>
+                        <th class="color-white min-w-150" >Source<br /></th>
+                        <th class="color-white min-w-150" >Payout %<br /></th>
+                        <th class="color-white-fix min-w-150" >Revenue<br /></th>
+
+                        <th class="color-white min-w-150" >&nbsp;<br /></th>
+                        <th class="color-white min-w-150" >&nbsp;<br /></th>
+
+
+                    </tr>
+                    <tr *ngFor="let objCustList of AchieveList | searchpipe : searchStr; let i = index">
+                    <td>
+                        {{objCustList.Business}}
+                    </td>
+                    <td>
+                        {{objCustList.DisburseAmount}}
+                    </td>
+                    <td>
+                        {{objCustList.Sourcing}}
+                    </td>
+                    <td>
+                        {{objCustList.Payout}}
+                    </td>
+                    <td>
+                        {{objCustList.Revenue}}
+                    </td>
+                    <td>
+                        {{objCustList.monyear}}
+                    </td>
+
+
+                      <!--  <div *ngIf="(this.objCustList.newstatus == '4') ;then Approved "> </div>
+                        <ng-template #Approved>
+                        <td ><h6><span>Approved - Lead</span></h6></td>
+                        </ng-template>
+                        <div *ngIf="(this.objCustList.newstatus != '4') ;then Other "> </div>
+                        <ng-template #Other>
+                        <td ><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="OpenCustomerTrack(objCustList.Id, objCustList.tracknumber)">Track</button></td>
+                        </ng-template>
+-->
+
+                        <td class="text-center">
+                            &nbsp; </td>
+
+                </tr>
+            </table>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+

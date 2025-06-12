@@ -1,0 +1,64 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                <div class="font-size-19">Lead Details </div>
+            </div>
+            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+
+                <div class="tableContainer rounded mBorder overflow-x-auto">
+                <table class="table font-w-600 color-initial mb-0">
+                    <th colspan="2" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th> 
+                    <th colspan="2" class="color-white-fix min-w-200 S-R">
+                        <label class="mb-1">From Date :</label>
+
+                        {{hfdt}}
+                    
+                          
+                    
+                    <th colspan="2" class="color-white-fix min-w-200 S-R">
+                        <label class="mb-1">To Date :</label>
+                        {{htdt}} -- {{lowner}}
+                    </th>
+                   
+                   <!-- <th colspan="5" class="color-white-fix min-w-200 S-R">Note : Reassign the records moved to unassigned Contact List. All the tracking details of those records will be deleted.</th>
+                   -->
+                    <th colspan="1" class="color-gray min-w-200 S-R">&nbsp; </th>
+                    <tr class="bg-color-ContHead">
+                             <th class="color-gray min-w-150" >Name<br /></th>
+                            <th class="color-gray min-w-150" >Status<br /></th>
+                            <th class="color-gray min-w-150" >Loantype<br /></th>
+                         
+                            
+                            <th class="color-gray min-w-100" >Desire Loan Amount<br/></th>
+                            <th class="color-gray min-w-100" >Followed By<br/></th>
+                        </tr>
+                        <tr *ngFor="let objStatusList of StatusList | searchpipe : searchStr; let i = index">
+                   
+                        <td>
+                            {{objStatusList.FirstName}}
+                        </td>
+                        <td>
+                            {{objStatusList.Status}}
+                        </td>
+
+                        <td>
+                            {{objStatusList.LoanType}}
+                        </td>
+                      
+                        <td>
+                            {{objStatusList.DesireLoanAmount}}
+                        </td>
+
+                        <td>
+                            {{objStatusList.Name}}
+                        </td>
+                    </tr>
+                </table>
+                </div>        
+            </div>        
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,31 @@
+.container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .input-container {
+    margin-top: 20px;
+  }
+
+  /* Certificate Styling */
+  .certificates {
+    width: 800px;
+    height: 500px;
+    border: 2px solid black;
+    padding: 20px;
+    text-align: center;
+    background: black;
+    background: url('./imagess.jpg') no-repeat center center;
+    background-size: cover;
+    margin: auto;
+    position: relative;
+  }
+
+  /* Styling for the username */
+  .username {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d39ebc;
+    position: relative;
+    top: 20px; /* Adjust this value to move the name down */
+  }

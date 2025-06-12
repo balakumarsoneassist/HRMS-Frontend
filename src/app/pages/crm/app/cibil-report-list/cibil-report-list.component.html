@@ -1,0 +1,128 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+          <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 align-items-center border-b rounded">
+              <div class="font-size-19 font-w-600">Cibil Report List</div>
+          </div>
+          <div class="bg-color-ContBody1 px-3 py-3 rounded">
+            <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+              <table class="table font-w-600 color-initial mb-0">
+                  <tr class="bg-color-ContHead">
+                      <th class="color-gray min-w-200">Name<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-200">Pan No.<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-200">D.O.B<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-150">Mobile No.<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" onkeypress="return (event.charCode > 46 && event.charCode < 58)" /></th>
+                      <th class="color-gray min-w-200">City<br /><input type="text" class="rounded w-100 px- py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-200">State<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-200">Checked Date<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                      <th class="color-gray min-w-250">Cibil Score<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+                  </tr>
+                  <tr (click)="ShowCibilReport(objCibil.Id,objCibil.IsSuccess)" *ngFor="let objCibil of CibilCheckerList; let i= index;">
+                      <td>
+                          {{objCibil.FirstName}}
+                      </td>
+                      <td>
+                        {{objCibil.PanNumber}}
+                      </td>
+                      <td>
+                        {{objCibil.DateOfBirth}}
+                      </td>
+                      <td class="">
+                        {{objCibil.MobileNumber}}
+                      </td>
+                      <td>
+                        {{objCibil.City}}
+                      </td>
+                      <td class="text-center">
+                        {{objCibil.State}}
+                      </td>
+                      <td class="text-center">
+                        {{objCibil.CreatedDateTime| date : "dd-MM-yyyy HH:mm"}}
+                      </td>
+                      <td class="text-center">
+                       
+                      </td>
+                  </tr>
+                  <!-- <tr>
+                    <td>
+                      muthu kumaran
+                  </td>
+                  <td>
+                      ADEFR1234D1
+                  </td>
+                  <td>
+                     12/12/2000
+                  </td>
+                  <td class="">
+                      956615478
+                  </td>
+                  <td>
+                    cuddalore
+                  </td>
+                  <td class="text-center">
+                      Tamil Nadu
+                  </td>
+                  <td class="text-center">
+                    5/6/2020
+                  </td>
+                  <td class="text-center">
+                    768
+                  </td>
+                </tr> -->
+                <!-- <tr>
+                  <td>
+                    muthu kumaran
+                </td>
+                <td>
+                    ADEFR1234D1
+                </td>
+                <td>
+                   12/12/2000
+                </td>
+                <td class="">
+                    956615478
+                </td>
+                <td>
+                  cuddalore
+                </td>
+                <td class="text-center">
+                    Tamil Nadu
+                </td>
+                <td class="text-center">
+                  5/6/2020
+                </td>
+                <td class="text-center">
+                  768
+                </td>
+              </tr> -->
+              </table>
+          </div>
+          <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+              <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing 1 to 10 of 500 Records</div>
+              <div class="paginationBtnContainer text-center">
+                  <button class="border-header mr-2 bg-color-input color-initial rounded"><i class="fas fa-chevron-left"></i></button>
+                  <input type="text" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"/>
+                  <span class="mr-2 color-initial font-w-600 font-size-14">of 50 pages</span>
+                  <button class="border-header bg-color-input color-initial rounded"><i class="fas fa-chevron-right"></i></button>
+              </div>
+          </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div class="myModel cibilReportModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+  <div class="modelContent bg-color-white boxShadow rounded">
+    <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+        <div>Credit Score Report</div>
+        <div (click)="closeModel()">
+            <i class="fas fa-times cursor-pointer"></i>
+        </div>
+    </div>
+    <app-cibil-report></app-cibil-report>
+
+  </div>
+</div>
+
+

@@ -1,0 +1,75 @@
+<div class="container-fluid">
+    <div>
+        <div class="col-lg-12">
+            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
+                <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+                    <div>Contact</div>
+                </div>
+                <form class="p-3 bg-color-ContBody1 px-3 py-3" #addContact="ngForm">
+                    <div class="formContainer  d-flex flex-row flex-wrap">
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">First Name*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter First Name" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.FirstName" #firstName="ngModel" name="firstName" required [class.is-invalid]="firstName.invalid && firstName.touched">
+                        <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched)" class="text-danger mt-1">
+                          <div *ngIf="firstName.errors?.['required']">
+                            First Name is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Last Name*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Last Name" pattern="[A-Za-z]{1,32}" name="lastName" [(ngModel)]="model.LastName" #lastName="ngModel" required [class.is-invalid]="lastName.invalid && lastName.touched">
+                        <div *ngIf="lastName.errors && (lastName.dirty || lastName.touched)" class="text-danger mt-1">
+                          <div *ngIf="lastName.errors?.['required']">
+                            Last Name is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Mobile Number*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Mobile Number" pattern="[0-9]{10}" name="mobilenumber" maxlength="10"  required="" [(ngModel)]="model.MobileNumber" #mobileNo="ngModel" [class.is-invalid]="mobileNo.invalid && mobileNo.touched">
+                        <div *ngIf="mobileNo.errors && (mobileNo.dirty || mobileNo.touched)" class="text-danger mt-1">
+                          <div *ngIf="mobileNo.errors?.['required']">
+                            Mobile Number is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Email*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="email" [(ngModel)]="model.EmailId" required #email="ngModel" [class.is-invalid]="email.invalid && email.touched">
+                        <span class="errorMsg">*Enter Valid Mail Id</span>
+                        <div *ngIf="email.errors && (email.dirty || email.touched)" class="text-danger mt-1">
+                          <div *ngIf="email.errors?.['pattern']">
+                            *Enter Valid Mail Id
+                          </div>
+                        </div>
+                    </div>
+                  <div class="mb-3 formItem">
+                            <label class="mb-1">Location*</label><br>
+                          <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" placeholder="Enter Location" name="location" [(ngModel)]="model.LocationId" required #location="ngModel" [ngModelOptions]="{standalone: true}" [class.is-invalid]="location.invalid && location.touched">
+                            <option *ngFor="let item of LocationList;" value={{item.Id}}>{{item.Location}}</option>
+                          </select>
+                          <span class="errorMsg">*Enter the Location</span>
+                          <div *ngIf="location.errors && (location.dirty || location.touched)" class="text-danger mt-1">
+                            <div *ngIf="location.errors?.['pattern']">
+                              *Enter  Location
+                            </div>
+                          </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                      <label class="mb-1">Refered By</label><br>
+                      <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Reference Name" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.ReferenceName" #referd by="ngModel" name="referd by">
+                    </div>
+                    <div class="mb-3 formItem">
+                      <label class="mb-1">ProductName</label><br>
+                      <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter ProductName" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.ProductName" #referd by="ngModel" name="ProductName">
+                    </div>
+                  </div>
+                    <div class="d-flex justify-content-end py-2 px-3">
+                        <button type="submit" value="Submit" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" [disabled]="addContact.invalid" (click)="ContactDetailSubmit();addContact.reset()">Submit</button>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

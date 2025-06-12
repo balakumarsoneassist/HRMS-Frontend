@@ -1,0 +1,40 @@
+<div class="col-md-12">
+    <app-revenueproduct-master></app-revenueproduct-master>
+<div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+       
+
+        <tr class="bg-color-ContHead">   
+    
+              <th class="color-gray min-w-200 text-center" >Product<br /></th>
+              <th class="color-gray min-w-200 text-center" >Category<br /></th>
+              <th class="color-gray min-w-200 text-left" >Percentage<br /></th>
+
+              <th class="color-gray min-w-200 text-left" >Name</th>
+              <th class="color-gray min-w-200 text-left" >&nbsp;</th>
+        </tr>
+        <tr *ngFor="let PList of ProductList">
+    
+            <td>
+                {{PList.Product}}
+            </td>
+            <td>
+                {{PList.Category}}
+            </td>
+            <td>
+                {{PList.Percentage}}
+            </td>
+            <td>
+                {{PList.RPname}}
+            </td>
+        
+            <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="EditProduct(PList.Id,PList.Category,PList.Product,PList.Percentage,PList.RPname)">Edit</button>
+            </td>
+        </tr>
+    </table>
+    
+</div>
+</div>
+
+

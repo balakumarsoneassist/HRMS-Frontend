@@ -1,0 +1,92 @@
+<div class="float-container" *ngIf="loaderService.showLoader && loadSpin > 0">
+    <div class="float-child">
+         &nbsp;        
+    </div>
+    <div class="float-child1">
+        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader"> 
+        </div>
+    </div>
+</div>
+<div >
+    &nbsp;        
+</div>
+<div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto mn">
+    <table class="table font-w-600 color-initial mb-0">
+        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text"  class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
+       
+        <!-- <tr class="bg-color-ContHead">
+            <th class="color-gray min-w-200" >TrackNumber<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-200" >Name<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-150" >Mobile Number<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" onkeypress="return (event.charCode > 46 && event.charCode < 58)" /></th>
+            <th class="color-gray min-w-250" >Email Id<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-250" >Location<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-150 text-center" >Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+            <th class="color-gray min-w-150 text-center" >Assign To</th>
+
+        </tr>
+        -->
+        <tr class="bg-color-ContHead">
+            <th class="color-gray min-w-200 text-center" >Track Number<br /></th>
+            <th class="color-gray min-w-200 text-center" >Name<br /></th>
+            <th class="color-gray min-w-200 text-center" >Mobile Number<br /></th>
+            <th class="color-gray min-w-200 text-center" >Email Id<br /></th>
+            <th class="color-gray min-w-200 text-center" >Location<br /></th>
+            <th class="color-gray min-w-200 text-center" >Status<br /></th>
+            <th class="color-gray min-w-200 text-center" >Assign To</th>
+
+        </tr>
+       
+        <tr *ngFor="let objLeadUnTrackList of LeadUnTrackList">
+            <td>
+                {{objLeadUnTrackList.TrackNumber}}
+            </td>
+            <td>
+                {{objLeadUnTrackList.Name}}
+            </td>
+            <td>
+              {{objLeadUnTrackList.MobileNumber}}
+            </td>
+            <td>
+              {{objLeadUnTrackList.Email}}
+            </td>
+            <td>
+                {{objLeadUnTrackList.Location}}
+              </td>
+            <td>
+                {{objLeadUnTrackList.Status|uppercase}}
+              </td>
+            <td class="t-c">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus(objLeadUnTrackList.Id,objLeadUnTrackList.TrackNumber)">Track</button>
+            </td>
+        </tr>
+        <!-- <tr>
+          <td>
+              muthu kumaran
+          </td>
+          <td>
+              1234567890
+          </td>
+          <td>
+              muthukumaran@gmail.com
+          </td>
+          <td>
+              cuddalore
+          </td>
+          <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix">Track</button>
+          </td>
+      </tr> -->
+    </table>
+</div>
+<div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
+    <div class="paginationBtnContainer text-center">
+        <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
+        <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
+        <!-- <input type="text" [(ngModel)]="ManualPageInput" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"  onkeydown="ChangePageNumber(this.ManualPageInput)" /> -->
+        <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
+        <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+

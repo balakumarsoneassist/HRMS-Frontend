@@ -1,0 +1,55 @@
+
+<div class="float-container" *ngIf="loaderService.showLoader && loadSpin > 0">
+    <div class="float-child">
+         &nbsp;
+    </div>
+    <div class="float-child1">
+        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader">
+        </div>
+    </div>
+</div>
+<div >
+    &nbsp;
+</div>
+
+  <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+    <table class="table font-w-600 color-initial mb-0">
+        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text"  class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th>
+
+
+        <tr class="bg-color-ContHead">
+            <th class="color-gray min-w-200 text-center" >Track Number<br /></th>
+              <th class="color-gray min-w-200 text-center" >Name<br /></th>
+              <th class="color-gray min-w-200 text-center" >Mobile Number<br /></th>
+              <th class="color-gray min-w-200 text-center" >Appointment Date<br /></th>
+              <th class="color-gray min-w-200 text-center" >Location<br /></th>
+              <!-- <th class="color-gray min-w-250">Assigned To<br /><input type="text" class="rounded px-2 py-1 color-initial border-header bg-color-input boxShadow" /></th> -->
+              <th class="color-gray min-w-200 text-center" >Status<br /></th>
+              <th class="color-gray min-w-200 text-center" >Action</th>
+        </tr>
+        <tr *ngFor="let objReviewList of ReviewList">
+            <td>
+                {{objReviewList.TrackNumber}}
+            </td>
+            <td>
+                {{objReviewList.Name}}
+            </td>
+            <td>
+                {{objReviewList.MobileNumber}}
+            </td>
+            <td>
+                {{objReviewList.AppointmentDate| date: 'dd/MM/yyyy HH:mm'}}
+            </td>
+            <td>
+                {{objReviewList.Location}}
+            </td>
+            <td class="">
+                <span class="py-2 px-3 bg-color-yellow rounded color-white"> {{objReviewList.Status|lowercase}}</span>
+            </td>
+            <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objReviewList.Status=="reject"' (click)="callStatus(objReviewList.Id,objReviewList.TrackNumber)">Update</button>
+            </td>
+        </tr>
+    </table>
+</div>
+

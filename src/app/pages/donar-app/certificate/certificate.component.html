@@ -1,0 +1,20 @@
+<div class="container">
+
+
+    <!-- Certificate with background -->
+    <div #certificates class="certificates">
+      <!-- <h1>CERTIFICATE OF ACHIEVEMENT</h1>
+      <p>This Certificate is Presented To:</p> -->
+
+      <!-- User Name -->
+      <h2 style="
+    margin-top: 34vh;" class="username">{{ userName }}</h2>
+      <!-- <p>For outstanding performance and dedication.</p> -->
+    </div>
+
+    <div class="input-container">
+        <!-- <label for="name">Enter Name:</label> -->
+        <input hidden type="text" id="name" pInputText [(ngModel)]="userName" />
+        <button pButton label="Download PDF" (click)="downloadPDF()"></button>
+      </div>
+  </div>

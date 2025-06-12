@@ -1,0 +1,56 @@
+
+<div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+    <div>Service Call Frequency</div>
+</div>
+<div class="tableContainer rounded mBorder overflow-x-auto">
+
+    <table class="table font-w-600 color-initial mb-0">
+        <tr class="bg-color-ContHead">
+            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
+            <th class="color-gray min-w-200">Name<br /></th>
+            <th class="color-gray min-w-150">Last Call Date<br /></th>
+            <th class="color-gray min-w-150">Called before Days<br /></th>
+            <th class="color-gray min-w-150">Owner<br /></th>
+            <th class="color-gray min-w-150">&nbsp;<br /></th>
+            <th class="color-gray min-w-150">&nbsp;<br /></th>
+        </tr>
+        <tr *ngFor="let objTrack of CustomerTrackList; let i= index;">
+
+            <td>{{objTrack.cname}}</td>
+            <td>{{objTrack.lastcall}}</td>
+            <td>{{objTrack.difdays}}</td>
+
+            <td>{{objTrack.name}}</td>
+            <td><span class="py-2 px-3 bg-color-yellow color-white-fix rounded">&nbsp;</span></td>
+            <td class="text-center">
+                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="callStatus(objTrack.Id,objTrack.cname,objTrack.MobileNumber)">Details</button>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<div class="myModel callHistoryModel1  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+        <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+            <div>Customer Service Track Details</div>
+            <div (click)="closeModel()">
+                <i class="fas fa-times cursor-pointer"></i>
+            </div>
+        </div>
+
+
+
+        <div id="callHistory" class="tabContentCont tabcontent bg-color-ContBody1 px-3 py-3 rounded defaultOpen">
+
+            <app-custservicetrack-history></app-custservicetrack-history>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+

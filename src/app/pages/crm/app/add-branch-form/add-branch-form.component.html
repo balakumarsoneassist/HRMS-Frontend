@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
+                <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+                    <div>Branch</div>
+                </div>
+                <form class="p-3 bg-color-ContBody1" #addBranch="ngForm">
+                    <div class="formContainer d-flex flex-row flex-wrap">
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Branch Name*</label><br>
+                        <input type="text" class="px-2 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Branch Name"  [(ngModel)]="model.Branch" #brancName="ngModel" name="brancName" required [class.is-invalid]="brancName.invalid && brancName.touched">
+                        <div *ngIf="brancName.errors && (brancName.dirty || brancName.touched)" class="text-danger mt-1">
+                          <div *ngIf="brancName.errors?.['required']">
+                            Branch Name is required.
+                          </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="d-flex justify-content-end py-2 px-3" style="margin-top: -65px;">
+                        <input type="submit" value="Submit" (click)="SaveBranchDetails();addBranch.reset()" [disabled]="addBranch.invalid" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12" style="margin-top:25px">
+        <app-branch-name-list></app-branch-name-list>
+        </div>
+        </div>
+
+

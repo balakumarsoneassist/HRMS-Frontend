@@ -1,0 +1,27 @@
+<!-- model following status - start -->
+<div class="myModel callHistoryModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+        <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+            <div>Customer Follow Up Details</div>
+            <div (click)="closeModel()">
+                <i class="fas fa-times cursor-pointer"></i>
+            </div>
+        </div>
+
+
+        <app-svcustomer-track-entry></app-svcustomer-track-entry>
+
+        <div id="callHistory" class="tabContentCont tabcontent bg-color-ContBody1 px-3 py-3 rounded defaultOpen">
+
+            <app-salesvisitreport></app-salesvisitreport>
+            <!-- call track history - end -->
+        </div>
+
+
+    </div>
+</div>
+<!-- model following status - end -->
+
+
+
+

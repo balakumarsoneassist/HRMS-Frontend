@@ -1,0 +1,582 @@
+
+<form #leadFollowUpForm="ngForm">
+  <!-- <div> <input type="submit" value="Refresh" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" (click)="GetLeadTrack(model.TrackId)"></div> -->
+  <div class="leadInputCategory leadFollDetailIpCont rounded py-2 px-3 bg-color-ContBody1 font-w-600">
+    <div class="leadIpFlexCont d-flex flex-wrap pt-3">
+      <div class="leadIpFitem mb-3">
+        <label class="mb-1">Appoinment Date*</label>
+        &nbsp;(
+        <label class="checkboxLabel">
+          <!-- CM Need to be Change Model -->
+          <input type="checkbox" [(ngModel)]="model.IsDirectMeet"  name="BusinessProof"/>
+          <span>- Is Direct Meet</span>
+          <span class="checkboxCheckmark"></span>
+        </label>
+        )
+        <p-calendar
+  [(ngModel)]="model.AppoinmentDate"
+  [minDate]="currentDateTime"
+  [showTime]="true"
+  [hourFormat]="'24'"
+  name="appoinmentDate"
+  class="w-100 mBorder bg-color-input color-initial border-header form-control"
+  inputStyleClass="px-2 py-1 rounded"
+></p-calendar>
+
+      </div>
+
+      <div class="leadIpFitem mb-3">
+          <label class="mb-1">Notes*</label>
+          <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Notes" required name="notes" #notes="ngModel">
+
+        </div>
+      <div class="leadIpFitem mb-3">
+          <label class="mb-1">Status*</label>
+          <select  class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control form-control" (change)="accodianOpen()" #statusTemVar="ngModel" [(ngModel)]="model.Status" name="status" >
+              <option *ngFor="let item of StatusCode;" value={{item.Id}}>{{item.Status}}</option>
+          </select>
+
+      </div>
+      <div class="leadIpFitem mb-3">
+        <label class="mb-1">Data Strength*</label>
+        <select  class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control form-control" (change)="accodianOpen()" #statusTemVar="ngModel" [(ngModel)]="model.DataStrength" name="datastrength" >
+          <option value="Useful">Useful > 60%</option>
+          <option value="Hold">Hold 20% - 60%</option>
+          <option value="Remove">Remove</option>
+
+        </select>
+
+    </div>
+    </div>
+    <div class="mBorder rounded py-2 px-3 mb-3">
+      <div class="leadCategoryTitle followingAccodian color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-info-circle pr-2"></i>Basic Details</div>
+        <div class="panel">
+            <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+              <div class="leadIpFitem mb-3">
+                <label class="mb-1">Loan Type</label>
+                <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.LoanType" name="loanType" #loanTypeTem= "ngModel" [disabled]="statusTemVar.value == 'Document Collection' || statusTemVar.value == 'File Login' || statusTemVar.value == 'Sanction' || statusTemVar.value == 'Disbursement'">
+                    <option>Personal Loan</option>
+                    <option>Business Loan</option>
+                    <option>Auto Loan-New</option>
+                    <option>Auto Loan-Used</option>
+                    <option>Jewel Loan</option>
+                    <option>LAP</option>
+                    <option>Home Loan-Self Construction</option>
+                    <option>Home Loan-Resale</option>
+                    <option>Home Loan-Builder Purchase</option>
+                    <option>Land Loan</option>
+                    <option>Land Loan+Construction</option>
+                    <option>NRP</option>
+                    <option>Commercial Vehicle Loan-New</option>
+                    <option>Personal Loan Bank Transfer</option>
+                    <option>Home Loan Bank Transfer</option>
+                    <option>LAP Bank Transfer</option>
+                    <option>Personal Loan Bank Transfer + Topup</option>
+                    <option>Home Loan Bank Transfer + Topup</option>
+                    <option>LAP Bank Transfer + Topup</option>
+                </select>
+              </div>
+
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Desire Loan Amount</label>
+                <div class="inputMoneyDiv position-relative">
+                    <input type="text" placeholder="Desire Loan Amount" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.DesireAmount" name="desireLoanAmount">
+                    <i class="fas fa-rupee-sign position-absolute"></i>
+                </div>
+            </div>
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Tenure (years)</label>
+                <input type="text" placeholder="Tenure" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Tenure" name="tenure">
+            </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Preferred Bank</label>
+              <!-- <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" name="preferedBank" [(ngModel)]="model.PreferedBank"> -->
+              <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" name="preferedBank" [(ngModel)]="model.PreferedBank">
+                <option *ngFor="let item of BankList;" value={{item.BankName}}>{{item.BankName}}</option>
+              </select>
+          </div>
+          <div class="leadIpFitem mb-3">
+            <label class="mb-1">Cibil Score</label>
+            <div class="input-group w-100">
+                <input type="text" class="px-2 py-1 rounded-left mBorder bg-color-input color-initial border-header w-75 form-control" name="cibilScore" [(ngModel)]="model.Cibilscore">
+                <div class="input-group-append w-25">
+                <!-- <button class="btn btn-success w-100 border-header font-w-600" type="submit" [disabled]="statusTemVar.value == 'Document Collection' || statusTemVar.value == 'File Login' || statusTemVar.value == 'Sanction' || statusTemVar.value == 'Disbursement'">Check</button> -->
+                </div>
+            </div>
+        </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">OccupationType</label>
+              <select  placeholder="Occupation" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.OccupationType" #occupation="ngModel" name="occupationtype" readonly >
+                <option>Salaried</option>
+                <option>Self Employed</option>
+              </select>
+            </div>
+
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">IncomeType</label>
+              <div class="input-group w-100">
+                <select  placeholder="IncomeType" class="px-2 py-1 rounded-left mBorder bg-color-input color-initial border-header w-75 form-control" name="incomeType" [(ngModel)]="model.IncomeType" readonly>
+                  <option>Cash</option>
+                  <option>Bank</option>
+                  <option>Cheque</option>
+                </select>
+              </div>
+           </div>
+           <div class="leadIpFitem mb-3">
+            <label class="mb-1">Income Amount</label>
+            <div class="inputMoneyDiv position-relative">
+                <input type="text" placeholder="Income Amount" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.IncomeAmount" name="incomeAmount" (blur) = "Onblurincome($event)"  >
+                <i class="fas fa-rupee-sign position-absolute"></i>
+            </div>
+          </div>
+
+                    <div class="leadIpFitem mb-3">
+            <label class="mb-1">Company Name</label>
+            <div class="input-group w-100">
+                <input type="text" class="px-2 py-1 rounded-left mBorder bg-color-input color-initial border-header w-75 form-control" name="compname" [(ngModel)]="model.Compname">
+                <div class="input-group-append w-25">
+                <!-- <button class="btn btn-success w-100 border-header font-w-600" type="submit" [disabled]="statusTemVar.value == 'Document Collection' || statusTemVar.value == 'File Login' || statusTemVar.value == 'Sanction' || statusTemVar.value == 'Disbursement'">Check</button> -->
+                </div>
+            </div>
+        </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Company Category</label>
+              <select  placeholder="Company Category" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control"   [(ngModel)]="model.Compcat" #compcat="ngModel" name="compcat" readonly  (change) = "Onchangecc($event)" >
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+              </select>
+            </div>
+
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Customer Segment</label>
+              <div class="input-group w-100">
+                <select  placeholder="Customer Segment" class="px-2 py-1 rounded-left mBorder bg-color-input color-initial border-header w-75 form-control" name="custseg" [(ngModel)]="model.Custsegment" readonly>
+                  <option>Royal</option>
+                  <option>Premium</option>
+                  <option>Gold</option>
+                  <option selected>Open</option>
+                </select>
+              </div>
+           </div>
+           <div class="leadIpFitem mb-3">
+          &nbsp;
+          </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mBorder rounded py-2 px-3 mb-3" [hidden]="model.Status != 12 && model.Status != 13 && model.Status != 15 && model.Status != 17 && model.Status != 18">
+      <div class="leadCategoryTitle docAccodian color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-id-badge pr-2"></i>DOC Details</div>
+      <div class="panel">
+          <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+              <div class="leadIpFitem mb-2">Know Your Customer</div>
+              <div class="w-100 d-flex align-items-center flex-wrap flex-row">
+                <div class="leadIpFitem mb-3">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsIdProof"  name="IdProof"/>
+                    <span>ID Proof</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+                <div class="leadIpFitem mb-3">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsAgeProof"  name="AgeProof"/>
+                    <span>Age Proof</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+                <div class="leadIpFitem mb-3">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsAddessProof"  name="AddressProof"/>
+                    <span>Address Proof</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Personal Loan' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Salaried') ||
+                 (occupation.value == 'Salaried' && loanTypeTem.value == 'Home Loan-Resale') || (loanTypeTem.value == 'LAP' && occupation.value == 'Salaried') ||
+                 (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Salaried') || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Salaried') ||
+                 (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Salaried') ||
+                 (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Salaried') || (loanTypeTem.value == 'NRP' && occupation.value == 'Salaried')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsBankStatement"  name="accStatement"/>
+                    <span>Bank Statement(6 Month)</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Personal Loan' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Salaried') ||
+                (occupation.value == 'Salaried' && loanTypeTem.value == 'Home Loan-Resale') || (loanTypeTem.value == 'LAP' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Salaried') || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Salaried') || (loanTypeTem.value == 'NRP' && occupation.value == 'Salaried')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsPaySlip"  name="salarySlip"/>
+                    <span>Pay Slip(3 Month)</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Personal Loan' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Salaried') ||
+                (occupation.value == 'Salaried' && loanTypeTem.value == 'Home Loan-Resale') || (loanTypeTem.value == 'LAP' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Salaried') || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Salaried') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Salaried') ||
+                (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Salaried') || (loanTypeTem.value == 'NRP' && occupation.value == 'Salaried')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsForm16"  name="Form16Form26"/>
+                    <span>Form 16, Form 26AS</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Self Employee') || (occupation.value == 'Self Employee' && loanTypeTem.value == 'Home Loan-Resale') ||
+                (loanTypeTem.value == 'LAP' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Self Employee') ||
+                loanTypeTem.value == 'Auto Loan-Used' || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Commercial Vehicle Loan-New' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Commercial Vehicle Loan-Used' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'NRP' && occupation.value == 'Self Employee')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsBusinessProof"  name="BusinessProof"/>
+                    <span>Business Proof</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Self Employee') || (occupation.value == 'Self Employee' && loanTypeTem.value == 'Home Loan-Resale') ||
+                (loanTypeTem.value == 'LAP' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Self Employee') ||
+                loanTypeTem.value == 'Auto Loan-Used' || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Commercial Vehicle Loan-New' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Commercial Vehicle Loan-Used' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'NRP' && occupation.value == 'Self Employee')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsITR"  name="itr"/>
+                    <span>ITR(3 Years)</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3" *ngIf="(loanTypeTem.value == 'Home Loan-Self Construction' && occupation.value == 'Self Employee') || (occupation.value == 'Self Employee' && loanTypeTem.value == 'Home Loan-Resale') ||
+                (loanTypeTem.value == 'LAP' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Auto Loan-New' && occupation.value == 'Self Employee') ||
+                loanTypeTem.value == 'Auto Loan-Used' || loanTypeTem.value == 'Business Loan' || (loanTypeTem.value == 'Jewel Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Home Loan-Builder Purchase' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Land Loan' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Land Loan+Construction' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'Commercial Vehicle Loan-New' && occupation.value == 'Self Employee') ||
+                (loanTypeTem.value == 'Commercial Vehicle Loan-Used' && occupation.value == 'Self Employee') || (loanTypeTem.value == 'NRP' && occupation.value == 'Self Employee')">
+                  <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsGstStatement"  name="gstReturn"/>
+                    <span>GST Return(1 Year)</span>
+                    <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+
+                <div class="leadIpFitem mb-3">
+                  <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsCreditcardStatement"  name="creditCardStatement"/>
+                      <span>Credit Card Statement</span>
+                      <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+                <div class="leadIpFitem mb-3">
+                  <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsExistingLoanTrack"  name="existingLoanTrack"/>
+                      <span>Existing Loan Track</span>
+                      <span class="checkboxCheckmark"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="leadIpFitem mb-2">Other DOC</div>
+                <div class="w-100 d-flex align-items-center flex-wrap">
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsEncumbranceCertificate"  name="EncumbranceCertificate"/>
+                      <span>Encumbrance Certificate</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3"*ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsTitleDeed"  name="Titledeed"/>
+                      <span>Title deed</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsParentDeed"  name="Parentdeeds"/>
+                      <span>Parent deeds (all)</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsLayoutPlan"  name="Layoutplan"/>
+                      <span>Layout plan</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsRegulationOrder"  name="RegularisationOrder"/>
+                      <span>Regularisation order</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' || loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsBuildingPermit"  name="BuildingPermitOrderPlanapproval"/>
+                      <span>Building Permit Order and Building Plan approval</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Resale' || loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' ||
+                   loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' || loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsPropertyTax"  name="PropertyWaterTaxEBbill"/>
+                      <span>Property Tax, Water Tax, EB bill</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Self Construction' ||loanTypeTem.value == 'Home Loan-Resale' ||
+                  loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'LAP' ||loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsPatta"  name="Patta"/>
+                      <span>Patta</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Resale' || loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'Land Loan+Construction' || loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsConstructionAgreement"  name="ConstructionAgreement"/>
+                      <span>Construction agreement </span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Resale' || loanTypeTem.value == 'Home Loan-Builder Purchase' ||
+                  loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'Land Loan+Construction' || loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsSaleAgreement"  name="SaleAgreement"/>
+                      <span>Sale agreement </span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'Land Loan+Construction' ||
+                  loanTypeTem.value == 'Land Loan' || loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsApf"  name="Apf"/>
+                      <span>APF</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Home Loan-Builder Purchase' || loanTypeTem.value == 'NRP'">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsUdsRegistration"  name="SaleDeedUDSRegistration"/>
+                      <span>Sale Deed -UDS Registration</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3" *ngIf="loanTypeTem.value == 'Auto Loan-Used' || (loanTypeTem.value == 'Commercial Vehicle Loan-Used' && occupation.value == 'Self Employee')">
+                    <label class="checkboxLabel">
+                      <input type="checkbox" [(ngModel)]="model.IsRcBook"  name="RCBookInsuranceRoadTax"/>
+                      <span>RC Book ,Insurance,Road Tax</span>
+                      <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3">
+                    <label class="checkboxLabel">
+                        <input type="checkbox" [(ngModel)]="model.IsCurrentAccountStatement"  name="currentAccStatement"/>
+                        <span>Current Acc Statement</span>
+                        <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                  <div class="leadIpFitem mb-3">
+                    <label class="checkboxLabel">
+                        <input type="checkbox" [(ngModel)]="model.IsStabilityProof"  name="stabilityProof"/>
+                        <span>Stability Proof(3 Years)</span>
+                        <span class="checkboxCheckmark"></span>
+                    </label>
+                  </div>
+                </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="mBorder rounded py-2 px-3 mb-3" [hidden]="model.Status != 13 && model.Status != 15 && model.Status != 17 && model.Status != 18">
+      <div class="leadCategoryTitle fileLoginAccodian color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-piggy-bank pr-2"></i>File Login Details</div>
+      <div class="panel">
+          <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Bank</label>
+              <!-- <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" pattern="[A-Za-z]{1,32}"> -->
+              <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.BankName" name="bank" placeholder="Bank">
+                <option *ngFor="let item of BankList;" value={{item.BankName}}>{{item.BankName}}</option>
+           <!--     <option>SBI</option>
+                <option>Canara Bank</option>
+                <option>Indian Bank</option>
+                <option>BANDHAN</option>
+                <option>STANDARED CHARTED</option>
+                <option>CHOLA MANDALAM</option>
+                <option>FEDERAL</option>
+                <option>FINNABLE</option>
+                <option>FULLECTRON</option>
+                <option>IDFC</option>
+                <option>INCREDIT</option>
+                <option>TATACAPITAL</option>
+                <option>MUTHOOT</option>
+                <option>ADITHYA BIRLA</option>
+                <option>BAJAJ HOME FINANCE</option>
+                <option>ICICI</option>
+                <option>HDFC</option>
+                <option>BOB</option>
+                <option>IOB</option>
+                <option>MANAPURAM</option>
+                <option>MAHENDRA HOME FINANCE</option>
+                <option>PNB</option>
+                <option>L&T</option>-->
+
+              </select>
+          </div>
+          <div class="leadIpFitem mb-3">
+              <label class="mb-1">Application No.</label>
+              <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.ApplicationNumber" name="applicationNo" placeholder="Application Number" pattern="[A-Za-z]{1,32}">
+          </div>
+          <div class="leadIpFitem mb-3">
+            <label class="mb-1">Login Date</label>
+            <p-calendar
+  [(ngModel)]="model.LoginDate"
+  name="loginDate"
+  placeholder="Login Date"
+  [showTime]="false"
+  dateFormat="dd/mm/yy"
+  class="w-100 mBorder bg-color-input color-initial border-header form-control"
+  inputStyleClass="px-2 py-1 rounded"
+></p-calendar>
+
+          </div>
+          <div class="leadIpFitem mb-3">
+            <label class="mb-1">Login Value</label>
+            <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.LoginValue" name="loginValue" placeholder="Enter the Value" >
+          </div>
+          </div>
+      </div>
+    </div>
+    <div class="mBorder rounded py-2 px-3 mb-3" [hidden]="model.Status != 15 && model.Status != 17 && model.Status != 18">
+      <div class="leadCategoryTitle sanctionAccodian color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-clipboard-check pr-2"></i>Santion Details</div>
+      <div class="panel">
+          <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Santion ROI</label>
+              <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.SanctionROI" name="santionRoi" placeholder="Santion ROI" pattern="[A-Za-z]{1,32}">
+            </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Santion Tenure (Year)</label>
+              <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.SanctionTenure" name="santionedTenure" placeholder="Santion Tenure" pattern="[A-Za-z]{1,32}">
+            </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Santion Letter</label>
+              <input type="file" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.SanctionLetter" name="santionLetter" placeholder="Santion Letter" pattern="[A-Za-z]{1,32}">
+            </div>
+            <div class="leadIpFitem mb-3">
+                <label class="mb-1">Value</label>
+                <div class="inputMoneyDiv position-relative">
+                    <input appCurrencyIp type="text" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.SanctionValue" name="value" placeholder="Value" pattern="[A-Za-z]{1,32}">
+                    <i class="fas fa-rupee-sign position-absolute"></i>
+                </div>
+            </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">Sanction Date</label>
+              <p-calendar
+  [(ngModel)]="model.SanctionDate"
+  [minDate]="currentDateTime"
+  [showTime]="true"
+  [hourFormat]="'24'"
+  name="sanctionDate"
+  class="w-100 mBorder bg-color-input color-initial border-header form-control"
+  inputStyleClass="px-2 py-1 rounded"
+></p-calendar>
+
+            </div>
+            <div class="leadIpFitem mb-3">
+              <label class="mb-1">PSD Condition</label>
+              <!-- <textarea [(ngModel)]="model.PsdCondition" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" name="psdCondition"></textarea> -->
+              <tag-input [(ngModel)]="model.PsdCondition" name='psdcondition' class="myTagInput myBorder bg-color-trans rounded pl-2" [onlyFromAutocomplete]="false" >
+              </tag-input>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="mBorder rounded py-2 px-3 mb-3" [hidden]="model.Status!= 17 && model.Status != 18">
+      <div class="leadCategoryTitle disbursementAccodian color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-hand-holding-usd pr-2"></i>Disbursement Details</div>
+      <div class="panel">
+          <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+            <div class="w-100 d-flex flex-row flex-wrap">
+              <!-- <div class="leadIpFitem mb-3">
+                <span>Disbursement Amount:</span>
+                <div class="inputMoneyDiv position-relative">
+                 <input appCurrencyIp type="text" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.DisbursementAmount" name="value" placeholder="Value" pattern="[A-Za-z]{1,32}">
+                    <i class="fas fa-rupee-sign position-absolute"></i>
+                </div>
+              </div> -->
+              <div class="leadIpFitem mb-3">
+                <div class="inputMoneyDiv position-relative">
+                 <input appCurrencyIp type="text" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" placeholder="Disbursement Amount" [(ngModel)]="model.DisbursementAmount" name="value"  pattern="[A-Za-z]{1,32}">
+                    <i class="fas fa-rupee-sign position-absolute"></i>
+                </div>
+              </div>
+              <div class="leadIpFitem mb-3">
+                <label></label>
+                <label class="checkboxLabel">
+                    <input type="checkbox" [(ngModel)]="model.IsLegal"  name="legal"/>
+                    <span>Legal</span>
+                    <span class="checkboxCheckmark"></span>
+                </label>
+              </div>
+                <div class="leadIpFitem mb-3">
+                  <label></label>
+                <label class="checkboxLabel mb-0">
+                    <input type="checkbox" [(ngModel)]="model.IsTechnical"  name="technical"/>
+                    <span>Technical</span>
+                    <span class="checkboxCheckmark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="float-container">
+
+      <div class="float-child">
+        <input type="submit" value="Save" (click)="SaveLeadTrack(false)" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600"  [disabled]="loaderService.showLoader" >
+              &nbsp;&nbsp;
+              <input type="submit" value="Save&Close" (click)="SaveLeadTrack(true)" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" [disabled]="loaderService.showLoader">
+
+      </div>
+
+
+
+      <div class="float-child1">
+        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader">
+      </div>
+    </div>
+    </div>
+
+
+
+  </div>
+</form>

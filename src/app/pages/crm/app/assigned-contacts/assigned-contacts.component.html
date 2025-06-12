@@ -1,0 +1,148 @@
+<!-- assigned contact details - start -->
+<!--pvr-->
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+           <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+               <div class="font-size-19">Contact List </div>
+          </div>
+          <div>
+              <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+                  <div class="leadIpFitem mb-3">
+                      <label class="mb-1">Assisgnee</label>
+                      <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  [formControl]="fcContactfby" >
+                          <option *ngFor="let item of EmpList;" value={{item}}>{{item}}</option> 
+                       
+                      </select>
+                  </div>
+
+                  <div class="leadIpFitem mb-3">
+                    <label class="mb-1">Status</label>
+                    <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"  [formControl]="fcStatus" >
+                        <option *ngFor="let item of StatusList;" value={{item}}>{{item}}</option> 
+                     
+                    </select>
+                </div>
+      
+
+                  <div class="leadIpFitem mb-3">
+                      <label class="mb-1">&nbsp;</label><p></p>
+                      <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="getAssignedReport()"> Report</button>
+                         
+                  </div>
+                             
+              </div>
+          </div>
+      </div>  
+  </div>   
+</div>  
+
+
+<div class="row">
+  <div class="col-lg-12" style="margin-top:25px">
+  </div>
+</div>  
+
+<section class="mb-3">
+  <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-12">
+             <!-- <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 align-items-center border-b rounded">
+                  <div class="font-size-19 font-w-600">Contact List</div>-->
+                  <!-- <div class="align-self-center">
+                    <button class="rounded border-0 py-1 px-3 color-white bg-color-pink font-w-600" (click)="contactsSwitch = 'UnTrackContact'" [hidden]="contactsSwitch == 'UnTrackContact'">UnTrack</button>
+                    <button class="rounded border-0 py-1 px-3 color-white bg-color-blue font-w-600" (click)="contactsSwitch = 'OnTrackContact'" [hidden]="contactsSwitch == 'OnTrackContact'">OnTrack</button>
+                  </div> -->
+              <!--</div>-->
+              <div class="bg-color-ContBody1 px-3 py-3 rounded">
+                <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
+                  <table class="table font-w-600 color-initial mb-0">
+                    <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text" [(ngModel)]="ContactListFilter" (change)="GetContactList()" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
+                      <tr class="bg-color-ContHead">
+                          <th class="color-gray min-w-200" >Name<br /></th>
+                          <th class="color-gray min-w-150" >Mobile Number<br /></th>
+                          <th class="color-gray min-w-150" >Location<br /></th>
+                          <th class="color-gray min-w-150" >Status<br /></th>
+                          <th class="color-gray min-w-200" >Assignee Name<br /></th>
+                          <th class="color-gray min-w-200" >Appointment Date<br /></th>
+                          <th class="color-gray min-w-200" >TrackId<br /></th>
+                          <th class="color-gray min-w-200" >Notes<br /></th>
+                          <th class="color-gray min-w-200" >Created Date<br /></th>
+                          <th class="color-gray min-w-200" >Remarks<br /></th>
+                          <!-- <th class="color-gray min-w-150" > Assign</th>    -->
+                          <th class="color-gray min-w-200 text-center" > Action</th>  
+                          <!-- <th class="color-gray min-w-150" >View</th>   -->
+                          <th class="color-gray min-w-150" ></th>  
+                      </tr>                   
+                      <tr *ngFor="let objContactList of ContactList;let i=index">
+                        <td>
+                          {{objContactList.Name}}
+                        </td>
+                        <td>
+                          {{objContactList.MobileNumber}}
+                        </td>
+                        <td>
+                          {{objContactList.Location}}
+                        </td>
+                        <td class="">
+                          <span class="py-2 px-3 bg-color-yellow rounded color-white"> {{objContactList.Status|lowercase}}</span>
+                        </td>
+                        <td>
+                          {{objContactList.AssigneeName}}
+                        </td>
+                        <td>
+                          {{objContactList.AppointmentDate| date : "dd-MM-yyyy HH:mm"}}
+                        </td>
+                        <td>
+                          {{objContactList.TrackNumber}}
+                        </td>
+                        <td>
+                          {{objContactList.Notes}}
+                        </td>
+                        <td>
+                          {{objContactList.createddt}}
+                        </td>
+                        <td>
+                          {{objContactList.remarks}}
+                        </td>
+                        <td class="text-center">
+                          <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objContactList.Status!="unassigned"' (click)="AssignEmployee(objContactList.Id,objContactList.IsConnectorContact)">Assign To Me</button>
+                          <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objContactList.Status=="unassigned"||objContactList.Status=="reject"||objContactList.IsUpdate==0' (click)="callStatus(objContactList.TrackNumber,objContactList.Id)">Update</button>
+                          <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objContactList.Status!="reject"' (click)="OpenTrackHistoryModel(objContactList.TrackNumber)">View</button>
+                        </td>
+                        <!-- <td class="text-center">
+                          <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objContactList.Status=="unassigned"||objContactList.Status=="reject"||objContactList.IsUpdate==0' (click)="callStatus(objContactList.TrackNumber,objContactList.Id)">Update</button>
+                        </td>
+                        <td class="text-center">
+                          <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objContactList.Status!="reject"' (click)="OpenTrackHistoryModel(objContactList.TrackNumber)">View</button>
+                        </td> -->
+                        <td> <button (click)="deleteRow(i)" class="tr-sh"><i class="fa fa-trash "></i></button></td>
+                      </tr>
+                  </table>
+              </div>
+              <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+                <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
+                <div class="paginationBtnContainer text-center">
+                    <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
+                    <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
+                    <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+              </div>
+          </div>
+      </div>
+  </div>
+<div class="myModel callHistoryModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
+    <div class="modelContent bg-color-white boxShadow rounded">
+      <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+          <div></div>
+          <div (click)="CloseTrackHistoryModel()">
+              <i class="fas fa-times cursor-pointer"></i>
+          </div>
+      </div>
+      <app-call-track-history></app-call-track-history>
+    </div>
+  </div>
+<app-lead-form-model></app-lead-form-model>
+</section>
+<!-- model following status - end -->

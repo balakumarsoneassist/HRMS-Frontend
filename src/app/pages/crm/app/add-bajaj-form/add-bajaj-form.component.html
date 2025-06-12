@@ -1,0 +1,188 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
+                <!-- <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+                    <div>Add ICICI Lead Details</div>
+                </div> -->
+                <form class="p-3 bg-color-ContBody1" #addIciici="ngForm">
+                    <div class="formContainer d-flex flex-row flex-wrap">
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">First Name*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter First Name" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.firstName" #firstName="ngModel" name="firstName" required [class.is-invalid]="firstName.invalid && firstName.touched">
+                        <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched)" class="text-danger mt-1">
+                          <div *ngIf="firstName.errors?.['required']">
+                            First Name is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Middle Name</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Middle Name" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.middleName" #middleName="ngModel" name="middleName" >
+
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Last Name*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Last Name" pattern="[A-Za-z]{1,32}" name="lastname"[(ngModel)]="model.lastName" #lastName="ngModel" required [class.is-invalid]="lastName.invalid && lastName.touched">
+                        <div *ngIf="lastName.errors && (lastName.dirty || lastName.touched)" class="text-danger mt-1">
+                          <div *ngIf="lastName.errors?.['required']">
+                         Last  Name is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Mobile Number*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Mobile No." pattern="[0-9]{10}" name="mobileNo" maxlength="10"  required="" [(ngModel)]="model.mobileNumber" #mobileNo="ngModel" [class.is-invalid]="mobileNo.invalid && mobileNo.touched">
+                        <div *ngIf="mobileNo.errors && (mobileNo.dirty || mobileNo.touched)" class="text-danger mt-1">
+                          <div *ngIf="mobileNo.errors?.['required']">
+                            Mobile Number is required.
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Personal Email*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="email" [(ngModel)]="model.emailId" #email="ngModel" [class.is-invalid]="email.invalid && email.touched">
+                        <span class="errorMsg">*Enter Valid Mail Id</span>
+                        <div *ngIf="email.errors && (email.dirty || email.touched)" class="text-danger mt-1">
+                          <div *ngIf="email.errors?.['pattern']">
+                            *Enter Valid Email Id
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 formItem">
+                        <label class="mb-1">Office Email*</label><br>
+                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="offemail" [(ngModel)]="model.offemailId" #offemail="ngModel" >
+
+                    </div>
+                    <div class="mb-3 formItem">
+                      <label class="mb-1">PinCode</label><br>
+                      <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Pincode" pattern="[0-9]" [(ngModel)]="model.pinCode" #pincode="ngModel" name="pincode">
+
+                  </div>
+                  <div class="mb-3 formItem">
+                    <label class="mb-1">PAN Number</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter PAN" pattern="[0-9]" [(ngModel)]="model.uniqueId" #panno="ngModel" name="panno">
+
+                </div>
+                  <div class="mb-3 formItem">
+                    <label class="mb-1">Loan Amount</label><br>
+                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Loan Amount" pattern="[0-9]" [(ngModel)]="model.appliedLoanAmount" #LoanAmount="ngModel" name="LoanAmount" >
+                </div>
+                <div class="mb-3 formItem">
+                    <label class="mb-1">Loan Tenor</label><br>
+                    <input type="text" value=12 class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Loan Tenor" pattern="[0-9]" [(ngModel)]="model.appliedTenor" #appliedTenor="ngModel" name="appliedTenor" >
+                </div>
+                <div class="mb-3 formItem">
+                    <label class="mb-1">Property Location</label><br>
+                    <input type="text" value="" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Property Location" pattern="[A-Za-z]" [(ngModel)]="model.propertyLocation" #propertyLocation="ngModel" name="propertyLocation" >
+                </div>
+                <div class="mb-3 formItem">
+                  <label class="mb-1">Source Branch</label><br>
+                  <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.sourcingBranch" #sourcingBranch="ngModel" name="sourcingBranch" >
+                    <OPTION VALUE='650'>ARSIKERE</OPTION>
+                    <OPTION VALUE='322'>BANGALORE</OPTION>
+                    <OPTION VALUE='321'>CHENNAI</OPTION>
+                    <OPTION VALUE='338'>COIMBATORE</OPTION>
+                    <OPTION VALUE='389'>ERODE</OPTION>
+                    <OPTION VALUE='980'>GOBICHETTIPALAYAM</OPTION>
+                    <OPTION VALUE='259'>GOKAK</OPTION>
+                    <OPTION VALUE='348'>KARUR</OPTION>
+                    <OPTION VALUE='520'>KARWAR</OPTION>
+                    <OPTION VALUE='640'>KOLAR</OPTION>
+                    <OPTION VALUE='8865'>LALGUDI</OPTION>
+                    <OPTION VALUE='5428'>LINGSUGUR</OPTION>
+                    <OPTION VALUE='871'>MADDUR</OPTION>
+                    <OPTION VALUE='797'>MADHUGIRI</OPTION>
+                    <OPTION VALUE='330'>MADURAI</OPTION>
+                    <OPTION VALUE='7622'>MAGADI</OPTION>
+                    <OPTION VALUE='8155'>MALAVALLI</OPTION>
+                    <OPTION VALUE='647'>MALUR</OPTION>
+                    <OPTION VALUE='286'>MANDYA</OPTION>
+                    <OPTION VALUE='637'>MANVI</OPTION>
+                    <OPTION VALUE='659'>MUDDEBIHAL</OPTION>
+                    <OPTION VALUE='660'>MUDHOL</OPTION>
+                    <OPTION VALUE='789'>MULBAGAL</OPTION>
+                    <OPTION VALUE='4639'>MUNDARGI</OPTION>
+                    <OPTION VALUE='369'>MYSORE</OPTION>
+                    <OPTION VALUE='915'>NAGAPATTINAM</OPTION>
+                    <OPTION VALUE='384'>NAGERCOIL</OPTION>
+                    <OPTION VALUE='676'>NAMAKKAL</OPTION>
+                    <OPTION VALUE='6595'>NANJANGUD</OPTION>
+                    <OPTION VALUE='8828'>NARGUND</OPTION>
+                    <OPTION VALUE='6799'>NAVALGUND</OPTION>
+                    <OPTION VALUE='983'>ODDANCHATRAM</OPTION>
+                    <OPTION VALUE='966'>PALANI</OPTION>
+                    <OPTION VALUE='3821'>PALLADAM</OPTION>
+                    <OPTION VALUE='4053'>PANRUTI</OPTION>
+                    <OPTION VALUE='1923'>PARAMAKUDI</OPTION>
+                    <OPTION VALUE='7414'>PAVAGADA</OPTION>
+                    <OPTION VALUE='1889'>PERAMBALUR</OPTION>
+                    <OPTION VALUE='379'>POLLACHI</OPTION>
+                    <OPTION VALUE='5446'>POLUR</OPTION>
+                    <OPTION VALUE='968'>PUDUKKOTTAI</OPTION>
+                    <OPTION VALUE='517'>PUTTUR</OPTION>
+                    <OPTION VALUE='50'>RAJAPALAYAM</OPTION>
+                    <OPTION VALUE='1886'>RAMANATHAPURAM</OPTION>
+                    <OPTION VALUE='262'>RAMDURG</OPTION>
+                    <OPTION VALUE='976'>RANIPET</OPTION>
+                    <OPTION VALUE='1369'>RASIPURAM</OPTION>
+                    <OPTION VALUE='1353'>RON</OPTION>
+                    <OPTION VALUE='415'>SALEM</OPTION>
+                    <OPTION VALUE='910'>SANKARANKOVIL</OPTION>
+                    <OPTION VALUE='4890'>SATHYAMANGALAM</OPTION>
+                    <OPTION VALUE='3978'>SATTUR</OPTION>
+                    <OPTION VALUE='2861'>SEDAM</OPTION>
+                    <OPTION VALUE='9005'>SHAHABAD</OPTION>
+                    <OPTION VALUE='6790'>SHIGGAON</OPTION>
+                    <OPTION VALUE='8299'>SIDLAGHATTA</OPTION>
+                    <OPTION VALUE='796'>SIRA</OPTION>
+                    <OPTION VALUE='1361'>SIRKALI</OPTION>
+                    <OPTION VALUE='1351'>SIRSI</OPTION>
+                    <OPTION VALUE='631'>SIRUGUPPA</OPTION>
+                    <OPTION VALUE='972'>SIVAGANGA</OPTION>
+                    <OPTION VALUE='143'>SIVAKASI</OPTION>
+                    <OPTION VALUE='984'>SRIVILLIPUTHUR</OPTION>
+                    <OPTION VALUE='909'>SURANDAI</OPTION>
+                    <OPTION VALUE='6800'>TARIKERE</OPTION>
+                    <OPTION VALUE='967'>TENKASI</OPTION>
+                    <OPTION VALUE='8001'>THAMMAMPATTI</OPTION>
+                    <OPTION VALUE='363'>THANJAVUR</OPTION>
+                    <OPTION VALUE='8618'>THIRUMANGALAM</OPTION>
+                    <OPTION VALUE='273'>THIRUVALLUR</OPTION>
+                    <OPTION VALUE='1921'>THURAIYUR</OPTION>
+                    <OPTION VALUE='2415'>TINDIVANAM</OPTION>
+                    <OPTION VALUE='636'>TIPTUR</OPTION>
+                    <OPTION VALUE='1891'>TIRUCHENDUR</OPTION>
+                    <OPTION VALUE='964'>TIRUCHENGODE</OPTION>
+                    <OPTION VALUE='1362'>TIRUKKOYILUR</OPTION>
+                    <OPTION VALUE='404'>TIRUNELVELI</OPTION>
+                    <OPTION VALUE='4052'>TIRUPATHUR</OPTION>
+                    <OPTION VALUE='4052'>TIRUPATHUR</OPTION>
+                    <OPTION VALUE='970'>TIRUVANNAMALAI</OPTION>
+                    <OPTION VALUE='138'>TUMKUR</OPTION>
+                    <OPTION VALUE='965'>UDHAGAMANDALAM</OPTION>
+                    <OPTION VALUE='9023'>UTHIRAMERUR</OPTION>
+                    <OPTION VALUE='9193'>VADIPATTI</OPTION>
+                    <OPTION VALUE='1359'>VANIYAMBADI</OPTION>
+                    <OPTION VALUE='4867'>VELLAKOIL</OPTION>
+                    <OPTION VALUE='346'>VELLORE</OPTION>
+                    <OPTION VALUE='921'>VIJAYAPURA</OPTION>
+                    <OPTION VALUE='969'>VIRUDHACHALAM</OPTION>
+                    <OPTION VALUE='751'>VIRUDHUNAGAR</OPTION>
+                    <OPTION VALUE='6834'>WADI</OPTION>
+                    <OPTION VALUE='795'>YADGIR</OPTION>
+
+                </select>
+                </div>
+
+                </div>
+                    <div class="d-flex justify-content-end py-2 px-3">
+                        <input type="submit" value="Submit" (click)="AssignLeadToBajaj();addIciici.reset()" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

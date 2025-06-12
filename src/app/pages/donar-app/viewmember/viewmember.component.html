@@ -1,0 +1,27 @@
+<!-- Back Button -->
+<div class="mb-3">
+  <button pButton type="button" label="Back to Home" icon="pi pi-arrow-left" (click)="goHome()"></button>
+</div>
+
+<!-- User Details Table (Two Columns: Label | Value) -->
+<p-table [value]="userDetails" *ngIf="userDetails?.length" [tableStyle]="{ width: '100%' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData>
+    <tr>
+      <td>{{ rowData.label }}</td>
+      <td>
+        <ng-container *ngIf="rowData.label === 'Profile Picture'; else textContent">
+          <img [src]="rowData.value" alt="Profile" width="80" height="80" />
+        </ng-container>
+        <ng-template #textContent>
+          {{ rowData.value }}
+        </ng-template>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

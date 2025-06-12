@@ -1,0 +1,85 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
+               <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
+                    <div>Revenue Target Master </div>
+                </div>
+                <form class="p-3 bg-color-ContBody1" #addrpm="ngForm">
+                    <div class="formContainer d-flex flex-row flex-wrap">
+                                
+                            <div class="mb-3 formItem">
+                                <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Month</span><br/>
+                                </label><br>
+                                <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.month" #month="ngModel" name="month" >
+                                    <OPTION VALUE='01' selected>Jan</OPTION>
+                                    <OPTION VALUE='02'>Feb</OPTION>
+                                    <OPTION VALUE='03'>Mar</OPTION>
+                                    <OPTION VALUE='04'>Apr</OPTION>
+                                    <OPTION VALUE='05'>May</OPTION>
+                                    <OPTION VALUE='06'>Jun</OPTION>
+                                    <OPTION VALUE='07'>Jul</OPTION>
+                                    <OPTION VALUE='08'>Aug</OPTION>
+                                    <OPTION VALUE='09'>Sep</OPTION>
+                                    <OPTION VALUE='10'>Oct</OPTION>
+                                    <OPTION VALUE='11'>Nov</OPTION>
+                                    <OPTION VALUE='12'>Dec</OPTION>
+                                    
+                                </select>
+                            </div>
+                            <div class="mb-3 formItem">&nbsp;</div>
+                            <div class="mb-3 formItem">
+                                <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Year</span><br/>
+                                </label><br>
+                                <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.year" #year="ngModel" name="year" >
+                                    <OPTION VALUE='2020'>2020</OPTION>
+                                    <OPTION VALUE='2021'>2021</OPTION>
+                                    <OPTION VALUE='2022'>2022</OPTION>
+                                    <OPTION VALUE='2023'>2023</OPTION>
+                                    <OPTION VALUE='2024'>2024</OPTION>
+                                    <OPTION VALUE='2025'>2025</OPTION>
+                                    <OPTION VALUE='2026'>2026</OPTION>
+                                    <OPTION VALUE='2027'>2027</OPTION>
+                                    <OPTION VALUE='2028'>2028</OPTION>
+                                    <OPTION VALUE='2029'>2029</OPTION>
+                                    
+                                    
+                                </select>
+                            </div>
+                                <div class="mb-3 formItem">&nbsp;</div>
+                                        <div class="mb-3 formItem">
+                                            <label class="mb-1">Employee Name</label><br>
+                                            <input type="hidden" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="empid" name="empid" [(ngModel)]="model.empid" #empid="ngModel" >
+                                            <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"   [(ngModel)]="model.ename" #ename="ngModel" (change)="changeEname($event)" name="ename">
+                                            
+                                                <option *ngFor="let item of EmpList;let j = index" value={{item.EmpName}}>{{item.EmpName}}</option> 
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3 formItem">
+                                            <label class="mb-1">Revenue Target - Employee Share</label><br>
+                                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Revenue Target" name="revtaget"  [(ngModel)]="model.revtarget" #revtaget="ngModel" >
+                                        
+                                        </div>
+                                        <div class="mb-3 formItem">
+                                            <label class="mb-1">Filelogin Target - Nos</label> <br>
+                                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Target" name="fltarget" [(ngModel)]="model.fltarget" #fltarget="ngModel" >
+                                        
+                                        </div>
+                                    
+                                
+                                </div>
+                                    <div class="d-flex justify-content-end py-2 px-3">
+                                            <input type="submit" value="Submit" (click)="SaveTarget();addrpm.reset()" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+                                
+                                    </div>
+                            
+                    </form>
+          
+                </div>
+        </div>
+    <app-revenuetarget-list></app-revenuetarget-list>
+</div>
+
+
+

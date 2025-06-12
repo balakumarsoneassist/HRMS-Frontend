@@ -1,0 +1,78 @@
+/* creidt report model section - start */
+.creditResultScoreDiv svg .textNum {
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.creditResultInfoFlex {
+  width: 350px;
+}
+
+.creditResultDiv, .connectorDetailFlexItem {
+  width: 500px;
+  /*border: thin solid #dee2e6;*/
+}
+
+.creditResultReport > div:first-child {
+  /*width: 150px;*/
+  width: calc(60% - 10px);
+}
+
+.creditResultReport > div:nth-child(2), .leadDetailFitem > div:nth-child(2), .customerDetailFitem > div:nth-child(2), .connectorDetailFitem > div:nth-child(2) {
+  width: 10px;
+}
+
+.creditResultReport  > div:nth-child(3) {
+  width: 40%;
+}
+
+.creditResultDetail  {
+  border: thin solid #dee2e6;
+}
+
+.creditScoreTable {
+border-collapse: separate;
+border-spacing: 0;
+min-width: 350px;
+}
+
+.creditScoreTable tr th,
+.creditScoreTable tr td {
+border-right: 1px solid #dee2e6;
+border-bottom: 1px solid #dee2e6;
+padding: 5px;
+text-align: center;
+}
+
+.creditScoreTable tr th:first-child,
+.creditScoreTable tr td:first-child {
+border-left: 1px solid #dee2e6;
+}
+.creditScoreTable tr th {
+border-top: 1px solid #dee2e6;
+}
+
+.creditScoreTable tr:first-child th:first-child {
+border-top-left-radius: 0.25rem;
+}
+
+.creditScoreTable tr:first-child th:last-child {
+border-top-right-radius: 0.25rem;
+}
+
+.creditScoreTable tr:last-child td:first-child {
+border-bottom-left-radius: 0.25rem;
+}
+
+.creditScoreTable tr:last-child td:last-child {
+border-bottom-right-radius: 0.25rem;
+}
+
+.creditScoreTable th:first-child, .creditScoreTable th:last-child, .creditScoreTable th:nth-child(6), .creditScoreTable th:nth-child(8), .creditScoreTable th:nth-child(9), .creditScoreTable th:nth-child(10), .creditScoreTable th:nth-child(11) {
+  min-width: 135px;
+}
+
+.creditScoreTable th:nth-child(2), .creditScoreTable th:nth-child(3), .creditScoreTable th:nth-child(4), .creditScoreTable th:nth-child(5), .creditScoreTable th:nth-child(7) {
+  min-width: 200px;
+}
+/* creidt report model section - end */

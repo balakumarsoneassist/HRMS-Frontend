@@ -1,0 +1,32 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+                <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                    <div class="font-size-19">Bulk SMS </div>
+                </div>
+                <div>
+                    <div class="leadIpFitem mb-3">
+                        <label class="mb-1">Mobile Numbers</label>
+                        <tag-input [(ngModel)]="model.mobileNos" name='psdcondition' class="myTagInput myBorder bg-color-trans rounded pl-2" [onlyFromAutocomplete]="false" >
+                        </tag-input>
+                    </div>
+
+                    <div class="leadIpFitem mb-3">
+                        <label class="mb-1">(Enter Mobile Numbers without 91)</label>
+
+                    </div>
+
+                    <div class="leadIpFitem mb-3">
+                        <label class="mb-1">&nbsp;</label><p></p>
+                        <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="SendSms()"> Send SMS</button>
+
+                    </div>
+
+                </div>
+        </div>
+   </div>
+</div>
+
+
+
+

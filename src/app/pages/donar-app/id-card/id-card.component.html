@@ -1,0 +1,24 @@
+<div class="container">
+    <div #certificate class="certificate">
+        <img class="photo" [src]="user?.profilepic" alt="User photo" />
+      <h2 class="username">{{ user?.name }}</h2>
+      <p class="role">DESIGNER</p>
+
+      <div class="info">
+        <p>ID NO: {{ user?.idNo }}</p>
+        <p>DOB: {{ user?.dob }}</p>
+        <p>Blood: {{ user?.blood }}</p>
+        <p>Phone: {{ user?.phone }}</p>
+        <p>E-mail: {{ user?.email }}</p>
+        <p>Join Date: {{ user?.joinDate }}</p>
+        <p>Expire Date: {{ user?.expireDate }}</p>
+      </div>
+      <svg #barcodeSvg id="barcode"></svg>
+
+    </div>
+    <div #certificateBack class="certificateBack">
+    </div>
+    <div class="input-container">
+      <button pButton label="Download PDF" (click)="downloadPDF()"></button>
+    </div>
+  </div>

@@ -1,0 +1,5 @@
+export const environment = {
+    production: true,
+    apiUrl: 'https://vmmministries.com/api/public'
+//apiUrl: 'http://localhost:8080/'
+  };

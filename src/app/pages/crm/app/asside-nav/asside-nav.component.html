@@ -1,0 +1,177 @@
+
+<!-- asside nav - start -->
+
+
+
+  <nav class="navSec position-fixed bg-color-white color-gray font-w-600 z-index-3 boxShadow pic-container"  >
+    <ul class="p-0 m-0 list-style-none">
+      <li class="position-relative" (click)="toggleMenu()">
+        <a href="javascript:void(0)" class="d-block py-3 px-3" [routerLink]="['/home']" routerLinkActive="router-link-active"><i class="fas fa-home pr-4"></i><span>Home</span> </a>
+      </li>
+
+      <!--Revenue-->
+      <li class="position-relative" >
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-user pr-4"></i> <span>Revenue</span></a>
+        <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()" [hidden]='!objEmployeeModel.IsAdminRights'><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/revenueprodlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Product Master</span></a></li>
+        <!--  <li (click)="toggleMenu()" [hidden]='!objEmployeeModel.IsAdminRights'><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/revenueprodlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Product List</span></a></li>-->
+          <li (click)="toggleMenu()" [hidden]='!objEmployeeModel.IsAdminRights'><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/revenuetarget']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Target</span></a></li>
+      <!--   <li (click)="toggleMenu()" [hidden]='!objEmployeeModel.IsAdminRights'><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/loadtest']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Load test</span></a></li>-->
+          <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+            <a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/revenueachieve']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Revenue Achievement</span></a>
+          </li>    
+        </ul>
+      </li>
+
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Contact</span></a>
+        <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/addContactForm']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Add</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/unassignedContacts']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Unassigned</span></a></li>
+         <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/assignedContacts']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li> 
+          <li [hidden]='!objEmployeeModel.IsContactRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/connectorcontactlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">ConnectorContact</span></a></li>
+          <li [hidden]='!objEmployeeModel.IsContactRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/ImportContact']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Import</span></a></li>
+        </ul>
+      </li>
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsLeadRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="far fa-id-card pr-4"></i> <span>Lead</span></a>
+        <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/leadForm']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Add</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/unAssignLeads']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Unassigned</span></a></li>
+        <!--  <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/leadsDetails']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>-->
+         <li (click)="toggleMenu()"><a href="javascript:void(0)"class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/IciciLeadList']" routerLinkActive="router-link-active"> <span class="d-inline-block pr-3">IciciLeadList</span></a></li>
+         <li (click)="toggleMenu()"><a href="javascript:void(0)"class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/bajajlist']" routerLinkActive="router-link-active"> <span class="d-inline-block pr-3">Bajaj LeadList</span></a></li>
+         <li (click)="toggleMenu()"><a href="javascript:void(0)"class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/leadcreaterep']" routerLinkActive="router-link-active"> <span class="d-inline-block pr-3">Lead Creators</span></a></li>
+        
+        </ul>
+      </li>
+     
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-user pr-4"></i> <span>Employee</span></a>
+        <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/employeeForm']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Add</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/employeelist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+        </ul>
+      </li>
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights' a href="javascript:void(0)"  [routerLink]="['/home/addbank']">
+        <a href="javascript:void(0)" class="d-block py-3 px-3 "><i class="fa fa-bank pr-4"></i> <span>Bank</span></a>
+      </li>
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights' a href="javascript:void(0)" [routerLink]="['/home/addbranch']">
+        <a href="javascript:void(0)" class="d-block py-3 px-3"><i class="fas fa-code-branch pr-4"></i> <span>Branch</span></a>
+      </li>
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights' a href="javascript:void(0)" [routerLink]="['/home/addlocation']">
+        <a href="javascript:void(0)" class="d-block py-3 px-3 "><i class="fas fa-map-marked pr-4"></i> <span>Location</span></a>
+      </li>
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights' a href="javascript:void(0)" [routerLink]="['/home/addstate']">
+        <a href="javascript:void(0)" class="d-block py-3 px-3"><i class="fa fa-globe pr-4"></i> <span>State</span></a>       
+      </li>
+
+     
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Connector</span></a>
+         <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/addConnectorCard']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Add</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/ConnectorList']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+        </ul> 
+      </li> 
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Payment</span></a>
+         <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/PaymentList']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+        </ul> 
+      </li>
+
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsAdminRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Reports</span></a>
+         <ul class="subMenus list-style-none p-0">
+
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/dailyreport']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">DailyReport</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/reportsummary']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Report Summary</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/noverallstatusrep']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Status Report Summary</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/bulksms']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3"> Bulk SMS</span></a></li>
+     
+        </ul> 
+      </li> 
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsSplRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>QR Code</span></a>
+         <ul class="subMenus list-style-none p-0">
+
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrcodeplaces']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Places</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrcodelist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+          
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrcodegeneration']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Generation</span></a></li>
+
+         <!-- <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrtest']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Test</span></a></li>
+     -->
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Customers</span></a></li>
+
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrdownload']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Download</span></a></li>
+
+        </ul> 
+      </li> 
+<div [hidden]="forcontact">
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Report</span></a>
+         <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/reportsummarycontact']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Report Summary</span></a></li>
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/bulksms']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3"> Bulk SMS</span></a></li>
+     
+        </ul> 
+      </li>
+    </div>
+
+    <div [hidden]="forcontact">
+      <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+        <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>QR Code</span></a>
+         <ul class="subMenus list-style-none p-0">
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Customers</span></a></li>
+       
+          <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/qrdownload']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">QR Code Download</span></a></li>
+        </ul> 
+      </li>
+    </div>
+
+    <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+      <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Customers</span></a>
+      <ul class="subMenus list-style-none p-0">
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/custlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/mycustomers']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">My Customers</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/custservicecall']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Service Call Frequency</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/custrating']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Customer Category</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/unicustomers']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Unique Customers</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/multiloancustomers']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Multiple Loans Customers</span></a></li>
+        
+        <!--  <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/unassignedContacts']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Unassigned</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/assignedContacts']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">List</span></a></li>
+        <li [hidden]='!objEmployeeModel.IsContactRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/connectorcontactlist']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">ConnectorContact</span></a></li>
+        <li [hidden]='!objEmployeeModel.IsContactRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/ImportContact']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Import</span></a></li>
+     --> </ul>
+    </li>
+
+    <li class="position-relative" [hidden]='!objEmployeeModel.IsReassignRights'>
+      <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Reassign</span></a>
+       <ul class="subMenus list-style-none p-0">
+
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/reassignreject']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Reject Reassign</span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/reassignother']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Other Reassign</span></a></li>
+        
+      
+      </ul> 
+    </li>
+
+    <li class="position-relative" [hidden]='!objEmployeeModel.IsContactRights'>
+      <a href="javascript:void(0)" class="mainMenu d-block py-3 px-3 position-relative"><i class="fas fa-address-book pr-4"></i> <span>Sales Visit</span></a>
+       <ul class="subMenus list-style-none p-0">
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/addcustomer']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Add Customer </span></a></li>
+        <li (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/svfollowup']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Customer Followup </span></a></li>
+     
+        <li [hidden]='objEmployeeModel.IsAdminRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/svcmycust']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">My Customers</span></a></li>
+        <li [hidden]='!objEmployeeModel.IsAdminRights' (click)="toggleMenu()"><a href="javascript:void(0)" class="d-block py-3 pr-4 pl-5" [routerLink]="['/home/svcoverall']" routerLinkActive="router-link-active"><span class="d-inline-block pr-3">Report</span></a></li>
+      
+      </ul> 
+    </li>
+      
+
+    </ul>
+</nav>
+

@@ -1,0 +1,78 @@
+
+<!--pvr-->
+<div class="container-fluid x2">
+    <div class="row">
+        <div class="col-md-12">
+             <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
+                 <div class="font-size-19">Daily Summary Report </div>
+            </div>
+            <div>
+                <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
+
+
+                    <div class="leadIpFitem mb-3">
+                        <label class="mb-1">Date</label>
+                        <p-calendar
+  [formControl]="fcfrdt"
+  [showIcon]="true"
+  placeholder="Date"
+  inputClass="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header"
+  dateFormat="dd/mm/yy"
+></p-calendar>
+
+                    </div>
+
+                    <div class="leadIpFitem mb-3">
+                        <label class="mb-1">&nbsp;</label><p></p>
+                        <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="getSReport()"> Report</button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12" style="margin-top:25px">
+    </div>
+</div>
+
+
+<div class="tableContainer rounded mBorder overflow-x-auto x2">
+    <table class="table font-w-600 color-initial mb-0">
+        <tr class="bg-color-ContHead2"><th>Date : {{selDt}}</th></tr>
+         <tr class="bg-color-ContHead">
+            <th class="color-gray min-w-200">Name</th>
+            <th class="color-gray min-w-150">TotalLead</th>
+            <th class="color-gray min-w-200">TotalCall</th>
+             <th class="color-gray min-w-200">AttendCall</th>
+            <th class="color-gray min-w-200">RejectCall</th>
+            <th class="color-gray min-w-200">No Response</th>
+
+           <!-- <th class="color-gray min-w-150"></th>
+            <th class="color-gray min-w-150"></th>-->
+        </tr>
+        <tr *ngFor="let objDailyRepList of model">
+            <td>{{objDailyRepList.Name}}</td>
+            <td>{{objDailyRepList.TotalLeadDayCount}}</td>
+            <td>{{objDailyRepList.TotalCallDayCount}}</td>
+            <td>{{objDailyRepList.AttendCallDayCount}}</td>
+            <td>{{objDailyRepList.RejectCallDayCount}}</td>
+            <td>{{objDailyRepList.PendingCallDayCount}}</td>
+
+
+          <!--  <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="AssignEmployee(objUnassignedLeadList.Id,objUnassignedLeadList.TrackNumber)">Assign to Me</button></td>
+            <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="openCibilReportModel(objUnassignedLeadList.Id)">Assign to Icici</button></td>-->
+        </tr>
+    </table>
+</div>
+<div class="VerticalSpace"></div>
+<div class="a2" [style]="dvdisp">
+    <h3 style="color: #53078d;text-align: center;">Summary Report</h3>
+    <canvas id="line-chart" ></canvas>
+
+  </div>
+
