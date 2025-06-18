@@ -75,6 +75,7 @@ import { CustratingreportComponent } from './custratingreport/custratingreport.c
 import { CustratingdetailreportComponent } from './custratingdetailreport/custratingdetailreport.component';
 import { ExistunicustomersComponent } from './existunicustomers/existunicustomers.component';
 import { MultiloancustomersComponent } from './multiloancustomers/multiloancustomers.component';
+import { AppLayout } from '../../../layout/component/app.layout';
 
 
 
@@ -82,9 +83,9 @@ export default [
 
     // { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '', component: SigninComponent},
-  { path: 'home', component: EntranceComponent,
+  { path: 'home', component: AppLayout,
     children: [
-    //   { path: '', component: HomeComponent},
+      { path: '', component: HomeComponent},
       { path: 'assignedContacts', component: AssignedContactsComponent},
       { path: 'leadsDetails', component: LeadsDetailsComponent},
       { path: 'unassignedContacts', component: UnassignedContactsComponent},

@@ -31,7 +31,7 @@ export class IdleService {
 
   private logout() {
     this.loginService.logout();
-    this.router.navigate(['auth//login']);
+    this.router.navigate(['']);
     alert('Logged out due to 30 minutes of inactivity.');
   }
 }

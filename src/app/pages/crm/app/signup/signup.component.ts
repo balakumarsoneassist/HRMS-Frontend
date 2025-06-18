@@ -13,6 +13,7 @@ import { LoaderService } from "../services/loader/loader.service";
 import { Signup } from '../model/signup';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
+import { EmployeeService } from '../services/employee/employee.service';
 
 @Component({
     selector: 'app-signin',
@@ -32,6 +33,7 @@ export class SigninComponent implements OnInit {
     }
 
     constructor(
+        private _objEmplyeeService: EmployeeService,
         private loginService: LoginService,
         public router: Router,
         public loaderService: LoaderService,
@@ -47,6 +49,7 @@ export class SigninComponent implements OnInit {
         }
 
         this.loadSpin = true;
+
         this.loginService.LoginValidation(this.model).subscribe({
             next: (response: any) => {
                 localStorage.setItem('oneAssistTokenStorage', JSON.stringify(response));
@@ -56,10 +59,36 @@ export class SigninComponent implements OnInit {
                 localStorage.setItem('oneAssistTokenExipyTime', tokenExpiryTime.toLocaleString());
 
                 if (response.WarningMessage) {
-                    this.messageService.add({ severity: 'warn', summary: 'Warning', detail: response.WarningMessage });
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Warning',
+                        detail: response.WarningMessage
+                    });
                 } else {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Login Successful!' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Login Successful!'
+                    });
                 }
+
+                // Now fetch and store user rights including hideOurBank flag
+                this._objEmplyeeService.GetEmployeeRights().subscribe({
+                    next: (res) => {
+                        const userRights = res[0];
+                        const hideBank = !userRights?.IsAdminRights;
+
+                        localStorage.setItem('userRights', JSON.stringify(userRights));
+                        localStorage.setItem('hideOurBank', JSON.stringify(hideBank));
+                    },
+                    error: () => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'Internal Server Error - Employee Rights'
+                        });
+                    }
+                });
 
                 this.loadSpin = false;
                 this.router.navigate(['../home'], { replaceUrl: true });
@@ -74,4 +103,5 @@ export class SigninComponent implements OnInit {
             }
         });
     }
+
 }

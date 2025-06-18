@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from "../header/header.component";
 import { AssideNavComponent } from "../asside-nav/asside-nav.component";
 import { RouterModule } from '@angular/router';
+import { AppTopbar } from "../../../../layout/component/app.topbar";
 
 
 @Component({
     standalone: true,
-    imports: [CommonModule, FormsModule, HeaderComponent, AssideNavComponent,RouterModule],
+    imports: [CommonModule, FormsModule, HeaderComponent, AssideNavComponent, RouterModule, AppTopbar],
     selector: 'app-entrance',
     templateUrl: './entrance.component.html',
 })

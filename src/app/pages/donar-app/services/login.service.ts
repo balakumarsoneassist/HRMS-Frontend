@@ -4,6 +4,7 @@ import { tap } from 'rxjs/operators';
 
 import { UserDetailsService, User } from '../services/user-details.service';
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class LoginService {
   private loginUrl = `${environment.apiUrl}/login`;
   private userStore = inject(UserDetailsService);  // ✅ inject the UserStore
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router : Router) {}
 
   login(username: string, password: string) {
     const payload = { username, password };
@@ -35,7 +36,8 @@ export class LoginService {
   }
 
   logout() {
-    localStorage.removeItem('auth_token');
+     localStorage.removeItem('oneAssistTokenStorage')
+     this.router.navigate([''], { replaceUrl: true})
     // Optionally: this.userStore.clearUser(); if you want to clear user data
   }
 

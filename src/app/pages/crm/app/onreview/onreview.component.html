@@ -1,55 +1,67 @@
-
-<div class="float-container" *ngIf="loaderService.showLoader && loadSpin > 0">
-    <div class="float-child">
-         &nbsp;
-    </div>
-    <div class="float-child1">
-        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader">
-        </div>
-    </div>
-</div>
-<div >
-    &nbsp;
+<div *ngIf="loadSpin" class="flex justify-content-center mt-4">
+  <p-progressSpinner strokeWidth="4"></p-progressSpinner>
 </div>
 
-  <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
-    <table class="table font-w-600 color-initial mb-0">
-        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text"  class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th>
-
-
-        <tr class="bg-color-ContHead">
-            <th class="color-gray min-w-200 text-center" >Track Number<br /></th>
-              <th class="color-gray min-w-200 text-center" >Name<br /></th>
-              <th class="color-gray min-w-200 text-center" >Mobile Number<br /></th>
-              <th class="color-gray min-w-200 text-center" >Appointment Date<br /></th>
-              <th class="color-gray min-w-200 text-center" >Location<br /></th>
-              <!-- <th class="color-gray min-w-250">Assigned To<br /><input type="text" class="rounded px-2 py-1 color-initial border-header bg-color-input boxShadow" /></th> -->
-              <th class="color-gray min-w-200 text-center" >Status<br /></th>
-              <th class="color-gray min-w-200 text-center" >Action</th>
-        </tr>
-        <tr *ngFor="let objReviewList of ReviewList">
-            <td>
-                {{objReviewList.TrackNumber}}
-            </td>
-            <td>
-                {{objReviewList.Name}}
-            </td>
-            <td>
-                {{objReviewList.MobileNumber}}
-            </td>
-            <td>
-                {{objReviewList.AppointmentDate| date: 'dd/MM/yyyy HH:mm'}}
-            </td>
-            <td>
-                {{objReviewList.Location}}
-            </td>
-            <td class="">
-                <span class="py-2 px-3 bg-color-yellow rounded color-white"> {{objReviewList.Status|lowercase}}</span>
-            </td>
-            <td class="text-center">
-                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" [hidden]='objReviewList.Status=="reject"' (click)="callStatus(objReviewList.Id,objReviewList.TrackNumber)">Update</button>
-            </td>
-        </tr>
-    </table>
+<div class="mt-3" *ngIf="!loadSpin">
+ <div class="mb-3 flex justify-content-end">
+  <input
+    type="text"
+    pInputText
+    placeholder="Search..."
+    [(ngModel)]="globalFilter"
+    (input)="dt.filterGlobal($event.target?.['value'], 'contains')"
+    class="w-full sm:w-25rem"
+  />
 </div>
 
+  <p-table
+  #dt
+  [value]="ReviewList"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[5, 10, 20]"
+  [resizableColumns]="true"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [responsiveLayout]="'scroll'"
+  [globalFilterFields]="['TrackNumber', 'Name', 'MobileNumber', 'Location', 'Status']"
+  class="p-datatable-sm"
+>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pResizableColumn pSortableColumn>Track Number</th>
+        <th pResizableColumn pSortableColumn>Name</th>
+        <th pResizableColumn pSortableColumn>Mobile Number</th>
+        <th pResizableColumn pSortableColumn>Appointment Date</th>
+        <th pResizableColumn pSortableColumn>Location</th>
+        <th pResizableColumn pSortableColumn>Status</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-review>
+      <tr>
+        <td>{{ review.TrackNumber }}</td>
+        <td>{{ review.Name }}</td>
+        <td>{{ review.MobileNumber }}</td>
+        <td>{{ review.AppointmentDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ review.Location }}</td>
+        <td>
+          <span class="px-2 py-1 bg-yellow-500 text-white border-round text-sm text-capitalize">
+            {{ review.Status | lowercase }}
+          </span>
+        </td>
+        <td class="text-center">
+          <p-button
+            label="Update"
+            icon="pi pi-pencil"
+            size="small"
+            class="p-button-sm"
+            (onClick)="callStatus(review.Id, review.TrackNumber)"
+            *ngIf="review.Status !== 'reject'"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

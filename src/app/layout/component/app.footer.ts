@@ -4,8 +4,8 @@ import { Component } from '@angular/core';
     standalone: true,
     selector: 'app-footer',
     template: `<div class="layout-footer">
-        Donar-App by
-        <a href="https://primeng.org" target="_blank" rel="noopener noreferrer" class="text-primary font-bold hover:underline">Bala</a>
+        CRM by
+        <a href="https://primeng.org" target="_blank" rel="noopener noreferrer" class="text-primary font-bold hover:underline">OneAssist Bala</a>
     </div>`
 })
 export class AppFooter {}

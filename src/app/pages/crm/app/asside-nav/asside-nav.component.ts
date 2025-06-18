@@ -48,16 +48,20 @@ export class AssideNavComponent implements OnInit {
     }
     /* accodian - end */
   }
-  GetUserRights() {
-    this._objEmplyeeService.GetEmployeeRights().subscribe(
-      response => {
-        this.objEmployeeModel = response[0];
-        console.log(this.objEmployeeModel);
-        this.checkSplRights();
-      },
-      error => alert('Internal Server Error')
-    )
-  }
+ GetUserRights() {
+  this._objEmplyeeService.GetEmployeeRights().subscribe({
+    next: (response) => {
+      this.objEmployeeModel = response[0];
+      console.log(this.objEmployeeModel);
+      this.checkSplRights();
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Internal Server Error');
+    }
+  });
+}
+
 
   checkSplRights(){
     this.adminRights = this.objEmployeeModel.IsAdminRights;

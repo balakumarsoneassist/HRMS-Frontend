@@ -6,18 +6,18 @@
             <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
             <th class="color-gray min-w-200">CallOn<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
             <th class="color-gray min-w-150">Apppointment Date<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-            <th class="color-gray min-w-150">Notes<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow"/></th>            
-            <th class="color-gray min-w-150">Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th> 
+            <th class="color-gray min-w-150">Notes<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow"/></th>
+            <th class="color-gray min-w-150">Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
         </tr>
         <tr *ngFor="let objTrack of LeadTrackList; let i= index;">
-            
+
             <td>{{objTrack.CallOn| date : "dd-MM-yyyy HH:mm"}}</td>
-            <td>{{objTrack.AppointmentDate| date : "dd-MM-yyyy HH:mm"}}</td>  
+            <td>{{objTrack.AppointmentDate| date : "dd-MM-yyyy HH:mm"}}</td>
             <td>{{objTrack.Notes}}</td>
             <td><span class="py-2 px-3 bg-color-yellow color-white-fix rounded">{{objTrack.Status|lowercase}}</span></td>
-                     
+
         </tr>
-           
+
     </table>
 </div>
 <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">

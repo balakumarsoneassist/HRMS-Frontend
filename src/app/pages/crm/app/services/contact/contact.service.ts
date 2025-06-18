@@ -1,103 +1,99 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Api } from '../api';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { ContactModel } from '../../model/Contact/ContactModel';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
+  constructor(private http: HttpClient, private objApi: Api) {}
 
-  constructor(private http:HttpClient,private objApi:Api) { }
-  private contactDetailSaveUrl:string=Api.contactContactDetailSaveUrl;
-  private contactUnassigContactListUrl:string=Api.getunassignContactListUrl;
-  private leadTrackUrl=Api.SaveLeadTrackUrl;
-  private contactListUrl=Api.contactListUrl;
-  private getLeadTrackUrl:string=Api.GetLeadTrackUrl;
-  private getLeadTracHistoryUrl:string=Api.GetLeadTracHistoryUrl;
-  private contactcardUrl:string=Api.contactcardUrl;
-  private connectorContactListUrl=Api.connectorContactListUrl;
-  private connectorContactUpdateUrl=Api.connectorContactUpdateUrl;
-  private GetContactListtUrl=Api.dailyCrmReport;
-  private GetStatusListtUrl=Api.contactStatusListUrl;
+  // API URLs
+  private contactDetailSaveUrl: string = Api.contactContactDetailSaveUrl;
+  private contactUnassigContactListUrl: string = Api.getunassignContactListUrl;
+  private leadTrackUrl = Api.SaveLeadTrackUrl;
+  private contactListUrl = Api.contactListUrl;
+  private getLeadTrackUrl: string = Api.GetLeadTrackUrl;
+  private getLeadTracHistoryUrl: string = Api.GetLeadTracHistoryUrl;
+  private contactcardUrl: string = Api.contactcardUrl;
+  private connectorContactListUrl = Api.connectorContactListUrl;
+  private connectorContactUpdateUrl = Api.connectorContactUpdateUrl;
+  private GetContactListtUrl = Api.dailyCrmReport;
+  private GetStatusListtUrl = Api.contactStatusListUrl;
+  private getEmpUrl = Api.GetEmployeeByIdUrl;
+
+  // Status Acco trigger
   private subject = new Subject<void>();
-  private LeadSubject = new Subject<any>();
-  leadSendObservable = this.LeadSubject.asObservable();
-
-  private LeadTracIdsubject=new Subject<any>();
-  LeadTrackIdObservable=this.LeadTracIdsubject.asObservable();
-
-  SendLeadId(Id) {
-    this.LeadSubject.next(Id);
-  }
-
-  SendLeadTrack(TrackId: string)
-  {
-    this.LeadTracIdsubject.next(TrackId);
-  }
-
-
-
-  saveContactDetails(contactDetailModel: any){
-    return this.objApi.callPost(this.contactDetailSaveUrl,contactDetailModel);
-    //return this.http.post<any>(this.contactDetailSaveUrl, contactDetailModel)
-  }
-  getUnassignContactList(PageDetails){
-    return this.objApi.callPost(this.contactUnassigContactListUrl,PageDetails);
-  }
-
-  statusOpeningAcco() {
+  statusOpeningAcco(): void {
     this.subject.next();
   }
-
   getStatusAcco(): Observable<any> {
     return this.subject.asObservable();
   }
 
-  SaveLeadTrack(leadTrackUrl){
-    return this.objApi.callPost(this.leadTrackUrl,leadTrackUrl);
+  // ✅ Use BehaviorSubjects for lead state
+  private LeadSubject = new BehaviorSubject<any>(null);
+  private LeadTracIdsubject = new BehaviorSubject<any>(null);
+
+  leadSendObservable = this.LeadSubject.asObservable();
+  LeadTrackIdObservable = this.LeadTracIdsubject.asObservable();
+
+  SendLeadId(id: number): void {
+    this.LeadSubject.next(id);
   }
 
-  GetLeadTrack(Id)
-  {
-    return this.objApi.callPost(this.getLeadTrackUrl,Id);
+  SendLeadTrack(trackId: string): void {
+    this.LeadTracIdsubject.next(trackId);
   }
-  GetLeadTrackHistoryList(Id)
-  {
 
-    return this.objApi.callPost(this.getLeadTracHistoryUrl,Id);
+  // Data APIs
+  saveContactDetails(contactDetailModel: any) {
+    return this.objApi.callPost(this.contactDetailSaveUrl, contactDetailModel);
   }
-  GetContactList(PageDetails)
-  {
-    return this.objApi.callPost(this.contactListUrl,PageDetails);
+
+  getUnassignContactList(PageDetails) {
+    return this.objApi.callPost(this.contactUnassigContactListUrl, PageDetails);
   }
-  Getcardcontact()
-  {
+
+  SaveLeadTrack(leadTrackModel) {
+    return this.objApi.callPost(this.leadTrackUrl, leadTrackModel);
+  }
+
+  GetLeadTrack(id) {
+    return this.objApi.callPost(this.getLeadTrackUrl, id);
+  }
+
+  GetLeadTrackHistoryList(id) {
+    return this.objApi.callPost(this.getLeadTracHistoryUrl, id);
+  }
+
+  GetContactList(PageDetails) {
+    return this.objApi.callPost(this.contactListUrl, PageDetails);
+  }
+
+  Getcardcontact() {
     return this.objApi.callPost(this.contactcardUrl);
   }
-  GetConnectorContactList(PageDetails)
-  {
-    return this.objApi.callPost(this.connectorContactListUrl,PageDetails);
-  }
-  updateConnectorContact(ConnectContact)
-  {
-    return this.objApi.callPost(this.connectorContactUpdateUrl,ConnectContact);
-  }
-  GetDailyReport(PaginationDetail){
-    return this.objApi.callPost(this.GetContactListtUrl ,PaginationDetail)
+
+  GetConnectorContactList(PageDetails) {
+    return this.objApi.callPost(this.connectorContactListUrl, PageDetails);
   }
 
-  //--pvr
-  GetStatusList()
-  {
-    return this.objApi.callPost(this.GetStatusListtUrl)
+  updateConnectorContact(connectContact) {
+    return this.objApi.callPost(this.connectorContactUpdateUrl, connectContact);
   }
 
-
-  private getEmpUrl = Api.GetEmployeeByIdUrl;
-  getEmpName(empModel){
-    return this.objApi.callPost(this.getEmpUrl,empModel);
-
+  GetDailyReport(PaginationDetail) {
+    return this.objApi.callPost(this.GetContactListtUrl, PaginationDetail);
   }
 
+  GetStatusList() {
+    return this.objApi.callPost(this.GetStatusListtUrl);
+  }
+
+  getEmpName(empModel) {
+    return this.objApi.callPost(this.getEmpUrl, empModel);
+  }
 }

@@ -1,129 +1,155 @@
-import { Component, OnInit } from '@angular/core';
-import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
-import { ContactService } from '../services/contact/contact.service';
-import { PaginationModel } from '../model/Contact/ContactModel';
-import { LoaderService } from "../services/loader/loader.service";
-import { LeadFollowUp } from '../model/leadFollowUp/lead-follow-up';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
+import { ContactService } from '../services/contact/contact.service';
+import { LoaderService } from '../services/loader/loader.service';
+import { PaginationModel } from '../model/Contact/ContactModel';
+import { LeadFollowUp } from '../model/leadFollowUp/lead-follow-up';
+
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
+import { LeadFormModelComponent } from "../lead-form-model/lead-form-model.component";
 
 @Component({
-    standalone: true,
-    imports:[CommonModule,FormsModule],
   selector: 'app-on-track-lead',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    ToastModule,
+    ProgressSpinnerModule,
+    InputTextModule,
+    DialogModule,
+    LeadFormModelComponent
+],
+  providers: [MessageService],
   templateUrl: './on-track-lead.component.html',
   styleUrls: ['./on-track-lead.component.css']
 })
 export class OnTrackLeadComponent implements OnInit {
-  ManualPageInput:any;
-  PageNumber:number=0;
-  TotalNumberOfPages=1;
-  TotalRecordNo:Number=0;
-  IsbtnPreviousEnable:boolean = true;
-  IsbtnNextEnable:boolean = true;
-  StartNo!:number;
-  EndNo!:number;
-  _objPageModel:PaginationModel;
+  LeadOnTrackList: any[] = [];
+  PageNumber = 0;
+  TotalNumberOfPages = 1;
+  TotalRecordNo = 0;
+  ManualPageInput = 1;
+  StartNo = 0;
+  EndNo = 0;
+  loadSpin = 0;
 
-  leadFilter: any ;
-  LeadList:any;
-  leadStatus = "Santioned";
-  _objLeadFollowUp:LeadFollowUp;
-  leadService: any;
-  LeadOnTrackList: any;
-  loadSpin:number = 0;
+  IsbtnPreviousEnable = true;
+  IsbtnNextEnable = true;
+  globalFilter: string = '';
 
-  constructor(private _objLeadTrackService:LeadtrackService,private contactService:ContactService, public loaderService: LoaderService)
-  {
-    this._objLeadFollowUp=new LeadFollowUp;
-    this._objPageModel=new PaginationModel
-  }
+  selectedLeadId: number | null = null;
+  selectedTrackNumber: string | null = null;
+  showLeadFormModel = false;
+
+  _objPageModel = new PaginationModel();
+  _objLeadFollowUp = new LeadFollowUp();
+
+  constructor(
+    private _objLeadTrackService: LeadtrackService,
+    private contactService: ContactService,
+    public loaderService: LoaderService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this._objLeadTrackService.leadTrackSubjectObservable.subscribe(response=>{
+    this._objLeadTrackService.leadTrackSubjectObservable.subscribe(() => {
       this.GetLeadOntrackList();
-    })
+    });
     this.GetLeadOntrackList();
   }
 
-  callStatus(Id,TrackNumber) {
-    let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    leadFormModel.style.display = "flex";
+  onLazyLoad(event: any): void {
+    this.PageNumber = Math.floor(event.first / event.rows);
+    this._objPageModel.PageNumber = this.PageNumber;
+    this.GetLeadOntrackList();
+  }
+
+  GetLeadOntrackList(): void {
+    this.loadSpin = 1;
+    this._objPageModel.PageNumber = this.PageNumber;
+
+    this._objLeadTrackService.GetLeadOntrack(this._objPageModel).subscribe({
+      next: (response: any[]) => {
+        this.LeadOnTrackList = response || [];
+        this.loadSpin = 0;
+
+        if (this.LeadOnTrackList.length === 0) {
+          this.TotalRecordNo = 0;
+          this.messageService.add({
+            severity: 'info',
+            summary: 'No Data',
+            detail: 'No records found...!'
+          });
+          return;
+        }
+
+        this.TotalRecordNo = this.LeadOnTrackList[0].TotalRows;
+        this.ManualPageInput = this.PageNumber + 1;
+        this.PageFooterCalculation();
+        this.EnablePageButton();
+      },
+      error: () => {
+        this.loadSpin = 0;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch lead list.'
+        });
+      }
+    });
+  }
+
+  PageFooterCalculation(): void {
+    this.StartNo = this.PageNumber * 10 + 1;
+    this.EndNo = Math.min(this.StartNo + 9, this.TotalRecordNo);
+    this.TotalNumberOfPages = Math.floor(this.TotalRecordNo / 10);
+    if (this.TotalRecordNo % 10 > 0) {
+      this.TotalNumberOfPages++;
+    }
+  }
+
+  EnablePageButton(): void {
+    this.IsbtnPreviousEnable = this.PageNumber > 0;
+    this.IsbtnNextEnable = this.PageNumber + 1 < this.TotalNumberOfPages;
+  }
+
+  GoToPreviousPage(): void {
+    if (this.PageNumber > 0) {
+      this.PageNumber--;
+      this.GetLeadOntrackList();
+    }
+    this.EnablePageButton();
+  }
+
+  GoToNextPage(): void {
+    if (this.PageNumber + 1 < this.TotalNumberOfPages) {
+      this.PageNumber++;
+      this.GetLeadOntrackList();
+    }
+    this.EnablePageButton();
+  }
+
+  callStatus(Id: number, TrackNumber: string): void {
+    this.selectedLeadId = Id;
+    this.selectedTrackNumber = TrackNumber;
+    this.showLeadFormModel = true;
+
     this.contactService.SendLeadId(Id);
     this.contactService.SendLeadTrack(TrackNumber);
   }
 
-  GetLeadOntrackList(){
-    this.loadSpin = 1;
-          this._objPageModel.PageNumber=this.PageNumber;
-          this._objLeadTrackService.GetLeadOntrack(this._objPageModel).subscribe(
-            response => {
-              this.LeadOnTrackList=response;
-            //  console.log(response);
-              this.loadSpin = 0;
-              if(this.LeadOnTrackList.length==0){
-                alert("No records found...!");
-                this.PageNumber=0;
-                this.TotalRecordNo=0;
-                this.TotalNumberOfPages=0;
-                this.StartNo=0;
-                this.EndNo=0;
-                return;
-      }
-      this.TotalRecordNo=this.LeadOnTrackList[0].TotalRows;
-          this.ManualPageInput=this.PageNumber+1;
-          this.PageFooterCalculation();
-          this.EnablePageButton();
-            })
-   }
-    GoToNextPage()
-    {
-      if(this.PageNumber<this.TotalNumberOfPages)
-      {
-        this.PageNumber=this.PageNumber+1;
-      }
-    this.GetLeadOntrackList();
-    this.EnablePageButton();
-    }
-    GoToPreviousPage()
-    {
-      if(this.PageNumber>0){
-        this.PageNumber=this.PageNumber-1;
-      }
-      else
-      {
-        this.IsbtnPreviousEnable=false;
-      }
-      this.GetLeadOntrackList();
-      this.EnablePageButton();
-    }
-    EnablePageButton()
-    {
-
-      if(this.PageNumber>0){
-        this.IsbtnPreviousEnable=true;
-      }
-      else{
-        this.IsbtnPreviousEnable=false;
-      }
-      if(this.PageNumber+1<this.TotalNumberOfPages||this.PageNumber==0){
-
-        this.IsbtnNextEnable=true;
-      }
-      else{
-        this.IsbtnNextEnable=false;
-      }
-    }
-    PageFooterCalculation()
-    {
-      this.StartNo=(this.PageNumber*10)+1;
-      this.EndNo=(this.PageNumber*10)+10;
-      this.TotalNumberOfPages=Math.floor(this.LeadOnTrackList[0].TotalRows/10);
-      if((this.LeadOnTrackList[0].TotalRows%10)>0)
-      {
-        this.TotalNumberOfPages=this.TotalNumberOfPages+1;
-      }
-
-
-}
+  closeLeadFormModel(): void {
+    this.showLeadFormModel = false;
+  }
 }

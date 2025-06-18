@@ -24,6 +24,7 @@ import { LayoutService } from '../service/layout.service';
     </div> `
 })
 export class AppLayout {
+
     overlayMenuOpenSubscription: Subscription;
 
     menuOutsideClickListener: any;

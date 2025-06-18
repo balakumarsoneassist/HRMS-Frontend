@@ -1,40 +1,35 @@
 <!-- model following status - start -->
-<div class="myModel leadInputModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-    <div class="modelContent bg-color-white boxShadow rounded">
-        <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-            <div>Follow Up Details</div>
-            <div (click)="closeModel()">
-                <i class="fas fa-times cursor-pointer"></i>
-            </div>
-        </div>
+<div class="myModel leadInputModel position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 z-index-3 overflow-auto">
+  <div class="modelContent bg-color-white boxShadow rounded">
 
-        <!-- lead follow up form - start -->
-        <app-lead-follow-up-form></app-lead-follow-up-form>
-        <!-- lead follow up form - end -->
+    <!-- Header -->
+    <!-- <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
+      <div>Follow Up Details</div>
+      <div (click)="closeModel()">
+        <i class="fas fa-times cursor-pointer"></i>
+      </div>
+    </div> -->
 
-        <div class="modelHeader font-w-600 align-items-center border-b bg-color-ContHead">
-            <button class="tabBtn callHistoryBtn font-w-600 px-sm-5 px-4 py-2 bg-color-ContHead color-gray rounded active" (click)="contentTab($event, 'callHistory')">
-                <i class="fas fa-calendar-check font-size-19"></i><br>
-                <span class="font-size-12 font-w-600">Call History</span>
-            </button>
+    <!-- Tab Section -->
+    <p-tabs [(value)]="activeTabIndex">
+      <p-tablist class="bg-color-ContHead d-flex justify-content-start px-3 py-2 border-bottom">
+        <p-tab [value]="0">Follow Up Form</p-tab>
+        <p-tab [value]="1">Call History</p-tab>
+        <p-tab [value]="2">Enter Lead Details</p-tab>
+      </p-tablist>
 
-            <button class="tabBtn leadDetFormBtn font-w-600 px-sm-5 px-4 py-2 bg-color-ContHead color-gray rounded" (click)="contentTab($event, 'leadDetailForm')">
-              <i class="fas fa-address-card font-size-19"></i><br>
-              <span class="font-size-12 font-w-600">Enter Lead Details</span>
-          </button>
-        </div>
-        <div class="leadInputContent overflowLeadForm p-3 font-w-600 bg-color-ContBody1 overflow-auto">
-            <div id="leadDetailForm" class="tabContentCont tabcontent bg-color-ContBody1 rounded">
-                <!-- lead detail form - start -->
-                <app-lead-detail-form [isSaveAndClose]=true></app-lead-detail-form>
-                <!-- lead detail form - end -->
-            </div>
-            <div id="callHistory" class="tabContentCont tabcontent bg-color-ContBody1 px-3 py-3 rounded defaultOpen">
-                <!-- call track history - start -->
-                <app-call-track-history></app-call-track-history>
-                <!-- call track history - end -->
-            </div>
-        </div>
-    </div>
+      <p-tabpanels class="leadInputContent bg-color-ContBody1 p-3 font-w-600 overflow-auto">
+        <p-tabpanel [value]="0">
+          <app-lead-follow-up-form></app-lead-follow-up-form>
+        </p-tabpanel>
+        <p-tabpanel [value]="1">
+          <app-call-track-history></app-call-track-history>
+        </p-tabpanel>
+        <p-tabpanel [value]="2">
+          <app-lead-detail-form [isSaveAndClose]="true"></app-lead-detail-form>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
 </div>
 <!-- model following status - end -->

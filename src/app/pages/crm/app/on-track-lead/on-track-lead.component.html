@@ -1,64 +1,121 @@
-<div class="float-container" *ngIf="loaderService.showLoader && loadSpin > 0">
-    <div class="float-child">
-         &nbsp;        
-    </div>
-    <div class="float-child1">
-        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader"> 
-        </div>
-    </div>
-</div>
-<div >
-    &nbsp;        
+<p-toast></p-toast>
+
+<div *ngIf="loaderService.showLoader && loadSpin > 0" class="flex justify-content-center mt-4">
+  <p-progressSpinner strokeWidth="4"></p-progressSpinner>
 </div>
 
-
-<div class="tableContainer rounded mBorder overflow-x-auto mn">
-    <table class="table font-w-600 color-initial mb-0">
-        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text"  class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
-        
-        <!-- <tr class="bg-color-ContHead">
-            <th class="color-gray min-w-200" >TrackNumber<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-              <th class="color-gray min-w-150" >Name<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-              <th class="color-gray min-w-150" >Mobile Number<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" onkeypress="return (event.charCode > 46 && event.charCode < 58)" /></th>
-              <th class="color-gray min-w-150" >Email<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-              <th class="color-gray min-w-150" >AppointmentDate<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-              <th class="color-gray min-w-100" >Location<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th> -->
-              <!-- <th class="color-gray min-w-250">Assigned To<br /><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" /></th> -->
-              <!-- <th class="color-gray min-w-100" >Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-              <th class="color-gray min-w-150" >Action</th>
-          </tr> -->
-        <tr class="bg-color-ContHead">
-            <th class="color-gray min-w-200 text-center" >Track Number<br /></th>
-              <th class="color-gray min-w-200 text-center" >Name<br /></th>
-              <th class="color-gray min-w-200 text-center" >Mobile Number<br /></th>
-              <th class="color-gray min-w-200 text-center" >Email Id<br /></th>
-              <th class="color-gray min-w-200 text-center" >Appointment Date<br /></th>
-              <th class="color-gray min-w-200 text-center" >Location<br /></th>
-              <!-- <th class="color-gray min-w-250">Assigned To<br /><input type="text" class="rounded px-2 py-1 color-initial border-header bg-color-input boxShadow" /></th> -->
-              <th class="color-gray min-w-200 text-center" >Status<br /></th>
-              <th class="color-gray min-w-200 text-center" >Action</th>
-          </tr>
-          <tr *ngFor="let objlead of LeadOnTrackList">
-             <td>{{objlead.TrackNumber}}</td>
-              <td>{{objlead.Name}}</td>
-              <td>{{objlead.MobileNumber}}</td>
-              <td>{{objlead.Email}}</td>
-              <td>{{objlead.AppointmentDate | date: 'dd/MM/yyyy HH:mm'}}</td>
-              <td>{{objlead.Location}}</td>
-              <td class="t-c"><span class="p-2 font-size-14 bg-color-yellow  rounded color-white-fix" data-lead-status="Doc Collection">{{objlead.Status|lowercase}}</span></td>
-              <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  [hidden]='objlead.Status=="bankcompleted"' (click)="callStatus(objlead.Id,objlead.TrackNumber)">Update</button></td>
-              <!--<td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  [hidden]='objlead.Status=="completed"' (click)="callStatus(objlead.Id,objlead.TrackNumber)">Update</button></td>-->
-          
-            </tr>
-    </table>
+<div class="mb-3 flex justify-content-end">
+  <input
+    type="text"
+    pInputText
+    placeholder="Search all..."
+    [(ngModel)]="globalFilter"
+    (input)="table.filterGlobal($event.target?.['value'], 'contains')"
+    class="w-full sm:w-25rem"
+  />
 </div>
+
+<p-table
+  #table
+  [value]="LeadOnTrackList"
+  [paginator]="true"
+  [rows]="10"
+  [totalRecords]="TotalRecordNo"
+  [rowsPerPageOptions]="[5, 10, 20]"
+  [resizableColumns]="true"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [responsiveLayout]="'scroll'"
+  [lazy]="true"
+  (onLazyLoad)="onLazyLoad($event)"
+  [loading]="loadSpin === 1"
+  [globalFilterFields]="['TrackNumber', 'Name', 'MobileNumber', 'Email', 'Location', 'Status']"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="TrackNumber">Track Number <p-sortIcon field="TrackNumber" /></th>
+      <th pSortableColumn="Name">Name <p-sortIcon field="Name" /></th>
+      <th pSortableColumn="MobileNumber">Mobile Number <p-sortIcon field="MobileNumber" /></th>
+      <th pSortableColumn="Email">Email Id <p-sortIcon field="Email" /></th>
+      <th pSortableColumn="AppointmentDate">Appointment Date <p-sortIcon field="AppointmentDate" /></th>
+      <th pSortableColumn="Location">Location <p-sortIcon field="Location" /></th>
+      <th pSortableColumn="Status">Status <p-sortIcon field="Status" /></th>
+      <th>Action</th>
+    </tr>
+    <tr>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'TrackNumber', 'contains')" /></th>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'Name', 'contains')" /></th>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'MobileNumber', 'contains')" /></th>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'Email', 'contains')" /></th>
+      <th></th>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'Location', 'contains')" /></th>
+      <th><input pInputText type="text" (input)="table.filter($event.target?.['value'], 'Status', 'contains')" /></th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <tr>
+      <td>{{ row.TrackNumber }}</td>
+      <td>{{ row.Name }}</td>
+      <td>{{ row.MobileNumber }}</td>
+      <td>{{ row.Email }}</td>
+      <td>{{ row.AppointmentDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ row.Location }}</td>
+      <td>
+        <span class="p-2 font-size-14 bg-color-yellow rounded color-white-fix">
+          {{ row.Status | lowercase }}
+        </span>
+      </td>
+      <td class="text-center">
+        <p-button
+          label="Update"
+          icon="pi pi-pencil"
+          size="small"
+          class="p-button-sm"
+          (onClick)="callStatus(row.Id, row.TrackNumber)"
+          *ngIf="row.Status !== 'bankcompleted'"
+        ></p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
 <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
-    <div class="paginationBtnContainer text-center">
-        <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
-        <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
-        <!-- <input type="text" [(ngModel)]="ManualPageInput" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"  onkeydown="ChangePageNumber(this.ManualPageInput)" /> -->
-        <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
-        <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
-    </div>
+  <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">
+    Showing {{ StartNo }} to {{ EndNo }} of {{ TotalRecordNo }} Records
+  </div>
+  <div class="paginationBtnContainer text-center">
+    <button
+      class="border-header mr-2 bg-color-input color-initial rounded"
+      [disabled]="!IsbtnPreviousEnable"
+      (click)="GoToPreviousPage()"
+    >
+      <i class="pi pi-chevron-left"></i>
+    </button>
+    <span class="mr-2 color-initial font-w-600 font-size-14">{{ ManualPageInput }} of {{ TotalNumberOfPages }} pages</span>
+    <button
+      class="border-header bg-color-input color-initial rounded"
+      [disabled]="!IsbtnNextEnable"
+      (click)="GoToNextPage()"
+    >
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
 </div>
+
+<!-- Modal Dialog -->
+<p-dialog
+  [(visible)]="showLeadFormModel"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  header="Update Lead"
+  [style]="{ width: '50vw' }"
+  (onHide)="closeLeadFormModel()"
+>
+  <ng-container *ngIf="showLeadFormModel">
+    <app-lead-form-model
+    ></app-lead-form-model>
+  </ng-container>
+</p-dialog>

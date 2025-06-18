@@ -4,298 +4,217 @@ import { RouterModule, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { LoginService } from '../../pages/donar-app/services/login.service';
+import { EmployeeService } from '../../pages/crm/app/services/employee/employee.service';
 
 @Component({
-    selector: 'app-menu',
-    standalone: true,
-    imports: [CommonModule, AppMenuitem, RouterModule],
-    template: `
-        <ul class="layout-menu">
-            <ng-container *ngFor="let item of model; let i = index">
-                <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
-                <li *ngIf="item.separator" class="menu-separator"></li>
-            </ng-container>
-        </ul>
-    `
+  selector: 'app-menu',
+  standalone: true,
+  imports: [CommonModule, AppMenuitem, RouterModule],
+  template: `
+    <ul class="layout-menu">
+      <ng-container *ngFor="let item of model; let i = index">
+        <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
+        <li *ngIf="item.separator" class="menu-separator"></li>
+      </ng-container>
+    </ul>
+  `
 })
 export class AppMenu implements OnInit {
-    model: MenuItem[] = [];
-    adminMenu: MenuItem[] = []; // renamed from this.model
-    userMenu: MenuItem[] = [];  // renamed from this.model2
-    model2 = [
-        {
-            label: 'Home',
-            items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
-        },
-        {
-            label: 'UI Components',
-            items: [
-                { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
-                { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
-                { label: 'Button', icon: 'pi pi-fw pi-mobile', class: 'rotated-icon', routerLink: ['/uikit/button'] },
-                { label: 'Table', icon: 'pi pi-fw pi-table', routerLink: ['/uikit/table'] },
-                { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/uikit/list'] },
-                { label: 'Tree', icon: 'pi pi-fw pi-share-alt', routerLink: ['/uikit/tree'] },
-                { label: 'Panel', icon: 'pi pi-fw pi-tablet', routerLink: ['/uikit/panel'] },
-                { label: 'Overlay', icon: 'pi pi-fw pi-clone', routerLink: ['/uikit/overlay'] },
-                { label: 'Media', icon: 'pi pi-fw pi-image', routerLink: ['/uikit/media'] },
-                { label: 'Menu', icon: 'pi pi-fw pi-bars', routerLink: ['/uikit/menu'] },
-                { label: 'Message', icon: 'pi pi-fw pi-comment', routerLink: ['/uikit/message'] },
-                { label: 'File', icon: 'pi pi-fw pi-file', routerLink: ['/uikit/file'] },
-                { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] },
-                { label: 'Timeline', icon: 'pi pi-fw pi-calendar', routerLink: ['/uikit/timeline'] },
-                { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] }
-            ]
-        },
-        {
-            label: 'Pages',
-            icon: 'pi pi-fw pi-briefcase',
-            routerLink: ['/pages'],
-            items: [
-                {
-                    label: 'Landing',
-                    icon: 'pi pi-fw pi-globe',
-                    routerLink: ['/landing']
-                },
-                {
-                    label: 'Auth',
-                    icon: 'pi pi-fw pi-user',
-                    items: [
-                        {
-                            label: 'Login',
-                            icon: 'pi pi-fw pi-sign-in',
-                            routerLink: ['/auth/login']
-                        },
-                        {
-                            label: 'Error',
-                            icon: 'pi pi-fw pi-times-circle',
-                            routerLink: ['/auth/error']
-                        },
-                        {
-                            label: 'Access Denied',
-                            icon: 'pi pi-fw pi-lock',
-                            routerLink: ['/auth/access']
-                        }
-                    ]
-                },
-                {
-                    label: 'Crud',
-                    icon: 'pi pi-fw pi-pencil',
-                    routerLink: ['/pages/crud']
-                },
-                {
-                    label: 'Not Found',
-                    icon: 'pi pi-fw pi-exclamation-circle',
-                    routerLink: ['/pages/notfound']
-                },
-                {
-                    label: 'Empty',
-                    icon: 'pi pi-fw pi-circle-off',
-                    routerLink: ['/pages/empty']
-                }
-            ]
-        },
-        {
-            label: 'Hierarchy',
-            items: [
-                {
-                    label: 'Submenu 1',
-                    icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        {
-                            label: 'Submenu 1.1',
-                            icon: 'pi pi-fw pi-bookmark',
-                            items: [
-                                { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                                { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                            ]
-                        },
-                        {
-                            label: 'Submenu 1.2',
-                            icon: 'pi pi-fw pi-bookmark',
-                            items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                        }
-                    ]
-                },
-                {
-                    label: 'Submenu 2',
-                    icon: 'pi pi-fw pi-bookmark',
-                    items: [
-                        {
-                            label: 'Submenu 2.1',
-                            icon: 'pi pi-fw pi-bookmark',
-                            items: [
-                                { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-                            ]
-                        },
-                        {
-                            label: 'Submenu 2.2',
-                            icon: 'pi pi-fw pi-bookmark',
-                            items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            label: 'Get Started',
-            items: [
-                {
-                    label: 'Documentation',
-                    icon: 'pi pi-fw pi-book',
-                    routerLink: ['/documentation']
-                },
-                {
-                    label: 'View Source',
-                    icon: 'pi pi-fw pi-github',
-                    url: 'https://github.com/primefaces/sakai-ng',
-                    target: '_blank'
-                }
-            ]
-        }
-    ];
-    constructor(private router: Router, private loginService: LoginService) {}
+  model: MenuItem[] = [];
+  objEmployeeModel: any;
+  adminRights: boolean = false;
+  contactrights: boolean = false;
+  forcontact: boolean = true;
 
-    ngOnInit() {
-        const currentUrl = this.router.url;
+  constructor(
+    private router: Router,
+    private loginService: LoginService,
+    private _objEmplyeeService: EmployeeService
+  ) {}
 
-        if (currentUrl.includes('register')) {
-            this.model = [];
-            return;
-        }
+  ngOnInit() {
+    this._objEmplyeeService.GetEmployeeRights().subscribe({
+      next: (response) => {
+        this.objEmployeeModel = response[0];
+        console.log(this.objEmployeeModel);
+        this.checkSplRights();
+        this.buildMenu(); // Build menu after getting rights
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Internal Server Error');
+      }
+    });
+  }
 
-        // Fill admin menu
-        this.adminMenu =  [
-            {
-                label: 'Dashboard',
-                items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
-                ]
-            },
-            {
-                label: 'Members Overview',
-                items: [
-                    { label: 'Active Members', icon: 'pi pi-fw pi-users', routerLink: ['/app/members/active'] },
-                    { label: 'In Active Members', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/members/inactive'] },
-                    { label: 'Total Members', icon: 'pi pi-fw pi-user', routerLink: ['/app/members/total'] },
-                    { label: 'New Members', icon: 'pi pi-fw pi-user-plus', routerLink: ['/app/members/new'] },
-                    { label: 'Block Members', icon: 'pi pi-fw pi-ban', routerLink: ['/app/members/block'] }
-                ]
-            },
-            {
-                label: 'Donation Overview',
-                items: [
-                    { label: 'Total Donations', icon: 'pi pi-fw pi-wallet', routerLink: ['/app/donations/total'] },
-                    { label: 'Active Members', icon: 'pi pi-fw pi-users', routerLink: ['/app/donations/active-members'] },
-                    { label: 'Visitor Donation', icon: 'pi pi-fw pi-user', routerLink: ['/app/donations/visitors'] },
-                    { label: 'Cash Donation', icon: 'pi pi-fw pi-dollar', routerLink: ['/app/donations/cash'] },
-                    { label: 'Blocked User', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/donations/blocked'] },
-                    { label: 'Cash-Donate', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/donations/new-cash-donation'] }
+  checkSplRights() {
+    this.adminRights = this.objEmployeeModel.IsAdminRights;
+    this.contactrights = this.objEmployeeModel.IsContactRights;
 
-                ]
-            },
-            {
-                label: 'Receipt Management',
-                items: [
-                    { label: 'Active Members', icon: 'pi pi-fw pi-users', routerLink: ['/app/receipts/active-members'] },
-                    { label: 'Visitor Donation', icon: 'pi pi-fw pi-user', routerLink: ['/app/receipts/visitors'] },
-                    { label: 'Blocked User', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/receipts/blocked'] }
-                ]
-            },
-            {
-                label: 'Certificate Management',
-                items: [
-                    { label: 'Active Members', icon: 'pi pi-fw pi-users', routerLink: ['/app/certificates/active-members'] },
-                    { label: 'Visitor Donation', icon: 'pi pi-fw pi-user', routerLink: ['/app/certificates/visitors'] },
-                    { label: 'Blocked User', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/certificates/blocked'] }
-                ]
-            },
-            {
-                label: 'Analytics & Charts',
-                icon: 'pi pi-fw pi-chart-line',
-                items: [
-                    { label: 'Analytics & Charts', icon: 'pi pi-fw pi-chart-line', routerLink: ['/app/analytics'] },
-                ],
+    localStorage.setItem('usertype', this.adminRights ? 'admin' : 'employee');
 
+    this.forcontact = !(this.contactrights && !this.adminRights);
+    console.log('Contact Rights:', this.contactrights);
+  }
 
-            },
-            {
-                label: 'Report Download',
-                items: [
-                    { label: 'Active Members', icon: 'pi pi-fw pi-users', routerLink: ['/app/reports/active-members'] },
-                    { label: 'Visitor Donation', icon: 'pi pi-fw pi-user', routerLink: ['/app/reports/visitors'] },
-                    { label: 'Blocked User', icon: 'pi pi-fw pi-user-minus', routerLink: ['/app/reports/blocked'] },
-                    { label: 'Cash Donation', icon: 'pi pi-fw pi-dollar', routerLink: ['/app/reports/cash'] }
-                ]
-            },
-            {
-                label: 'All User Data',
-                icon: 'pi pi-fw pi-database',
-                routerLink: ['/app/users/data']
-            },
-            {
-                label: 'Update Software',
-                icon: 'pi pi-fw pi-refresh',
-                routerLink: ['/update']
-            },
-            {
-                label: 'Settings',
-                icon: 'pi pi-fw pi-cog',
-                routerLink: ['/settings']
-            }
-        ];
-        // Fill user menu
-        this.userMenu = [
-            {
-                label: 'Dashboard',
-                items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/app/userDashboard'] }
-                ]
-            },
-            {
-                label: 'Membership',
-                items: [
-                    { label: 'Apply For Membership', icon: 'pi pi-fw pi-user-plus', routerLink: ['/app/membershipstatus'] },
-                    { label: 'Membership Status', icon: 'pi pi-fw pi-info-circle', routerLink: ['/app/membershipstatus'] }
-                ]
-            },
-            {
-                label: 'Documents',
-                items: [
-                    { label: 'Generate ID Card', icon: 'pi pi-fw pi-id-card', routerLink: ['/app/generateIdCard'] },
-                    { label: 'Appointment Letter', icon: 'pi pi-fw pi-file', routerLink: ['/app/generateletter'] },
-                    { label: 'Our Certificate', icon: 'pi pi-fw pi-certificate', routerLink: ['/app/cert'] }
-                ]
-            },
-            {
-                label: 'Profile',
-                items: [
-                    { label: 'Update Profile', icon: 'pi pi-fw pi-user-edit', routerLink: ['/app/updateProfile'] },
-                    { label: 'Account', icon: 'pi pi-fw pi-user', routerLink: ['/app/account'] }
-                ]
-            },
-            {
-                label: 'Donations',
-                items: [
-                    { label: 'Donate Now', icon: 'pi pi-fw pi-credit-card', routerLink: ['/app/donateNow'] },
-                    { label: 'Receipt', icon: 'pi pi-fw pi-receipt', routerLink: ['/app/generatereciept'] }
-                ]
-            }
-        ];
+  buildMenu() {
+   this.model = [
+  {
+    label: 'Home',
+    items: [
+      {
+        label: 'Dashboard',
+        icon: 'pi pi-fw pi-home',
+        routerLink: ['/home']
+      }
+    ]
+  },
+  {
+    label: 'Revenue',
+    items: [
+      {
+        label: 'Product Master',
+        icon: 'pi pi-fw pi-box',
+        routerLink: ['/home/revenueprodlist'],
+        visible: this.objEmployeeModel?.IsAdminRights
+      },
+      {
+        label: 'Target',
+        icon: 'pi pi-fw pi-chart-line',
+        routerLink: ['/home/revenuetarget'],
+        visible: this.objEmployeeModel?.IsAdminRights
+      },
+      {
+        label: 'Revenue Achievement',
+        icon: 'pi pi-fw pi-star',
+        routerLink: ['/home/revenueachieve'],
+        visible: this.objEmployeeModel?.IsContactRights
+      }
+    ]
+  },
+  {
+    label: 'Contact',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'Add', icon: 'pi pi-fw pi-user-plus', routerLink: ['/home/addContactForm'] },
+      { label: 'Unassigned', icon: 'pi pi-fw pi-user-minus', routerLink: ['/home/unassignedContacts'] },
+      { label: 'List', icon: 'pi pi-fw pi-users', routerLink: ['/home/assignedContacts'] },
+      { label: 'ConnectorContact', icon: 'pi pi-fw pi-link', routerLink: ['/home/connectorcontactlist'] },
+      { label: 'Import', icon: 'pi pi-fw pi-upload', routerLink: ['/home/ImportContact'] }
+    ]
+  },
+  {
+    label: 'Lead',
+    visible: this.objEmployeeModel?.IsLeadRights,
+    items: [
+      { label: 'Add', icon: 'pi pi-fw pi-plus', routerLink: ['/home/leadForm'] },
+      { label: 'Unassigned', icon: 'pi pi-fw pi-user-minus', routerLink: ['/home/unAssignLeads'] },
+      { label: 'Icici Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/IciciLeadList'] },
+      { label: 'Bajaj Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/bajajlist'] },
+      { label: 'Lead Creators', icon: 'pi pi-fw pi-users', routerLink: ['/home/leadcreaterep'] }
+    ]
+  },
+  {
+    label: 'Employee',
+    visible: this.objEmployeeModel?.IsAdminRights,
+    items: [
+      { label: 'Add', icon: 'pi pi-fw pi-user-plus', routerLink: ['/home/employeeForm'] },
+      { label: 'List', icon: 'pi pi-fw pi-users', routerLink: ['/home/employeelist'] }
+    ]
+  },
+  {
+    label: 'Banking',
+    visible: this.objEmployeeModel?.IsAdminRights,
+    items: [
+      { label: 'Bank', icon: 'pi pi-fw pi-dollar', routerLink: ['/home/addbank'] },
+      { label: 'Branch', icon: 'pi pi-fw pi-sitemap', routerLink: ['/home/addbranch'] },
+      { label: 'Location', icon: 'pi pi-fw pi-map-marker', routerLink: ['/home/addlocation'] },
+      { label: 'State', icon: 'pi pi-fw pi-globe', routerLink: ['/home/addstate'] }
+    ]
+  },
+  {
+    label: 'Connector',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'Add', icon: 'pi pi-fw pi-user-plus', routerLink: ['/home/addConnectorCard'] },
+      { label: 'List', icon: 'pi pi-fw pi-users', routerLink: ['/home/ConnectorList'] }
+    ]
+  },
+  {
+    label: 'Payment',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'List', icon: 'pi pi-fw pi-credit-card', routerLink: ['/home/PaymentList'] }
+    ]
+  },
+  {
+    label: 'Reports',
+    visible: this.objEmployeeModel?.IsAdminRights,
+    items: [
+      { label: 'Daily Report', icon: 'pi pi-fw pi-calendar', routerLink: ['/home/dailyreport'] },
+      { label: 'Report Summary', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/home/reportsummary'] },
+      { label: 'Status Report Summary', icon: 'pi pi-fw pi-file', routerLink: ['/home/noverallstatusrep'] },
+    //   { label: 'Bulk SMS', icon: 'pi pi-fw pi-envelope', routerLink: ['/home/bulksms'] }
+    ]
+  },
+  {
+    label: 'QR Code',
+    visible: this.objEmployeeModel?.IsSplRights,
+    items: [
+      { label: 'QR Code Places', icon: 'pi pi-fw pi-map', routerLink: ['/home/qrcodeplaces'] },
+      { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/home/qrcodelist'] },
+      { label: 'QR Code Generation', icon: 'pi pi-fw pi-qrcode', routerLink: ['/home/qrcodegeneration'] },
+      { label: 'QR Code Customers', icon: 'pi pi-fw pi-users', routerLink: ['/home/qrlist'] },
+      { label: 'QR Code Download', icon: 'pi pi-fw pi-download', routerLink: ['/home/qrdownload'] }
+    ]
+  },
+  {
+    label: 'Contact Report',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'Report Summary', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/home/reportsummarycontact'] },
+      { label: 'Bulk SMS', icon: 'pi pi-fw pi-envelope', routerLink: ['/home/bulksms'] }
+    ]
+  },
+  {
+    label: 'QR Code (Contact)',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'QR Code Customers', icon: 'pi pi-fw pi-users', routerLink: ['/home/qrlist'] },
+      { label: 'QR Code Download', icon: 'pi pi-fw pi-download', routerLink: ['/home/qrdownload'] }
+    ]
+  },
+  {
+    label: 'Customers',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/home/custlist'] },
+      { label: 'My Customers', icon: 'pi pi-fw pi-user', routerLink: ['/home/mycustomers'] },
+      { label: 'Service Call Frequency', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/home/custservicecall'] },
+      { label: 'Customer Category', icon: 'pi pi-fw pi-tags', routerLink: ['/home/custrating'] },
+      { label: 'Unique Customers', icon: 'pi pi-fw pi-user-edit', routerLink: ['/home/unicustomers'] },
+      { label: 'Multiple Loans Customers', icon: 'pi pi-fw pi-clone', routerLink: ['/home/multiloancustomers'] }
+    ]
+  },
+  {
+    label: 'Reassign',
+    visible: this.objEmployeeModel?.IsReassignRights,
+    items: [
+      { label: 'Reject Reassign', icon: 'pi pi-fw pi-ban', routerLink: ['/home/reassignreject'] },
+      { label: 'Other Reassign', icon: 'pi pi-fw pi-refresh', routerLink: ['/home/reassignother'] }
+    ]
+  },
+  {
+    label: 'Sales Visit',
+    visible: this.objEmployeeModel?.IsContactRights,
+    items: [
+      { label: 'Add Customer', icon: 'pi pi-fw pi-user-plus', routerLink: ['/home/addcustomer'] },
+      { label: 'Customer Followup', icon: 'pi pi-fw pi-comments', routerLink: ['/home/svfollowup'] },
+      { label: 'My Customers', icon: 'pi pi-fw pi-users', routerLink: ['/home/svcmycust'], visible: !this.objEmployeeModel?.IsAdminRights },
+      { label: 'Report', icon: 'pi pi-fw pi-chart-line', routerLink: ['/home/svcoverall'], visible: this.objEmployeeModel?.IsAdminRights }
+    ]
+  }
+];
 
-
-        // Set the menu based on role
-        const role = this.loginService.getUserRole();
-
-        if (role === 'admin') {
-            this.model = this.adminMenu;
-        } else if (role === 'user') {
-            this.model = this.userMenu;
-        } else {
-            // fallback if needed
-            this.model = [];
-        }
-    }
+  }
 }

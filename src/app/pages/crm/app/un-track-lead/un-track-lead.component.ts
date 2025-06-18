@@ -1,128 +1,153 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
 import { ContactService } from '../services/contact/contact.service';
+import { LoaderService } from '../services/loader/loader.service';
 import { PaginationModel } from '../model/Contact/ContactModel';
-import { LoaderService } from "../services/loader/loader.service";
-
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { LeadFollowUp } from '../model/leadFollowUp/lead-follow-up';
 
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { LeadFormModelComponent } from "../lead-form-model/lead-form-model.component";
+import { DialogModule } from 'primeng/dialog';
+
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule],
   selector: 'app-un-track-lead',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    ProgressSpinnerModule,
+    InputTextModule,
+    ToastModule,
+    LeadFormModelComponent,
+    DialogModule
+],
+  providers: [MessageService],
   templateUrl: './un-track-lead.component.html',
   styleUrls: ['./un-track-lead.component.css']
 })
 export class UnTrackLeadComponent implements OnInit {
-  LeadUnTrackList:any;
-  ManualPageInput:any;
-  PageNumber:number=0;
-  TotalNumberOfPages=1;
-  TotalRecordNo:Number=0;
-  IsbtnPreviousEnable:boolean = true;
-  IsbtnNextEnable:boolean = true;
-  StartNo!:number;
-  EndNo!:number;
-  _objPageModel:PaginationModel;
+  LeadUnTrackList: any[] = [];
+  PageNumber = 0;
+  TotalNumberOfPages = 1;
+  TotalRecordNo = 0;
+  ManualPageInput = 1;
+  StartNo = 0;
+  EndNo = 0;
+  loadSpin = 0;
 
+  IsbtnPreviousEnable = true;
+  IsbtnNextEnable = true;
+  globalFilter: string = '';
 
-  LeadList:any;
-  leadStatus = "Santioned";
-  _objLeadFollowUp:LeadFollowUp;
-  leadService: any;
-  //objLeadUnTrackList: any;
-  loadSpin:number = 0;
+  _objPageModel = new PaginationModel();
+  _objLeadFollowUp = new LeadFollowUp();
+    showLeadFormModel: boolean = false;
 
-  constructor(private _objLeadTrackService:LeadtrackService,private contactService:ContactService, public loaderService: LoaderService)
-  {
-    this._objLeadFollowUp=new LeadFollowUp;
-    this._objPageModel=new PaginationModel
-  }
+  constructor(
+    private _objLeadTrackService: LeadtrackService,
+    private contactService: ContactService,
+    public loaderService: LoaderService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this._objLeadTrackService.leadTrackSubjectObservable.subscribe(response=>{
+    this._objLeadTrackService.leadTrackSubjectObservable.subscribe(() => {
       this.GetUntrackLeadList();
-    })
+    });
     this.GetUntrackLeadList();
   }
-  GetUntrackLeadList(){
+
+  onLazyLoad(event: any): void {
+    this.PageNumber = Math.floor(event.first / event.rows);
+    this._objPageModel.PageNumber = this.PageNumber;
+    this.GetUntrackLeadList();
+  }
+
+  GetUntrackLeadList(): void {
     this.loadSpin = 1;
-    this._objPageModel.PageNumber=this.PageNumber;
-    this._objLeadTrackService.GetLeadUnTrack(this._objPageModel).subscribe(
-      response => {
-        this.LeadUnTrackList=response;
+    this._objPageModel.PageNumber = this.PageNumber;
+
+    this._objLeadTrackService.GetLeadUnTrack(this._objPageModel).subscribe({
+      next: (response: any[]) => {
+        this.LeadUnTrackList = response || [];
         this.loadSpin = 0;
-     //   console.log(response);
-        if(this.LeadUnTrackList.length==0){
-          alert("No records found...!");
-          this.PageNumber=0;
-          this.TotalRecordNo=0;
-          this.TotalNumberOfPages=0;
-          this.StartNo=0;
-          this.EndNo=0;
+
+        if (this.LeadUnTrackList.length === 0) {
+          this.TotalRecordNo = 0;
+          this.messageService.add({
+            severity: 'info',
+            summary: 'No Data',
+            detail: 'No records found...!'
+          });
           return;
-}
-this.TotalRecordNo=this.LeadUnTrackList[0].TotalRows;
-    this.ManualPageInput=this.PageNumber+1;
-    this.PageFooterCalculation();
+        }
+
+        this.TotalRecordNo = this.LeadUnTrackList[0].TotalRows;
+        this.ManualPageInput = this.PageNumber + 1;
+        this.PageFooterCalculation();
+        this.EnablePageButton();
+      },
+      error: () => {
+        this.loadSpin = 0;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch lead list.'
+        });
+      }
+    });
+  }
+
+  callStatus(Id: number, TrackNumber: string): void {
+
+    const leadFormModel = document.querySelector('.leadInputModel') as HTMLElement;
+    if (leadFormModel) leadFormModel.style.display = 'flex';
+    this.contactService.SendLeadId(Id);
+    this.contactService.SendLeadTrack(TrackNumber);
+    this.showLeadFormModel = true;
+
+  }
+
+  GoToNextPage(): void {
+    if (this.PageNumber + 1 < this.TotalNumberOfPages) {
+      this.PageNumber++;
+      this.GetUntrackLeadList();
+    }
     this.EnablePageButton();
-      })
-}
-callStatus(Id,TrackNumber) {
-  let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-  leadFormModel.style.display = "flex";
-  this.contactService.SendLeadId(Id);
-  this.contactService.SendLeadTrack(TrackNumber);
-}
-GoToNextPage()
-{
-  if(this.PageNumber<this.TotalNumberOfPages)
-  {
-    this.PageNumber=this.PageNumber+1;
   }
-this.GetUntrackLeadList();
-this.EnablePageButton();
-}
-GoToPreviousPage()
-{
-  if(this.PageNumber>0){
-    this.PageNumber=this.PageNumber-1;
-  }
-  else
-  {
-    this.IsbtnPreviousEnable=false;
-  }
-  this.GetUntrackLeadList();
-  this.EnablePageButton();
-}
-EnablePageButton()
-{
 
-  if(this.PageNumber>0){
-    this.IsbtnPreviousEnable=true;
+  GoToPreviousPage(): void {
+    if (this.PageNumber > 0) {
+      this.PageNumber--;
+      this.GetUntrackLeadList();
+    }
+    this.EnablePageButton();
   }
-  else{
-    this.IsbtnPreviousEnable=false;
-  }
-  if(this.PageNumber+1<this.TotalNumberOfPages||this.PageNumber==0){
 
-    this.IsbtnNextEnable=true;
+  EnablePageButton(): void {
+    this.IsbtnPreviousEnable = this.PageNumber > 0;
+    this.IsbtnNextEnable = this.PageNumber + 1 < this.TotalNumberOfPages;
   }
-  else{
-    this.IsbtnNextEnable=false;
-  }
-}
-PageFooterCalculation()
-{
-  this.StartNo=(this.PageNumber*10)+1;
-  this.EndNo=(this.PageNumber*10)+10;
-  this.TotalNumberOfPages=Math.floor(this.LeadUnTrackList[0].TotalRows/10);
-  if((this.LeadUnTrackList[0].TotalRows%10)>0)
-  {
-    this.TotalNumberOfPages=this.TotalNumberOfPages+1;
-  }
-}
 
+  PageFooterCalculation(): void {
+    this.StartNo = this.PageNumber * 10 + 1;
+    this.EndNo = Math.min(this.StartNo + 9, this.TotalRecordNo);
+    this.TotalNumberOfPages = Math.floor(this.TotalRecordNo / 10);
+    if (this.TotalRecordNo % 10 > 0) {
+      this.TotalNumberOfPages++;
+    }
+  }
+
+    closeLeadFormModel(): void {
+    this.showLeadFormModel = false;
+  }
 }
