@@ -40,7 +40,7 @@ export class ContactModel {
 }
 
 export class PaginationModel {
-    PageRange: number = 10;
+    PageRange: number = 1;
     PageNumber: number = 1;
     SearchText: string = '';
     FromDate: Date = new Date();

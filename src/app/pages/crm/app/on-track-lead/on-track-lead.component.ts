@@ -70,7 +70,10 @@ export class OnTrackLeadComponent implements OnInit {
   }
 
   onLazyLoad(event: any): void {
+
+
     this.PageNumber = Math.floor(event.first / event.rows);
+    console.log(this.PageNumber);
     this._objPageModel.PageNumber = this.PageNumber;
     this.GetLeadOntrackList();
   }
@@ -78,6 +81,7 @@ export class OnTrackLeadComponent implements OnInit {
   GetLeadOntrackList(): void {
     this.loadSpin = 1;
     this._objPageModel.PageNumber = this.PageNumber;
+console.log( this._objPageModel);
 
     this._objLeadTrackService.GetLeadOntrack(this._objPageModel).subscribe({
       next: (response: any[]) => {

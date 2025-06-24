@@ -8,7 +8,8 @@ import { UserDetailsService } from './app/pages/donar-app/services/user-details.
     selector: 'app-root',
     standalone: true,
     imports: [RouterModule],
-    template: `<router-outlet></router-outlet>`
+    templateUrl: './app.component.html',
+
 })
 export class AppComponent {
 
@@ -24,5 +25,20 @@ ngOnInit() {
             this.userStore.loadUser(payload.username, token);
         }
     }
+}
+
+funName(){
+    console.log("hello");
+    let button : any = document.getElementById('button2');
+    console.log(button?.style.color);
+
+if (button?.style.color == 'red') {
+  button.style.color = 'brown';
+}
+else{
+  button.style.color = 'red';
+
+}
+
 }
 }

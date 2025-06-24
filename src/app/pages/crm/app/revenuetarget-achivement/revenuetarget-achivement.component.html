@@ -1,170 +1,128 @@
-<div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
-    <div>Revenue Achievement </div>
+<p-toast></p-toast>
+
+<div class="card p-4 shadow-3 border-round-xl">
+  <h4 class="mb-4 text-green-600 font-bold">Revenue Achievement</h4>
+
+  <form [formGroup]="form" class="formgrid grid gap-4 mb-4">
+    <!-- Month Dropdown -->
+    <div class="field col-12 md:col-3">
+      <label class="font-medium text-sm mb-2 block">Month</label>
+      <p-dropdown
+        [options]="monthOptions"
+        optionLabel="label"
+        formControlName="month"
+        (onChange)="changeMonth($event)"
+        placeholder="Select Month"
+        class="w-full">
+      </p-dropdown>
+    </div>
+
+    <!-- Year Dropdown -->
+    <div class="field col-12 md:col-3">
+      <label class="font-medium text-sm mb-2 block">Year</label>
+      <p-dropdown
+        [options]="yearOptions"
+        optionLabel="label"
+        formControlName="year"
+        (onChange)="changeYear($event)"
+        placeholder="Select Year"
+        class="w-full">
+      </p-dropdown>
+    </div>
+
+    <!-- Financial Year -->
+    <div class="field col-12 md:col-3">
+      <label class="font-medium text-sm mb-2 block">Financial Year</label>
+      <input pInput [disabled]="true" formControlName="fyear" class="w-full"/>
+    </div>
+
+    <!-- Get Data Button -->
+    <div class="field col-12 md:col-3 flex align-items-end">
+      <button
+        pButton
+        type="button"
+        label="Get Data"
+        class="p-button-success w-full"
+        (click)="Getdata()"
+        [disabled]="loaderService.showLoader">
+      </button>
+    </div>
+  </form>
+
+  <!-- Loader -->
+  <div class="flex justify-content-center mb-3" *ngIf="loaderService.showLoader && loadSpin > 0">
+    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+  </div>
+
+  <!-- Revenue Table Section -->
+  <div *ngFor="let TList of AchieveList; let i = index" class="mb-5 border-round surface-section p-3 shadow-1">
+    <div class="font-bold mb-3 text-lg text-primary">#{{ i + 1 }} - {{ TList.Name }}</div>
+
+    <p-table [value]="[TList]" class="p-datatable-sm" >
+      <ng-template pTemplate="body" let-row>
+        <tr class="bg-color-ContHead text-white">
+          <td colspan="10">
+            <div class="flex justify-content-between align-items-center">
+              <span><strong>Employee Name:</strong> {{ row.Name }}</span>
+              <button
+                pButton
+                icon="pi pi-search"
+                label="Get Details"
+                class="p-button-rounded p-button-info p-button-sm"
+                (click)="Getdetails(row.LeadFollowedBy, row.Name)">
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Header Row -->
+        <tr class="bg-primary text-white text-center">
+          <td colspan="6">Revenue</td>
+          <td colspan="1"></td>
+          <td colspan="3">File Login</td>
+        </tr>
+
+        <!-- Revenue & FileLogin Metrics -->
+        <tr class="text-center">
+          <td class="font-bold">#</td>
+          <td>Total Nos</td>
+          <td>Target</td>
+          <td>Achievement</td>
+          <td>%</td>
+          <td>Shortfall</td>
+          <td></td>
+          <td>Target Count</td>
+          <td>Achievement</td>
+        </tr>
+
+        <!-- Yearly -->
+        <tr class="text-center">
+          <td>{{ rfyr }}</td>
+          <td>{{ row.RNOS }}</td>
+          <td>{{ row.REVTARGET }}</td>
+          <td>{{ row.REVAMT }}</td>
+          <td>{{ (row.REVAMT / row.REVTARGET) * 100 | number : '1.0-2' }}</td>
+          <td>{{ (row.REVTARGET - row.REVAMT) < 0 ? 0 : (row.REVTARGET - row.REVAMT) }}</td>
+          <td></td>
+          <td>{{ row.FLTARGET }}</td>
+          <td>{{ row.FNOS }}</td>
+        </tr>
+
+        <!-- Monthly -->
+        <tr class="text-center">
+          <td>{{ rmon }}</td>
+          <td>{{ row.mRNOS }}</td>
+          <td>{{ row.mREVTARGET }}</td>
+          <td>{{ row.mREVAMT }}</td>
+          <td>{{ row.fltarget }}</td>
+          <td>{{ row.mREVTARGET - row.mREVAMT }}</td>
+          <td></td>
+          <td>{{ row.mFLTARGET }}</td>
+          <td>{{ row.mRNOS }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
 
-<table class="table font-w-600 color-initial mb-0">
-    <th  class="color-white-fix min-w-200 S-R">
-        <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Month</span><br/>
-        </label>
-      
-        <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="pmodel.month" #mon="ngModel" name="mon" (change)="changeMonth($event)" >
-            <OPTION VALUE='01'>Jan</OPTION>
-            <OPTION VALUE='02'>Feb</OPTION>
-            <OPTION VALUE='03'>Mar</OPTION>
-            <OPTION VALUE='04'>Apr</OPTION>
-            <OPTION VALUE='05'>May</OPTION>
-            <OPTION VALUE='06'>Jun</OPTION>
-            <OPTION VALUE='07'>Jul</OPTION>
-            <OPTION VALUE='08'>Aug</OPTION>
-            <OPTION VALUE='09'>Sep</OPTION>
-            <OPTION VALUE='10'>Oct</OPTION>
-            <OPTION VALUE='11'>Nov</OPTION>
-            <OPTION VALUE='12'>Dec</OPTION>
-            
-        </select>
-    </th>
-    <th  class="color-white-fix min-w-200 S-R">
-        <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Year</span><br/>
-        </label>
-        <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="pmodel.year" #year="ngModel" name="year" (change)="changeYear($event)" >
-            <OPTION VALUE='2020'>2020</OPTION>
-            <OPTION VALUE='2021'>2021</OPTION>
-            <OPTION VALUE='2022'>2022</OPTION>
-            <OPTION VALUE='2023'>2023</OPTION>
-            <OPTION VALUE='2024'>2024</OPTION>
-            <OPTION VALUE='2025'>2025</OPTION>
-            <OPTION VALUE='2026'>2026</OPTION>
-            <OPTION VALUE='2027'>2027</OPTION>
-            <OPTION VALUE='2028'>2028</OPTION>
-            <OPTION VALUE='2029'>2029</OPTION>
-            
-            
-        </select>
-    </th>
-    <th  class="color-white-fix min-w-200 S-R">
-        <label class="mb-1"><span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " > Financial Year</span><br/>
-        </label><br/>
-        <input type="text" disabled="true" [(ngModel)]="pmodel.fyear" #fyear="ngModel" name="fyear">
-    </th>
-    <th  class="color-gray min-w-200 S-R"><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="Getdata()" [disabled]="loaderService.showLoader">Get Data</button>
-    </th>
-    <th> 
-    <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader"></div></th>
-</table>
-
-<table *ngFor="let TList of AchieveList; let i=index">
-    <tr>
-        <table>
-            <tr><th colspan="10">&nbsp;</th></tr>
-            <tr><td rowspan="6" class="min-w-50 bg-color-gr1">{{i+1}}</td></tr>
-<tr class="bg-color-ContHead">   
-    
-    <th colspan="4" class=" min-w-150 text-center bg-color-gr1" >
-        Employee Name</th>
-    <th colspan="5" class="min-w-150 text-center bg-color-gr1" >
-        {{TList.Name}}</th>
-    <th colspan="2" class="color-gray min-w-150 text-left bg-color-gr1" >&nbsp;</th>
-    
-    
-</tr>
-
-
-<tr><th colspan="1" class=" min-w-150 text-center bg-color-t1">&nbsp;</th>
-    <th colspan="5" class=" min-w-150 text-center bg-color-t1">Revenue </th>
-    <th colspan="1" class=" min-w-100 text-center bg-color-t1">&nbsp;</th>
-    <th colspan="3" class=" min-w-150 text-center bg-color-t2">File Login </th>
-    <td rowspan="6" class="min-w-50 bg-color-gr1">
-        <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="Getdetails(TList.LeadFollowedBy,TList.Name)"  >Get Details</button>
-    </td>
-</tr>
-
-<tr >
-    <th>&nbsp;</th>
-    <th class=" min-w-150 text-center bg-color-pink">Total Nos</th>
-    <th class=" min-w-150 text-center bg-color-pink">Target</th>
-    <th class=" min-w-150 text-center bg-color-pink">Achievement</th>
-    <th class=" min-w-150 text-center bg-color-pink">%</th>
-    <th class=" min-w-150 text-center bg-color-pink">Shortfall</th>
-    <th class=" min-w-100 text-center bg-color-pink">&nbsp;</th>
-  <!-- <th class=" min-w-150 text-center bg-color-pink">Total Nos</th>--> 
-    
-    <th class=" min-w-150 text-center bg-color-pink">Target count</th>
-    <th class=" min-w-150 text-center bg-color-pink">Achievement</th>
-</tr>
-
-<tr>
-    <td class="bg-color-t3">
-        {{rfyr}}
-    </td>
-    <td class="text-center">
-        {{TList.RNOS}}
-    </td>
-  <td class="text-center">
-      {{TList.REVTARGET}}
-  </td>
-  <td class="text-center">
-      {{TList.REVAMT}}
-  </td>
-  <td class="text-center">
-      {{TList.REVAMT/TList.REVTARGET * 100}}
-  </td>
-  <div *ngIf="(TList.REVTARGET -TList.REVAMT) < 0 ;then Approved; else Other "> </div> 
-  <ng-template #Approved>
-  <td class="text-center">0</td>
-  </ng-template> 
-  
-  <ng-template #Other>
-  <td class="text-center">{{TList.REVTARGET -TList.REVAMT}}</td>
-  </ng-template>  
-
-  <td class="text-center">&nbsp;</td>
- 
-  <td class="text-center">
-    {{TList.FLTARGET}}
-  </td>
-   <td class="text-center">
-    {{TList.FNOS}}
-</td>
-
- <!--    <td class="text-center">
-        {{TList.FLAMT}}
-    </td>--> 
-
-</tr>
-
-<tr>
-    <td class="bg-color-t3">
-        {{rmon}}
-    </td>
-
-    <td class="text-center">
-        {{TList.mRNOS}}
-    </td>
-  <td class="text-center">
-      {{TList.mREVTARGET}}
-  </td>
-  <td class="text-center">
-      {{TList.mREVAMT}}
-  </td>
-  <td class="text-center">
-      {{TList.fltarget}}
-  </td>
-  <td class="text-center">
-    {{TList.mREVTARGET - TList.mREVAMT}}
-  </td>
-  <td class="text-center">&nbsp;</td>
-
-  <td class="text-center">
-    {{TList.mFLTARGET}}
-  </td>  
-  
-  <td class="text-center">
-    {{TList.mRNOS}}
-</td>
-
-</tr>
-</table>
-</tr>
-</table>
 <app-revenuetarget-details></app-revenuetarget-details>
-

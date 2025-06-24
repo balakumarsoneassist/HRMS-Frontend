@@ -2,77 +2,109 @@ import { Component, OnInit } from '@angular/core';
 import { RevenueProductModel } from '../model/revenue/revenuemodel';
 import { RevenueProductService } from '../services/revenueproduct/revenue.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
-    standalone: true,
-      imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  standalone: true,
   selector: 'app-revenueproduct-master',
   templateUrl: './revenueproduct-master.component.html',
-  styleUrls: ['./revenueproduct-master.component.css']
+  styleUrls: ['./revenueproduct-master.component.css'],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DropdownModule,
+    InputTextModule,
+    ButtonModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 export class RevenueproductMasterComponent implements OnInit {
-  model:RevenueProductModel = new RevenueProductModel();
-  constructor(private objRevenueSer:RevenueProductService) { }
+  model: RevenueProductModel = new RevenueProductModel();
+
+  productOptions = [
+    { label: 'Personal Loan', value: 'PL' },
+    { label: 'Business Loan', value: 'BL' },
+    { label: 'Home Loan', value: 'HL' },
+    { label: 'LAP', value: 'LAP' }
+  ];
+
+  categoryOptions = [
+    { label: 'Self / Website', value: 'Self' },
+    { label: 'Connector / QR', value: 'Connector' }
+  ];
+
+  constructor(
+    private objRevenueSer: RevenueProductService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.model.id = 0;
-    this.objRevenueSer.ProductidSendObservable.subscribe(response=>{
-      // console.log(response+'-------QWE')
-
-      // this.model.id = response;// ie from id, here response is id
-       //console.log(this.model);
-       this.FillRPmaster(response);
-
-     })
+    this.objRevenueSer.ProductidSendObservable.subscribe(response => {
+      this.FillRPmaster(response);
+    });
   }
 
-  Generatepname(){
-    var pname = '';
-    pname = this.model.product + this.model.category;
-    //alert(pname);
-    this.model.rpname = pname;
-    if(this.model.product == 'HL') {
-      this.model.pname = 'Home Loan';
-    }
-    else if(this.model.product == 'PL') {
-      this.model.pname = 'Personal Loan';
-    }
-    else if(this.model.product == 'BL') {
-      this.model.pname = 'Business Loan';
-    }
-    else if(this.model.product == 'LAP') {
-      this.model.pname = 'Loan Against Property';
+  Generatepname() {
+    this.model.rpname = this.model.product + this.model.category;
+
+    switch (this.model.product) {
+      case 'HL':
+        this.model.pname = 'Home Loan';
+        break;
+      case 'PL':
+        this.model.pname = 'Personal Loan';
+        break;
+      case 'BL':
+        this.model.pname = 'Business Loan';
+        break;
+      case 'LAP':
+        this.model.pname = 'Loan Against Property';
+        break;
     }
   }
+
   SaveProduct() {
     this.Generatepname();
     this.objRevenueSer.SaveRevenueProduct(this.model).subscribe(
       response => {
-        if(response == true) {
-
-         alert(" Saved Sucessfully");
-         window.location.reload();
-
-         }
-         else {
-          alert('Record already available.....!');
-         }
-
+        if (response === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Saved Successfully'
+          });
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: 'Record already exists.'
+          });
+        }
       },
-      error => alert('Cant Save master -- May record already available..')
-    )
-    }
-
-    FillRPmaster(res:any) {
-      var tmp = res.split('**');
-      this.model.id = tmp[0];
-      this.model.category = tmp[1];
-      this.model.product = tmp[2];
-      this.model.percentage = tmp[3];
-      this.model.rpname = tmp[4];
-      //console.log(this.model)
-    }
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot save master. Record might already exist.'
+        });
+      }
+    );
   }
 
-
+  FillRPmaster(res: any) {
+    const tmp = res.split('**');
+    this.model.id = tmp[0];
+    this.model.category = tmp[1];
+    this.model.product = tmp[2];
+    this.model.percentage = tmp[3];
+    this.model.rpname = tmp[4];
+  }
+}
