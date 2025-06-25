@@ -1,67 +1,50 @@
-<!-- unassigned contact details - start -->
-<section class="mb-3">
-  <div class="container-fluid">
-      <div class="row">
-          <div class="col-md-12">
-              <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b rounded">
-                  <div>Unassigned Contact List</div>
-              </div>
-              <div class="bg-color-ContBody1 px-3 py-3 rounded">
-                  <div class="tableContainer rounded mBorder overflow-x-auto">
-                      <table class="table font-w-600 color-initial mb-0">
-                        <th colspan="12" class="color-gray-search min-w-200 S-R">Search  : <input type="text" [(ngModel)]="SearchText" (change)="getUnassignedContactList()" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
-                          <tr class="bg-color-ContHead" >
-                             <!-- <th ng-repeat="(key, val) in myArray[0]">{{ key }}</th> -->
-                              <th class="color-gray-search min-w-200">Name<br /></th>
-                              <th class="color-gray-search min-w-100">Mobile Number<br /></th>
-                              <th class="color-gray-search min-w-200">Email Id<br /></th>
-                              <th class="color-gray-search min-w-150">Location<br /></th> 
-                               <th class="color-gray min-w-150">Assign To</th>
-                               <th class="color-gray min-w-150">Created Date</th>
-                               <th class="color-gray-search min-w-150">Remarks</th>
-                          </tr>
-                         
-                          <tr *ngFor="let objUnassignedContactList of model.UnassignedContactList">
-                            <td>
-                               {{objUnassignedContactList.FirstName}}
-                               <br [hidden]='objUnassignedContactList.ReferenceName == null||objUnassignedContactList.IsConnectorContact == true' />
-                               <span [hidden]='objUnassignedContactList.ReferenceName == null||objUnassignedContactList.IsConnectorContact == true' >(Refer By:{{objUnassignedContactList.ReferenceName}})</span>
-                            </td>
-                            <td>
-                              {{objUnassignedContactList.MobileNumber}}
-                            </td>
-                            <td>
-                              {{objUnassignedContactList.EmailId}}
-                            </td>
-                            <td>
-                              {{objUnassignedContactList.Location}}
-                            </td>
-                            
-                            <td class="t-c">
-                                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="AssignEmployee(objUnassignedContactList.Id,objUnassignedContactList.IsConnectorContact)">Assign To Me</button>
-                            </td>
-                            <td>
-                              {{objUnassignedContactList.createddt}}
-                            </td>
-                            <td>
-                              {{objUnassignedContactList.remarks}}
-                            </td>
-                        </tr>      
-                      </table>
-                  </div>
-                  <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-                      <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
-                      <div class="paginationBtnContainer text-center">
-                          <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
-                          <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
-                          <input type="text" [(ngModel)]="ManualPageInput" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"  (change)="ChangePageNumber(this.ManualPageInput)" />
-                          <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
-                          <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+<p-toast></p-toast>
+
+<p-card header="Unassigned Contact List" class="mb-3">
+  <div class="p-input-icon-left mb-3">
+    <i class="pi pi-search"></i>
+    <input pInputText type="text" [(ngModel)]="SearchText" (input)="table.filterGlobal($event.target?.['value'], 'contains')" placeholder="Search..." class="w-full md:w-30rem" />
   </div>
-</section>
-<!-- unassigned contact details - end -->
+
+  <p-table
+    #table
+    [value]="model.UnassignedContactList"
+    [paginator]="true"
+    [rows]="10"
+    [lazy]="true"
+    [totalRecords]="TotalRecordNo"
+    [loading]="loading"
+    (onLazyLoad)="loadUnassignedContacts($event)"
+    [globalFilterFields]="['FirstName', 'MobileNumber', 'EmailId', 'Location', 'ReferenceName']"
+    [responsiveLayout]="'scroll'"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="FirstName">Name <p-sortIcon field="FirstName"></p-sortIcon></th>
+        <th pSortableColumn="MobileNumber">Mobile Number <p-sortIcon field="MobileNumber"></p-sortIcon></th>
+        <th pSortableColumn="EmailId">Email Id <p-sortIcon field="EmailId"></p-sortIcon></th>
+        <th pSortableColumn="Location">Location <p-sortIcon field="Location"></p-sortIcon></th>
+        <th>Assign To</th>
+        <th pSortableColumn="createddt">Created Date <p-sortIcon field="createddt"></p-sortIcon></th>
+        <th>Remarks</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-contact>
+      <tr>
+        <td>
+          {{ contact.FirstName }}<br />
+          <span *ngIf="contact.ReferenceName && !contact.IsConnectorContact">(Refer By: {{ contact.ReferenceName }})</span>
+        </td>
+        <td>{{ contact.MobileNumber }}</td>
+        <td>{{ contact.EmailId }}</td>
+        <td>{{ contact.Location }}</td>
+        <td>
+          <button pButton type="button" label="Assign To Me" icon="pi pi-user-plus" class="p-button-sm p-button-info" (click)="assignEmployee(contact.Id, contact.IsConnectorContact)"></button>
+        </td>
+        <td>{{ contact.createddt }}</td>
+        <td>{{ contact.remarks }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

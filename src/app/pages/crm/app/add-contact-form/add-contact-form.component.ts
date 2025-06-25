@@ -1,51 +1,92 @@
 import { Component, OnInit } from '@angular/core';
-import { ContactModel } from '../model/Contact/ContactModel';
-import { ContactService } from '../services/contact/contact.service';
-import { Tokenauthentication } from '../model/common/tokenauthentication';
-import { BranchServiceService } from '../services/branch/branch-service.service';
-import { LocationServiceService } from '../services/location/location-service.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
-
+import { ContactService } from '../services/contact/contact.service';
+import { LocationServiceService } from '../services/location/location-service.service';
+import { ContactModel } from '../model/Contact/ContactModel';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-     standalone: true,
-      imports:[CommonModule,FormsModule],
+  standalone: true,
   selector: 'app-add-contact-form',
   templateUrl: './add-contact-form.component.html',
-  styleUrls: ['./add-contact-form.component.css']
+  styleUrls: ['./add-contact-form.component.css'],
+  imports: [
+    CommonModule,
+      MessagesModule,
+    MessageModule,
+    FloatLabelModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    InputTextModule,
+    ButtonModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 export class AddContactFormComponent implements OnInit {
-  model: ContactModel;
-  LocationList:any[] | undefined;
-  constructor(private contactService: ContactService,private objLocationService:LocationServiceService) {
-    this.model = new ContactModel;
-  }
+  contactForm!: FormGroup;
+  LocationList: any[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private contactService: ContactService,
+    private locationService: LocationServiceService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.GetLocationList();
-
+    this.buildForm();
+    this.fetchLocations();
   }
 
-  ContactDetailSubmit() {
-    var displayName=this.model.FirstName+" "+this.model.LastName;
-    this.contactService.saveContactDetails(this.model).subscribe(
-      response => {
-        if(response == true) {
-        alert(displayName + " Saved Sucessfully");
-         }
-      },
-      error => alert('Internal Server Error')
-    )
+  buildForm() {
+    this.contactForm = this.fb.group({
+      FirstName: ['', Validators.required],
+      LastName: ['', Validators.required],
+      MobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      EmailId: ['', [Validators.required, Validators.email]],
+      LocationId: ['', Validators.required],
+      ReferenceName: [''],
+      ProductName: ['']
+    });
   }
-  GetLocationList(){
-    this.objLocationService.GetLocationList().subscribe(
-      response=>{
-        this.LocationList=response;
+
+  fetchLocations() {
+    this.locationService.GetLocationList().subscribe({
+      next: (res) => (this.LocationList = res),
+      error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load locations' })
+    });
+  }
+
+  onSubmit() {
+    if (this.contactForm.invalid) {
+      this.contactForm.markAllAsTouched();
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct the form errors' });
+      return;
+    }
+
+    const contact: ContactModel = this.contactForm.value;
+    const displayName = `${contact.FirstName} ${contact.LastName}`;
+
+    this.contactService.saveContactDetails(contact).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({ severity: 'success', summary: 'Saved', detail: `${displayName} saved successfully` });
+          this.contactForm.reset();
+        } else {
+          this.messageService.add({ severity: 'warn', summary: 'Exists', detail: 'Contact already exists' });
+        }
       },
-      error=>alert('Internal Server Error'+error)
-    )
+      error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save contact' })
+    });
   }
 }
