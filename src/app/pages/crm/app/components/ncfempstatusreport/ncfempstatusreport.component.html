@@ -1,80 +1,91 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-                <div class="font-size-19">Contact Status Emp Report - {{FollowerName}} - {{StatusType}}</div>
-            </div>
-            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+<p-toast></p-toast>
 
-                <div class="tableContainer rounded mBorder overflow-x-auto">
-                <table class="table font-w-600 color-initial mb-0">
-                    <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th> 
-                        <tr class="bg-color-ContHead">
-                            <th class="color-gray min-w-150" >ID<br /></th>
-                            <th class="color-gray min-w-150" >Name<br /></th>
-                            <th class="color-gray min-w-150" >Mobile Number<br /></th>
-                           <!-- <th class="color-gray min-w-150" >Status<br /></th>
-                            <th class="color-gray min-w-150" >Type<br /></th>-->
-                            <th class="color-gray min-w-150" >Track No<br /></th>
-                            <th class="color-gray min-w-150" >Modified On<br /></th>
-                            
-                            <th class="color-gray min-w-100" >&nbsp;<br/></th>
-                            <th class="color-gray min-w-100" >&nbsp;<br/></th>
-                        </tr>
-                        <tr *ngFor="let objStatusList of StatusList | searchpipe : searchStr; let i = index">
-                        <td>
-                            {{objStatusList.id}}
-                        </td>
-                        <td>
-                            {{objStatusList.firstname}}
-                        </td>
-                        <td>
-                            {{objStatusList.mobilenumber}}
-                        </td>
-                      <!--  <td>
-                            {{objStatusList.status}}
-                        </td>
-                        <td>
-                            {{objStatusList.stype}}
-                        </td>-->
-                        <td>
-                            {{objStatusList.tracknumber}}
-                        </td>
-                        <td>
-                            {{objStatusList.modifiedon}}
-                        </td>
-                        <td class="text-center">
-                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="OpenTrackHistoryModel(objStatusList.tracknumber)">View</button>
-                        </td>
-                        <td class="text-center">
-                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="callStatus(objStatusList.tracknumber,objStatusList.id)">Track</button>
-           
-                        </td>
-                    </tr>
-                </table>
-                </div>        
-            </div>        
-        </div>
+<div class="container">
+  <div class="flex flex-column gap-3 p-3">
+    <div class="bg-color-ContHead flex justify-content-between align-items-center py-2 px-3 font-w-600 border-b rounded">
+      <div class="text-xl">Contact Status Emp Report - {{ FollowerName }} - {{ StatusType }}</div>
     </div>
-    <!--<app-connector-form-model></app-connector-form-model>-->
+
+    <div class="bg-color-ContBody1 p-3 rounded">
+      <div class="flex align-items-center gap-3 mb-3">
+        <p-floatLabel class="w-full sm:w-20rem">
+          <input
+            pInputText
+            id="search"
+            type="text"
+            [(ngModel)]="searchStr"
+            class="w-full"
+          />
+          <label for="search">Search</label>
+        </p-floatLabel>
+      </div>
+
+      <p-table
+        [value]="StatusList | searchpipe : searchStr"
+        responsiveLayout="scroll"
+        class="font-w-600"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Track No</th>
+            <th>Modified On</th>
+            <th>View</th>
+            <th>Track</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{ row.id }}</td>
+            <td>{{ row.firstname }}</td>
+            <td>{{ row.mobilenumber }}</td>
+            <td>{{ row.tracknumber }}</td>
+            <td>{{ row.modifiedon }}</td>
+            <td>
+              <button
+                pButton
+                size="small"
+                icon="pi pi-eye"
+                label="View"
+                (click)="openView(row.tracknumber)"
+              ></button>
+            </td>
+            <td>
+              <button
+                pButton
+                size="small"
+                icon="pi pi-search"
+                label="Track"
+                (click)="openTrack(row.tracknumber, row.id)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
 
-<section>
-    <div class="myModel callHistoryModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-        <div class="modelContent bg-color-white boxShadow rounded">
-          <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-              <div></div>
-              <div (click)="CloseTrackHistoryModel()">
-                  <i class="fas fa-times cursor-pointer"></i>
-              </div>
-          </div>
-          <app-call-track-history></app-call-track-history>
-        </div>
-      </div>
-    <app-lead-form-model></app-lead-form-model>
-    </section>
-            
-            
-        
-    
+<!-- View Dialog -->
+<p-dialog
+  header="Call History"
+  [(visible)]="showViewDialog"
+  [modal]="true"
+  [style]="{width: '60vw'}"
+  [dismissableMask]="true"
+>
+  <app-call-track-history></app-call-track-history>
+</p-dialog>
 
+<!-- Track Dialog -->
+<p-dialog
+  header="Lead Details"
+  [(visible)]="showTrackDialog"
+  [modal]="true"
+  [style]="{width: '60vw'}"
+  [dismissableMask]="true"
+>
+  <app-lead-form-model></app-lead-form-model>
+</p-dialog>

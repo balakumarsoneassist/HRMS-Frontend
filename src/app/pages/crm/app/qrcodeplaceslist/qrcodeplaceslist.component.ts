@@ -1,59 +1,75 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { PaginationInstance } from 'ngx-pagination';
+import { Component, OnInit } from '@angular/core';
+import { Qrshops } from '../model/Qrcode/qrplaces';
 import { QrcodeService } from '../services/qrcode/qrcode.service';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { Qrshops } from '../model/Qrcode/qrplaces';
 import { PaginationModel } from '../model/Contact/ContactModel';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { QrcodeplacesComponent } from "../qrcodeplaces/qrcodeplaces.component";
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule, QrcodeplacesComponent],
   selector: 'app-qrcodeplaceslist',
+  standalone: true,
   templateUrl: './qrcodeplaceslist.component.html',
-  styleUrls: ['./qrcodeplaceslist.component.css']
+  styleUrls: ['./qrcodeplaceslist.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ToastModule,
+    TableModule,
+    DialogModule,
+    InputTextModule,
+    FloatLabelModule,
+    ButtonModule,
+    QrcodeplacesComponent
+  ]
 })
 export class QrcodeplaceslistComponent implements OnInit {
-  model: Qrshops;
+  model: Qrshops = new Qrshops();
   ManualPageInput: any;
   PageNumber: number = 0;
   TotalNumberOfPages = 1;
-  TotalRecordNo: Number = 0;
+  TotalRecordNo: number = 0;
   IsbtnPreviousEnable: boolean = true;
   IsbtnNextEnable: boolean = true;
   StartNo!: number;
   EndNo!: number;
-  _objPageModel: PaginationModel;
-  shopsFilter: any;
-  constructor(private QrService: QrcodeService, private router: Router) {
-    this.model = new Qrshops;
-    this._objPageModel = new PaginationModel;
-   }
+  shopsFilter: string = '';
+
+  showQrDialog = false;
+  currentShopId: string = '';
+
+  _objPageModel: PaginationModel = new PaginationModel();
+
+  constructor(
+    private qrService: QrcodeService,
+    private router: Router,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.QrService.ShopsRefershObservable.subscribe(response => {
+    this.qrService.ShopsRefershObservable.subscribe(() => {
       this.getShopsList();
       this.EnablePageButton();
-    })
+    });
     this.getShopsList();
-  }
-
-  editQrshop(shop) {
-    // this.employeeService.
-    this.router.navigate(['/qrcodeplaces'], { state: { data: shop } });
   }
 
   getShopsList() {
     this._objPageModel.PageNumber = this.PageNumber;
     this._objPageModel.SearchText = this.shopsFilter;
-    this.QrService.GetShopsList(this._objPageModel).subscribe(
-      response => {
+    this.qrService.GetShopsList(this._objPageModel).subscribe({
+      next: response => {
         this.model.QrshopsList = response;
-        console.log(response)
-        if (this.model.QrshopsList.length == 0) {
+        if (this.model.QrshopsList.length === 0) {
           this.PageNumber = 0;
           this.TotalRecordNo = 0;
           this.TotalNumberOfPages = 0;
@@ -66,67 +82,54 @@ export class QrcodeplaceslistComponent implements OnInit {
         this.PageFooterCalculation();
         this.EnablePageButton();
       },
-      error => alert('Internel Server Error')
-    )
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Server Error' });
+      }
+    });
   }
 
-  openShopModel(Id) {
-    let cibilReportModel = document.querySelector('.cibilReportModel') as HTMLInputElement;
-    cibilReportModel.style.display = "flex";
-    this.QrService.SendShopId(Id);
+  openShopDialog(shopId: string) {
+    this.showQrDialog = true;
+    this.qrService.SendShopId(shopId);
   }
 
-  closeModel() {
-    let cibilReportModel = document.querySelector('.cibilReportModel') as HTMLInputElement;
-    cibilReportModel.removeAttribute('style');
+  closeShopDialog() {
+    this.showQrDialog = false;
   }
+
   GoToNextPage() {
     if (this.PageNumber < this.TotalNumberOfPages) {
-      this.PageNumber = this.PageNumber + 1;
+      this.PageNumber++;
     }
     this.getShopsList();
     this.EnablePageButton();
   }
+
   GoToPreviousPage() {
     if (this.PageNumber > 0) {
-      this.PageNumber = this.PageNumber - 1;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
+      this.PageNumber--;
     }
     this.getShopsList();
     this.EnablePageButton();
   }
+
   EnablePageButton() {
-    if (this.PageNumber > 0) {
-      this.IsbtnPreviousEnable = true;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
-    }
-    if(this.TotalNumberOfPages === 1){
+    this.IsbtnPreviousEnable = this.PageNumber > 0;
+    if (this.TotalNumberOfPages === 1) {
       this.IsbtnNextEnable = false;
-    }
-    else if (this.PageNumber + 1 < this.TotalNumberOfPages || this.PageNumber === 0) {
-
+    } else if (this.PageNumber + 1 < this.TotalNumberOfPages || this.PageNumber === 0) {
       this.IsbtnNextEnable = true;
-    }
-    else {
+    } else {
       this.IsbtnNextEnable = false;
     }
   }
-  PageFooterCalculation() {
 
-    this.StartNo = (this.PageNumber * 10) + 1;
-    this.EndNo = (this.PageNumber * 10) + 10;
+  PageFooterCalculation() {
+    this.StartNo = this.PageNumber * 10 + 1;
+    this.EndNo = this.PageNumber * 10 + 10;
     this.TotalNumberOfPages = Math.floor(this.model.QrshopsList[0].TotalRows / 10);
-    if ((this.model.QrshopsList[0].TotalRows % 10) > 0) {
-      this.TotalNumberOfPages = this.TotalNumberOfPages + 1;
+    if (this.model.QrshopsList[0].TotalRows % 10 > 0) {
+      this.TotalNumberOfPages++;
     }
   }
-  ChangePageNumber(pageIndex) {
-    this._objPageModel.PageNumber = pageIndex;
-    this.getShopsList();
-  }
-
 }

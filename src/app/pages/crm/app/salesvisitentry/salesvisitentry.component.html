@@ -1,96 +1,107 @@
-<div class="col-md-12">
-    <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-        <div class="font-size-19">Customer Entry</div>
+<p-toast></p-toast>
+
+<div class="card">
+  <div
+    class="bg-color-ContHead d-flex justify-between p-2 px-3 font-w-600 border-b rounded"
+  >
+    Customer Entry
+  </div>
+
+  <form [formGroup]="form" class="p-4" (ngSubmit)="saveSalesVisit()">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div>
+        <label>Name*</label>
+        <input
+          pInputText
+          formControlName="name"
+          class="w-full"
+          [ngClass]="{ 'p-invalid': form.get('name')?.invalid && form.get('name')?.touched }"
+        />
+      </div>
+
+      <div>
+        <label>Mobile No*</label>
+        <input
+          pInputText
+          formControlName="mobileno"
+          class="w-full"
+          [ngClass]="{ 'p-invalid': form.get('mobileno')?.invalid && form.get('mobileno')?.touched }"
+        />
+      </div>
+
+      <div>
+        <label>Profession</label>
+        <input pInputText formControlName="profession" class="w-full" />
+      </div>
+
+      <div>
+        <label>Designation</label>
+        <input pInputText formControlName="designation" class="w-full" />
+      </div>
+
+      <div>
+        <label>Location</label>
+        <input pInputText formControlName="location" class="w-full" />
+      </div>
+
+      <div>
+        <label>Distance From Office</label>
+        <input pInputText formControlName="distance" class="w-full" />
+      </div>
+
+      <div class="col-span-3">
+        <label>Notes</label>
+        <input pInputText formControlName="notes" class="w-full" />
+      </div>
     </div>
-    <form #svForm="ngForm">
-        <!-- <div> <input type="submit" value="Refresh" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" (click)="GetLeadTrack(model.TrackId)"></div> -->
-        <div class="leadInputCategory leadFollDetailIpCont rounded py-2 px-3 bg-color-ContBody1 font-w-600">
-            <div class="leadIpFlexCont d-flex flex-wrap pt-3">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Name*</label>
 
-                    <input class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Name" name="name" />
-                </div>
+    <div class="bg-color-pink px-2 py-1 rounded font-w-600 text-white mb-2">
+      Visit Details
+    </div>
 
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Mobile No*</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Mobileno" required name="mobileno" #mobileno="ngModel" />
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Profession</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Profession" required name="profession" #profession="ngModel" />
-                </div>
-            </div>
-            <div class="leadIpFlexCont d-flex flex-wrap pt-3">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Designation</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Designation" name="designation" #designation="ngModel" />
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Location</label>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div>
+        <label>Visited Date*</label>
+        <p-calendar
+          formControlName="dateofvisit"
+          [minDate]="currentDateTime"
+          [showIcon]="true"
+          [showTime]="true"
+          placeholder="Select Date and Time"
+          class="w-full"
+        ></p-calendar>
+      </div>
 
-                    <input class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Location" name="location" />
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Distance From Office</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Distance" required name="distance" #distance="ngModel" />
-                </div>
-            </div>
-            <div class="leadIpFlexCont d-flex flex-wrap pt-3">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Notes</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Notes" name="notes" #notes="ngModel" />
-                </div>
-                <div class="leadIpFitem mb-3">&nbsp;</div>
-                <div class="leadIpFitem mb-3">&nbsp;</div>
-            </div>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink">Visit Details</span><br />
-            <br />
-            <div class="leadIpFlexCont d-flex flex-wrap pt-3">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Visited Date*</label>
+      <div>
+        <label>Next Visit Date</label>
+        <p-calendar
+          formControlName="nextvisit"
+          [minDate]="currentDateTime"
+          [showIcon]="true"
+          [showTime]="true"
+          placeholder="Select Date and Time"
+          class="w-full"
+        ></p-calendar>
+      </div>
 
-                    <p-datepicker
-                        [(ngModel)]="model.Dateofvisit"
-                        [minDate]="currentDateTime"
-                        [showIcon]="true"
-                        [showTime]="true"
-                        [iconDisplay]="'input'"
-                        inputId="dateofvisit"
-                        name="dateofvisit"
-                        inputClass="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control"
-                        placeholder="Select Date and Time"
-                    >
-                    </p-datepicker>
-                </div>
+      <div>
+        <label>Remarks*</label>
+        <input
+          pInputText
+          formControlName="remarks"
+          class="w-full"
+          [ngClass]="{ 'p-invalid': form.get('remarks')?.invalid && form.get('remarks')?.touched }"
+        />
+      </div>
+    </div>
 
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Next Visit Date</label>
-
-                    <p-datepicker
-                        [(ngModel)]="model.Nextvisit"
-                        [minDate]="currentDateTime"
-                        [showIcon]="true"
-                        [showTime]="true"
-                        [iconDisplay]="'input'"
-                        inputId="nextvisit"
-                        name="nextvisit"
-                        inputClass="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control"
-                        placeholder="Select Date and Time"
-                    >
-                    </p-datepicker>
-                </div>
-
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Remarks*</label>
-                    <input type="text" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" [(ngModel)]="model.Remarks" name="remarks" #remarks="ngModel" />
-                </div>
-            </div>
-
-            <div class="text-right">
-                <input type="submit" value="Save" (click)="SavesalesVisit(); svForm.reset()" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" />
-                &nbsp;&nbsp;
-            </div>
-        </div>
-    </form>
+    <div class="text-right">
+      <button
+        pButton
+        label="Save"
+        class="bg-color-logo text-white border-0 rounded px-4 py-2 font-w-600"
+        type="submit"
+      ></button>
+    </div>
+  </form>
 </div>

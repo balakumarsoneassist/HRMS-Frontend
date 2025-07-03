@@ -1,98 +1,86 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-                <div class="font-size-19">Customer List</div>
-            </div>
-            <div class="bg-color-ContBody1 px-3 py-3 rounded">
+<p-toast></p-toast>
 
-                <div class="tableContainer rounded mBorder overflow-x-auto">
-                <table class="table font-w-600 color-initial mb-0">
-                    <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" [(ngModel)]="searchStr" /></th>
-                        <tr class="bg-color-ContHead">
-                            <th class="color-gray min-w-150" >Name<br /></th>
-                            <th class="color-gray min-w-150" >Mobile Number<br /></th>
-                            <th class="color-gray min-w-150" >Product<br /></th>
-                            <th class="color-gray min-w-150" >Location<br /></th>
-                            <th class="color-gray" style="width:90px;">Date<br /></th>
-                            <th class="color-gray min-w-150" >Bank<br /></th>
-                            <th class="color-gray" style="width:70px;" >ROI<br /></th>
-                            <th class="color-gray min-w-150" >Loan Amount<br /></th>
-                            <th class="color-gray min-w-150" >Converter<br /></th>
-                            <th class="color-gray min-w-150" >&nbsp;<br /></th>
-                            <th class="color-gray min-w-150" >Assign To<br /></th>
+<div class="card">
+  <div class="bg-color-ContHead d-flex justify-between p-3 align-items-center font-w-600 border-b rounded mb-3">
+    <div class="font-size-19">Customer List</div>
+  </div>
 
-                        </tr>
-                        <tr *ngFor="let objCustList of CustList | searchpipe : searchStr; let i = index">
-                        <td>
-                            {{objCustList.name}}
-                        </td>
-                        <td>
-                            {{objCustList.mobilenumber}}
-                        </td>
-                        <td>
-                            {{objCustList.product}}
-                        </td>
-                        <td>
-                            {{objCustList.location}}
-                        </td>
-                        <td>
-                            {{objCustList.loandate}}
-                        </td>
-                        <td>
-                            {{objCustList.bank}}
-                        </td>
-                        <td style="text-align: right;">
-                            {{objCustList.roi}}
-                        </td>
-                        <td style="text-align: right;">
-                            {{objCustList.amount}}
-                        </td>
-                        <td style="text-align: right;">
-                            {{objCustList.Converter}}
-                        </td>
-                        <td>
-                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="OpenCustomerModel(objCustList.Id)">Update</button>
+  <div class="mb-3 flex flex-wrap gap-2">
+    <input
+      pInputText
+      placeholder="Search by keyword"
+      [formControl]="searchStr"
+      class="w-full sm:w-30rem"
+    />
+  </div>
 
-                        </td>
-
-                        <div *ngIf="(this.CustList.followedby == 0) ;then NAssto; else Assto"> </div>
-                        <ng-template #Assto>
-                        <td > Customer Assigned.</td>
-                        </ng-template>
-                        <ng-template #NAssto>
-                        <td>
-
-                            <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="AssignedTo(objCustList.Id)">Assign to me</button>
-
-                        </td>
-                    </ng-template>
-
-
-                    </tr>
-                </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--<app-connector-form-model></app-connector-form-model>-->
+  <p-table
+    [value]="customers"
+    [paginator]="true"
+    [rows]="10"
+    [globalFilterFields]="['name', 'mobilenumber', 'product', 'location']"
+    [globalFilterFields]="searchForm.get('searchStr')?.value"
+    class="p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Mobile</th>
+        <th>Product</th>
+        <th>Location</th>
+        <th>Date</th>
+        <th>Bank</th>
+        <th class="text-right">ROI</th>
+        <th class="text-right">Loan Amount</th>
+        <th>Converter</th>
+        <th>Action</th>
+        <th>Assign</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-customer>
+      <tr>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.mobilenumber }}</td>
+        <td>{{ customer.product }}</td>
+        <td>{{ customer.location }}</td>
+        <td>{{ customer.loandate }}</td>
+        <td>{{ customer.bank }}</td>
+        <td class="text-right">{{ customer.roi }}</td>
+        <td class="text-right">{{ customer.amount }}</td>
+        <td>{{ customer.Converter }}</td>
+        <td>
+          <button
+            pButton
+            label="Update"
+            icon="pi pi-pencil"
+            class="p-button-sm"
+            (click)="openCustomerModal(customer)"
+          ></button>
+        </td>
+        <td>
+          <ng-container *ngIf="customer.followedby === 0; else assignedBlock">
+            <button
+              pButton
+              label="Assign to Me"
+              icon="pi pi-user-plus"
+              class="p-button-sm p-button-success"
+              (click)="assignToMe(customer)"
+            ></button>
+          </ng-container>
+          <ng-template #assignedBlock>
+            <span class="text-green-600">Assigned</span>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
-<section>
-    <div class="myModel callHistoryModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-        <div class="modelContent bg-color-white boxShadow rounded">
-          <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-              <div></div>
-              <div (click)="CloseCustomerModel()">
-                  <i class="fas fa-times cursor-pointer"></i>
-              </div>
-          </div>
-          <app-customerext></app-customerext>
-        </div>
-      </div>
-
-    </section>
-
-
-
-
+<p-dialog
+  header="Customer Details"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [style]="{ width: '60vw' }"
+>
+  <app-customerext></app-customerext>
+</p-dialog>

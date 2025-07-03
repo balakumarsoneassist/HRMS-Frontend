@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   standalone: true,
@@ -20,7 +21,8 @@ import { MessageService } from 'primeng/api';
     DropdownModule,
     InputTextModule,
     ButtonModule,
-    ToastModule
+    ToastModule,
+    CalendarModule
   ],
   providers: [MessageService]
 })

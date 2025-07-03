@@ -1,36 +1,55 @@
-<div class="tableContainer rounded mBorder overflow-x-auto">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-yellow " >Name : {{name}} ---- {{mno}}</span><br/>
-        <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Earlier Call History</span><br/>
-        <br>
-    <table class="table font-w-600 color-initial mb-0">
-        <tr class="bg-color-ContHead">
-            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
-            <th class="color-gray min-w-200">Last Call Date<br /></th>
-            <th class="color-gray min-w-150">Next Call Date<br /></th>
-            <th class="color-gray min-w-150">Call Attended<br /></th>
-            <th class="color-gray min-w-150">Remarks<br /></th>
-            <th class="color-gray min-w-150">&nbsp;<br /></th>
-        </tr>
-        <tr *ngFor="let objTrack of CustomerTrackList; let i= index;">
+<p-toast></p-toast>
 
-            <td>{{objTrack.Calledon}}</td>
-            <td>{{objTrack.Nextcall}}</td>
+<div class="tableContainer rounded mBorder overflow-x-auto p-3">
+  <span
+    class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-yellow"
+  >
+    Name: {{ name }} — {{ mno }}
+  </span>
+  <br /><br />
+  <span
+    class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink"
+  >
+    Earlier Call History
+  </span>
+  <br /><br />
 
-            <div *ngIf="(objTrack.Callattend == 1) ;then Attended else Nores"> </div>
-                            <ng-template #Attended>
-                            <td ><span>Call Attended</span></td>
-                            </ng-template>
-                             <ng-template #Nores>
-                                <td ><span>Not Attended</span></td>
-                            </ng-template>
-            <td>{{objTrack.Remarks}}</td>
-            <td><span class="py-2 px-3 bg-color-yellow color-white-fix rounded">&nbsp;</span></td>
-
-        </tr>
-
-    </table>
+  <p-table
+    [value]="customerTrackList"
+    [paginator]="false"
+    class="p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Last Call Date</th>
+        <th>Next Call Date</th>
+        <th>Call Attended</th>
+        <th>Remarks</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-call>
+      <tr>
+        <td>{{ call.Calledon }}</td>
+        <td>{{ call.Nextcall }}</td>
+        <td>
+          <span
+            [ngClass]="{
+              'bg-green-500 text-white px-2 py-1 rounded': call.Callattend == 1,
+              'bg-red-500 text-white px-2 py-1 rounded': call.Callattend != 1
+            }"
+          >
+            {{ call.Callattend == 1 ? 'Call Attended' : 'Not Attended' }}
+          </span>
+        </td>
+        <td>{{ call.Remarks }}</td>
+        <td>
+          <span
+            class="py-2 px-3 bg-color-yellow color-white-fix rounded"
+            >&nbsp;</span
+          >
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
-
-
-

@@ -1,56 +1,89 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-                <div class="font-size-19">QR Code Shops List</div>
-            </div>
-            <div class="bg-color-ContBody1 px-3 py-3 rounded">
-  
-                <div class="tableContainer rounded mBorder overflow-x-auto">
-                  <table class="table font-w-600 color-initial mb-0">
-                    <th colspan="6" class="color-gray min-w-200 S-R">Search  : <input type="text" [(ngModel)]="shopsFilter" (change)="getShopsList()" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
-                        <tr class="bg-color-ContHead">
-                            <th class="color-gray min-w-150" >Name<br /></th>
-                            <th class="color-gray min-w-150" >Contact Person<br /></th>
-                            <th class="color-gray min-w-150" >City<br /></th>
-                            
-                            <th class="color-gray min-w-150" >Mobile No.<br /></th>
-                            <th class="color-gray min-w-150" >Refer By<br /></th>
-                     
-                            <th class="color-gray min-w-100" >Action</th>
-                        </tr>
-                        <tr *ngFor="let shops of model.QrshopsList">
-                            <td>{{shops.Name}}</td>
-                            <td>{{shops.ContactPerson}}</td>
-                            <td>{{shops.City}}</td>
-                            <td>{{shops.MobileNumber}}</td>
-                            <td>{{shops.Referer}}</td>
-                            
-                            <td><i class="fas fa-pencil-alt" (click)='openShopModel(shops.Id)'></i></td>
-                        </tr>
-                  </table>
-              </div>
-              <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-                <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
-                <div class="paginationBtnContainer text-center">
-                    <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
-                    <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
-                    <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-              <div class="myModel cibilReportModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-                <div class="modelContent bg-color-white boxShadow rounded">
-                  <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-                      <div></div>
-                      <div (click)="closeModel()">
-                          <i class="fas fa-times cursor-pointer"></i>
-                      </div>
-                  </div>
-                  <app-qrcodeplaces></app-qrcodeplaces>
-                </div>
-              </div>
-        </div>
+<p-toast></p-toast>
+
+<div class="flex flex-column gap-3 p-3">
+  <div class="bg-color-ContHead flex justify-content-between align-items-center py-2 px-3 font-w-600 border-b rounded">
+    <div class="text-xl">QR Code Shops List</div>
+  </div>
+
+  <div class="bg-color-ContBody1 p-3 rounded">
+    <div class="flex align-items-center gap-3 mb-3">
+      <p-floatLabel class="w-full sm:w-20rem">
+        <input
+          pInputText
+          id="shopSearch"
+          [(ngModel)]="shopsFilter"
+          (ngModelChange)="getShopsList()"
+          placeholder=""
+        />
+        <label for="shopSearch">Search</label>
+      </p-floatLabel>
+    </div>
+
+    <p-table
+      [value]="model.QrshopsList"
+      responsiveLayout="scroll"
+      class="font-w-600"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Contact Person</th>
+          <th>City</th>
+          <th>Mobile No.</th>
+          <th>Refer By</th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.Name }}</td>
+          <td>{{ row.ContactPerson }}</td>
+          <td>{{ row.City }}</td>
+          <td>{{ row.MobileNumber }}</td>
+          <td>{{ row.Referer }}</td>
+          <td>
+            <button
+              pButton
+              size="small"
+              icon="pi pi-pencil"
+              (click)="openShopDialog(row.Id)"
+              label="Edit"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <div class="flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
+      <div class="align-self-center text-center">
+        Showing {{ StartNo }} to {{ EndNo }} of {{ TotalRecordNo }} Records
+      </div>
+      <div class="flex align-items-center gap-2">
+        <button
+          pButton
+          icon="pi pi-angle-left"
+          (click)="GoToPreviousPage()"
+          [disabled]="!IsbtnPreviousEnable"
+        ></button>
+        <span>{{ ManualPageInput }} of {{ TotalNumberOfPages }} pages</span>
+        <button
+          pButton
+          icon="pi pi-angle-right"
+          (click)="GoToNextPage()"
+          [disabled]="!IsbtnNextEnable"
+        ></button>
       </div>
     </div>
   </div>
-  
+</div>
+
+<!-- QR Shop Form Modal -->
+<p-dialog
+  header="QR Shop"
+  [(visible)]="showQrDialog"
+  [modal]="true"
+  [style]="{width: '50vw'}"
+  [dismissableMask]="true"
+>
+  <app-qrcodeplaces></app-qrcodeplaces>
+</p-dialog>

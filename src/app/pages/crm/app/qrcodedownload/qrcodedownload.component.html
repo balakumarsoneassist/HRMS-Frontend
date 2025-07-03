@@ -1,21 +1,71 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h2>QR Code Download</h2>
-      <button (click)="showQrCode()">Generate QR Code</button>
-    </div>
+<p-toast></p-toast>
+<div class="container flex flex-column gap-3 p-3">
+  <div class="bg-color-ContHead flex align-items-center py-2 px-3 font-w-600 border-b rounded">
+    <div class="text-xl">QR Code Download</div>
   </div>
 
-  <div id="QrDown" [hidden]="forDownload">
-    <div id="table">
-      <h3>Scan the QR Code</h3>
+  <form class="p-3 bg-color-ContBody1 font-w-600 flex flex-column gap-4">
+    <div class="grid">
+      <div class="col-12 md:col-6">
+        <p-dropdown
+          [options]="qrTokenList"
+          optionLabel="Qrtokenname"
+          placeholder="Select QR Code Name"
+          [(ngModel)]="selectedTokenIndex"
+          (onChange)="onOptionsSelected($event)"
+        ></p-dropdown>
+      </div>
+      <div class="col-12 md:col-6">
+        <label>Office Name:</label>
+        <div>{{ Offname }}</div>
+      </div>
+      <div class="col-12 md:col-6">
+        <label>Offer Code:</label>
+        <div>{{ Offercode }}</div>
+      </div>
+      <div class="col-12 md:col-6">
+        <label>Valid From:</label>
+        <div>{{ Vfrom }}</div>
+      </div>
+      <div class="col-12 md:col-6">
+        <label>Valid To:</label>
+        <div>{{ Vto }}</div>
+      </div>
+      <div class="col-12 md:col-6">
+        <label>Responsible:</label>
+        <div>{{ ename }}</div>
+      </div>
+    </div>
+
+    <div class="flex justify-content-end">
+      <button
+        pButton
+        label="Show QR Code"
+        icon="pi pi-qrcode"
+        (click)="ShowQrCode()"
+        type="button"
+      ></button>
+    </div>
+  </form>
+
+  <div *ngIf="!forDownload" class="bg-color-ContBody1 p-3 rounded mt-4">
+    <div id="table" class="flex flex-column align-items-center gap-3">
+      <img src="assets/img/logo.png" width="300" />
+      <h5>Scan the QR Code</h5>
+      <h4 class="text-primary">{{ Offname }}</h4>
       <qrcode
         [qrdata]="myAngularxQrCode"
         [width]="256"
         [errorCorrectionLevel]="'M'"
-        (qrCodeURL)="onChangeURL($event)">
-      </qrcode>
+        (qrCodeURL)="onChangeURL($event)"
+      ></qrcode>
+      <button
+        pButton
+        label="Download PDF"
+        icon="pi pi-download"
+        (click)="exportAsPDF()"
+        class="mt-2"
+      ></button>
     </div>
-    <button (click)="exportAsPDF()">Download PDF</button>
   </div>
 </div>

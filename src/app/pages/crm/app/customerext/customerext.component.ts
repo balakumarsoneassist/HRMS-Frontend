@@ -1,117 +1,153 @@
 import { Component, OnInit } from '@angular/core';
-import { Extcustomer } from '../model/extcustomer/extcustomer';
-import { TrackExtCust } from '../model/extcustomer/extcustomer';
 import { ExtCustomerService } from '../services/extcustomer/extcustomer.service';
-import { FormsModule } from '@angular/forms';
+import { Extcustomer, TrackExtCust } from '../model/extcustomer/extcustomer';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
-    standalone: true,
-      imports:[CommonModule,FormsModule],
+  standalone: true,
   selector: 'app-customerext',
   templateUrl: './customerext.component.html',
-  styleUrls: ['./customerext.component.css']
+  styleUrls: ['./customerext.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ToastModule,
+    InputTextModule,
+    ButtonModule
+  ]
 })
 export class CustomerextComponent implements OnInit {
-  model:any;
-  paraModel: TrackExtCust = new TrackExtCust;
-  custdatalist:any;
-  constructor(private objExtCustService:ExtCustomerService) {
-    this.model = new Extcustomer();
-  }
+  customerForm!: FormGroup;
+  paraModel: TrackExtCust = new TrackExtCust();
+  custdatalist: Extcustomer[] = [];
+
+  constructor(
+    private objExtCustService: ExtCustomerService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.objExtCustService.ExtCutomerIdObservable.subscribe(response=>{
-   //   console.log(response+'-------QWE')
-      this.GetExtCustData(response); // ie from id, here response is id
-    })
+    this.customerForm = this.fb.group({
+      Name: [{ value: '', disabled: true }, Validators.required],
+      location: [''],
+      loandate: [''],
+      mobilenumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      product: [''],
+      email: ['', [Validators.email]],
+      bank: [''],
+      amount: [''],
+      roi: ['', Validators.required],
+      tracknumber: [{ value: '', disabled: true }],
+      notes: ['']
+    });
+
+    this.objExtCustService.ExtCutomerIdObservable.subscribe(response => {
+      this.GetExtCustData(response);
+    });
   }
-  GetExtCustData(Id:any)
-  {
-     // console.log(Id+'-------QWE2')
-     this.paraModel.Id = Id;
-   //console.log(this.paraModel + '----QWE3')
-   this.objExtCustService.GetExtCustomer(this.paraModel).subscribe(
-    response => {
-      console.log(response)
-        //this.model=response;
+
+  GetExtCustData(id: any) {
+    this.paraModel.Id = id;
+    this.objExtCustService.GetExtCustomer(this.paraModel).subscribe({
+      next: (response) => {
         this.custdatalist = response;
         this.DataFill();
-
-    },
-    error => alert('Internal Server Error')
-  )
-
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Internal Server Error'
+        });
+      }
+    });
   }
-  updateData(){
 
-  this.objExtCustService.UpdateExtCustomer(this.model).subscribe(
-    response => {
-      console.log(response)
-        //this.model=response;
-        if (response) {
-          alert("Data Updated ...!");
-          this.CloseCustomerModel();
-        }
-        else { alert("Error While Update...!")}
-
-    },
-    error => alert('Internal Server Error')
-  )
-   }
-
-  DataFill(){
-    for(let i=0; i<this.custdatalist.length; i++) {
-     //console.log(this.ChildList[i].chseckey)
-     this.model.Id = this.custdatalist[i].Id;
-     this.model.Name = this.custdatalist[i].name;
-     this.model.mobilenumber =this.custdatalist[i].mobilenumber;
-     this.model.location =this.custdatalist[i].location;
-     const date = this.cnvertToDate(this.custdatalist[i].loandate);
-
-    // console.log(date);
-     this.model.loandate =date;
-     this.model.email =this.custdatalist[i].email;
-     this.model.bank =this.custdatalist[i].bank;
-     this.model.amount =this.custdatalist[i].amount;
-     this.model.notes =this.custdatalist[i].notes;
-     this.model.product =this.custdatalist[i].product;
-     this.model.roi =this.custdatalist[i].roi;
-     this.model.tracknumber =this.custdatalist[i].tracknumber;
-
+  updateData() {
+    if (this.customerForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Please fill all required fields correctly.'
+      });
+      return;
     }
 
-   }
+    const updatedCustomer: Extcustomer = this.customerForm.getRawValue();
 
-   cnvertToDate(dt:any){
-    let spData = dt.split("  ",3);
-    console.log(spData);
-    var mon = "";
-    if (spData[0] == "Jan") {mon="01";}
-    else if (spData[0] == "Jan") {mon="01";}
-    else if (spData[0] == "Feb") {mon="02";}
-    else if (spData[0] == "Mar") {mon="03";}
-    else if (spData[0] == "Apr") {mon="04";}
-    else if (spData[0] == "May") {mon="05";}
-    else if (spData[0] == "Jun") {mon="06";}
-    else if (spData[0] == "Jul") {mon="07";}
-    else if (spData[0] == "Aug") {mon="08";}
-    else if (spData[0] == "Sep") {mon="09";}
-    else if (spData[0] == "Oct") {mon="10";}
-    else if (spData[0] == "Nov") {mon="11";}
-    else if (spData[0] == "Dec") {mon="12";}
-    var dd = "";
-    var spData1 = spData[1].split(" ",2);
-    dd = spData1[0];
-    var yyyy = spData1[1];
-    var dtnew = dd + "/" + mon + "/" + yyyy;
-    return dtnew;
-   }
+    this.objExtCustService.UpdateExtCustomer(updatedCustomer).subscribe({
+      next: (response) => {
+        if (response) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Customer data updated!'
+          });
+          this.CloseCustomerModel();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Update failed.'
+          });
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Server Error',
+          detail: 'Something went wrong'
+        });
+      }
+    });
+  }
 
-   CloseCustomerModel() {
-    let customerModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    customerModel.removeAttribute('style');
+  DataFill() {
+    if (!this.custdatalist || !this.custdatalist.length) return;
+
+    const cust : any = this.custdatalist[0];
+
+    const formattedDate : any = this.convertToDate(cust.loanDate);
+
+    this.customerForm.patchValue({
+      Name: cust.name,
+      location: cust.location,
+      loandate: formattedDate,
+      mobilenumber: cust.mobilenumber,
+      product: cust.product,
+      email: cust.email,
+      bank: cust.bank,
+      amount: cust.amount,
+      roi: cust.roi,
+      tracknumber: cust.tracknumber,
+      notes: cust.notes
+    });
+  }
+
+  convertToDate(dt: string) {
+    if (!dt) return '';
+    const spData = dt.split('  ', 3);
+    const mon = {
+      Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+      Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
+    }[spData[0]] || '00';
+
+    const spData1 = spData[1].split(' ', 2);
+    const dd = spData1[0];
+    const yyyy = spData1[1];
+
+    return `${dd}/${mon}/${yyyy}`;
+  }
+
+  CloseCustomerModel() {
+    const modal = document.querySelector('.callHistoryModel') as HTMLElement;
+    if (modal) modal.removeAttribute('style');
   }
 }
-
-

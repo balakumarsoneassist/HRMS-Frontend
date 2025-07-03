@@ -1,24 +1,37 @@
+<p-toast></p-toast>
 
-<div class="tableContainer rounded mBorder overflow-x-auto">
-    <table class="table font-w-600 color-initial mb-0">
-        <tr class="bg-color-ContHead">
-            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
-            <th class="color-gray min-w-200">Name<br /></th>
-            <th class="color-gray min-w-150">Mobile Number<br /></th>
-            <th class="color-gray min-w-150">Loan Date<br /></th>            
-            <th class="color-gray min-w-150">Amount<br /></th> 
-            <th class="color-gray min-w-150">Converter<br /></th> 
-            
+<div class="card">
+  <div
+    class="bg-color-ContHead d-flex flex-row justify-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b rounded"
+  >
+    Product-wise Customer Details
+  </div>
+
+  <div class="bg-color-ContBody1 px-3 py-3 rounded">
+    <p-table
+      [value]="pwcList"
+      [paginator]="true"
+      [rows]="10"
+      class="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Customer Name</th>
+          <th>Product</th>
+          <th>Loan Amount</th>
+          <th>Status</th>
+          <th>Other</th>
         </tr>
-        <tr *ngFor="let custlist of PWCList; let i= index;">
-            
-            <td>{{custlist.name}}</td>
-            <td>{{custlist.mobilenumber}}</td>  
-            <td>{{custlist.loandate}}</td> 
+      </ng-template>
+      <ng-template pTemplate="body" let-custlist>
+        <tr>
+          <td>{{custlist.name}}</td>
+            <td>{{custlist.mobilenumber}}</td>
+            <td>{{custlist.loandate}}</td>
             <td>{{custlist.amount}}</td>
             <td>{{custlist.converter}}</td>
-                   
         </tr>
-           
-    </table>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

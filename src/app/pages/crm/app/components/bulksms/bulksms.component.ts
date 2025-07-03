@@ -1,62 +1,83 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SmssService } from '../../services/sms/smss.service';
-import { BSms, Nsms } from '../../model/sms/bulksms';
-import { TagInputModule } from 'ngx-chips';
+import { MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { ChipModule  } from 'primeng/chip';
+import { TagInputComponent, TagInputModule } from 'ngx-chips';
+
 @Component({
-    standalone: true,
-      imports:[CommonModule,FormsModule,TagInputModule],
   selector: 'app-bulksms',
+  standalone: true,
   templateUrl: './bulksms.component.html',
-  styleUrls: ['./bulksms.component.css']
+  styleUrls: ['./bulksms.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ToastModule,
+    ButtonModule,
+    ChipModule,
+    FormsModule,
+    TagInputModule
+  ]
 })
 export class BulksmsComponent implements OnInit {
+  smsForm!: FormGroup;
 
-  model!:BSms;
-  model1!:Nsms;
-  resp!:string;
-  newMnos:any;
-  constructor(private smsservice: SmssService) {
-
-   }
+  constructor(
+    private fb: FormBuilder,
+    private smsservice: SmssService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.model = new BSms();
-    this.model1 = new Nsms();
+    this.smsForm = this.fb.group({
+      mobileNos: [[], Validators.required]
+    });
   }
 
-  SendSms(){
-   // console.log(this.model);
-   // console.log(this.model1);
-   // console.log(this.model.mobileNos)
-   // console.log(this.model.mobileNos[0])
-    this.newMnos = this.model.mobileNos;
-  //  console.log(this.newMnos.length)
-    var nm = "";
-    for(var i=0; i< this.newMnos.length; i++){
-      if(nm == "") {
-        nm = this.newMnos[i].value;
-      }
-      else {
-        nm = nm + "," + this.newMnos[i].value;
-      }
+  SendSms() {
+    if (this.smsForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Please enter at least one mobile number'
+      });
+      return;
     }
-    this.model1.mobileNos = nm;
-    console.log(nm);
-    this.smsservice.sendBulkSms(this.model1).subscribe(
-      response => {
-        this.resp = response;
-        console.log(this.resp);
-        if (this.resp) {
-          alert("Message Sent...!");
+
+    const mobileNosArray = this.smsForm.value.mobileNos;
+    const concatenatedNumbers = mobileNosArray.join(',');
+
+    const payload = { mobileNos: concatenatedNumbers };
+
+    this.smsservice.sendBulkSms(payload).subscribe({
+      next: res => {
+        if (res) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Message sent successfully!'
+          });
+          this.smsForm.reset();
         } else {
-          alert(this.resp);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Message sending failed'
+          });
         }
-
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Server Error',
+          detail: 'Something went wrong on the server'
+        });
+      }
+    });
   }
-
 }

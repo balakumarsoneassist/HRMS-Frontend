@@ -1,60 +1,87 @@
 import { Component, OnInit } from '@angular/core';
-import { ServiceTrackForm } from '../model/extcustomer/extcustomer';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { CustomertrackService } from '../services/customertrack/customertrack.service';
-import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
-
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
-    standalone: true,
-      imports:[CommonModule,FormsModule,CalendarModule],
+  standalone: true,
   selector: 'app-custservicetrack-entry',
   templateUrl: './custservicetrack-entry.component.html',
-  styleUrls: ['./custservicetrack-entry.component.css']
+  styleUrls: ['./custservicetrack-entry.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    ButtonModule,
+    InputTextModule,
+    ToastModule,
+    DropdownModule,
+    DialogModule,
+    FormsModule
+  ],
+  providers: [MessageService]
 })
 export class CustservicetrackEntryComponent implements OnInit {
+  serviceForm!: FormGroup;
+  custid!: number;
+  currentDateTime = new Date();
+  displayDialog = false;
 
-  model:ServiceTrackForm = new ServiceTrackForm();
-  custid!:number;
-  currentDateTime: any = new Date();
-  constructor(private objCustservice:CustomertrackService) { }
+  constructor(
+    private fb: FormBuilder,
+    private customerTrackService: CustomertrackService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-     //pass cust id and get data from custtrack table
-     this.objCustservice.custidSendObservable.subscribe(response=>{
-      // console.log(response+'-------QWE')
-       var tmpid = response.split('**')
-       this.custid = tmpid[0];// ie from id, here response is id
+    this.serviceForm = this.fb.group({
+      nextcall: [null, Validators.required],
+      callattend: [null, Validators.required],
+      remarks: ['', Validators.required],
+    });
 
-     })
+    this.customerTrackService.custidSendObservable.subscribe((response) => {
+      const tmpid = response.split('**');
+      this.custid = +tmpid[0];
+      this.displayDialog = true;
+    });
   }
 
-  SaveHistory(){
-    this.model.Id = this.custid;
-    this.objCustservice.SaveServiceCallhistory(this.model).subscribe(
-      response => {
-        if(response == true) {
+  saveHistory() {
+    const model = this.serviceForm.value;
+    model.Id = this.custid;
 
-         alert(" Saved Sucessfully");
-         this.closeModel();
-       /*   this.model.AppoinmentDate = null;
-          this.model.Notes = '';
-          this.model.Status = null;
-          this._objCusttrackservice.SendCustomerTrack(this.model.TrackNumber);*/
-         }
-
+    this.customerTrackService.SaveServiceCallhistory(model).subscribe({
+      next: (response) => {
+        if (response === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'Saved successfully'
+          });
+          this.closeDialog();
+        }
       },
-      error => alert('Cant Save history')
-    )
-    }
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Unable to save history'
+        });
+      }
+    });
+  }
 
-    closeModel() {
-      //let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-      let customerModel = document.querySelector('.callHistoryModel1') as HTMLInputElement;
-     // customerModel.style.display = "flex";
-      //leadFormModel.removeAttribute('style');
-      customerModel.removeAttribute('style');
-    }
-
+  closeDialog() {
+    this.displayDialog = false;
+    this.serviceForm.reset();
+  }
 }

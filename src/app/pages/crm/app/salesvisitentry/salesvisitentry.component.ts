@@ -1,70 +1,118 @@
 import { Component, OnInit } from '@angular/core';
-import { SalesvisitForm } from '../model/salesvisit/salesvisit';
 import { SalesVisitService } from '../services/salesvisit/salesvisit.service';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DatePickerModule } from 'primeng/datepicker';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
-    standalone: true,
-      imports: [CommonModule,FormsModule,ReactiveFormsModule,DatePickerModule],
+  standalone: true,
   selector: 'app-salesvisitentry',
   templateUrl: './salesvisitentry.component.html',
-  styleUrls: ['./salesvisitentry.component.css']
+  styleUrls: ['./salesvisitentry.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    ButtonModule,
+    InputTextModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 export class SalesvisitentryComponent implements OnInit {
-  model:SalesvisitForm = new SalesvisitForm();
-  model1:SalesvisitForm = new SalesvisitForm();
+  form!: FormGroup;
+  currentDateTime = new Date();
 
-  currentDateTime: any = new Date();
-
-  constructor(private objSalesService:SalesVisitService) { }
+  constructor(
+    private fb: FormBuilder,
+    private objSalesService: SalesVisitService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      mobileno: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      profession: [''],
+      designation: [''],
+      location: [''],
+      distance: [''],
+      notes: [''],
+      dateofvisit: [null, Validators.required],
+      nextvisit: [null],
+      remarks: ['', Validators.required]
+    });
   }
 
-  SavesalesVisit(){
-    console.log(this.model);
-    this.model1.Mobileno = this.model.Mobileno;
-    this.model1.Dateofvisit = this.model.Dateofvisit;
-    this.model1.Nextvisit = this.model.Nextvisit;
-    this.model1.Remarks = this.model.Remarks;
-    this.model1.Id = this.model.Id;
-  this.objSalesService.SaveSlesVisita(this.model).subscribe(
-    response => {
-      if(response == true) {
-        //alert("Customer Saved Sucessfully");
-        this.SaveHistory(this.model);
-
-     /*   this.model.AppoinmentDate = null;
-        this.model.Notes = '';
-        this.model.Status = null;
-        this._objCusttrackservice.SendCustomerTrack(this.model.TrackNumber);*/
-       }
-       else {
-        alert("Mobile no already added..");
-      }
-    },
-    error => alert('Cant Save Customer')
-  )
-  }
-
-  SaveHistory(m1:any){
-    this.objSalesService.SaveSalesVisithistory(this.model1).subscribe(
-      response => {
-        if(response == true) {
-
-         alert(" Saved Sucessfully");
-       /*   this.model.AppoinmentDate = null;
-          this.model.Notes = '';
-          this.model.Status = null;
-          this._objCusttrackservice.SendCustomerTrack(this.model.TrackNumber);*/
-         }
-
-      },
-      error => alert('Cant Save history')
-    )
+  saveSalesVisit() {
+    if (this.form.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Please fill all required fields'
+      });
+      return;
     }
 
+    console.log('SalesVisit:', this.form.value);
+
+    this.objSalesService.SaveSlesVisita(this.form.value).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'Customer saved successfully'
+          });
+          this.saveHistory();
+          this.form.reset();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Duplicate',
+            detail: 'Mobile number already added'
+          });
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not save customer'
+        });
+      }
+    });
+  }
+
+  saveHistory() {
+    const historyPayload = {
+      Mobileno: this.form.value.mobileno,
+      Dateofvisit: this.form.value.dateofvisit,
+      Nextvisit: this.form.value.nextvisit,
+      Remarks: this.form.value.remarks
+    };
+    this.objSalesService.SaveSalesVisithistory(historyPayload).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'Visit history saved'
+          });
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not save history'
+        });
+      }
+    });
+  }
 }

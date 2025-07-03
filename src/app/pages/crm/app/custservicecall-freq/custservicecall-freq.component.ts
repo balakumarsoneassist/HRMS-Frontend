@@ -1,87 +1,95 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomertrackService } from '../services/customertrack/customertrack.service';
 import { Servicefreq } from '../model/extcustomer/extcustomer';
-
+import { CustomertrackService } from '../services/customertrack/customertrack.service';
 import { EmployeeService } from '../services/employee/employee.service';
-
 import { Employee } from '../model/employee/employee';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
 import { CustservicetrackHistoryComponent } from "../custservicetrack-history/custservicetrack-history.component";
 
 @Component({
-    standalone: true,
-      imports: [CommonModule, FormsModule, CustservicetrackHistoryComponent],
+  standalone: true,
   selector: 'app-custservicecall-freq',
   templateUrl: './custservicecall-freq.component.html',
-  styleUrls: ['./custservicecall-freq.component.css']
+  styleUrls: ['./custservicecall-freq.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    DialogModule,
+    ToastModule,
+    ButtonModule,
+    CustservicetrackHistoryComponent
+  ],
+  providers: [MessageService]
 })
 export class CustservicecallFreqComponent implements OnInit {
-
-  CustomerTrackList:any;
-  trackForm:Servicefreq = new Servicefreq();
+  customerTrackList: any[] = [];
+  trackForm: Servicefreq = new Servicefreq();
   objEmployeeModel!: Employee;
-  adminRights:any;
+  adminRights: any;
+  displayDialog: boolean = false;
+  selectedCustomer: any = null;
 
-  constructor(private objCustSer:CustomertrackService,private objEmpService:EmployeeService) { }
+  constructor(
+    private objCustSer: CustomertrackService,
+    private objEmpService: EmployeeService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.GetUserRights();
+    this.getUserRights();
   }
 
-  GetServiceCallFreqList()
-  {
-console.log(this.trackForm);
-  this.objCustSer.GetServiceCallfreq(this.trackForm).subscribe(
-    response => {
- //     console.log(response)
-        this.CustomerTrackList=response;
-    },
-    error => alert('Internal Server Error')
-  )
-  }
-
-  GetUserRights() {
-    this.objEmpService.GetEmployeeRights().subscribe(
-      response => {
-        this.objEmployeeModel = response[0];
-      //  console.log(this.objEmployeeModel);
+  getUserRights() {
+    this.objEmpService.GetEmployeeRights().subscribe({
+      next: (res) => {
+        this.objEmployeeModel = res[0];
         this.checkSplRights();
       },
-      error => alert('Internal Server Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error getting user rights'
+        });
+      }
+    });
   }
 
-  checkSplRights(){
+  checkSplRights() {
     this.adminRights = this.objEmployeeModel.IsAdminRights;
-  //  console.log(this.adminRights)
-    if(this.adminRights) {
-
-      this.trackForm.usertype = 'admin';
-    }
-    else {
-      this.trackForm.usertype = 'others';
-    }
-    this.GetServiceCallFreqList();
+    this.trackForm.usertype = this.adminRights ? 'admin' : 'others';
+    this.getServiceCallFreqList();
   }
 
-  closeModel() {
-    //let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    let customerModel = document.querySelector('.callHistoryModel1') as HTMLInputElement;
-   // customerModel.style.display = "flex";
-    //leadFormModel.removeAttribute('style');
-    customerModel.removeAttribute('style');
+  getServiceCallFreqList() {
+    this.objCustSer.GetServiceCallfreq(this.trackForm).subscribe({
+      next: (res) => {
+        this.customerTrackList = res;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not load service call frequency'
+        });
+      }
+    });
   }
 
-
-  callStatus(Id:number,name:string,mno:string) {
-    if (Id == null){Id=0;}
-   // console.log(Id)
-    var tmp = Id + '**' + name + '**' + mno;
-    let customerModel1 = document.querySelector('.callHistoryModel1') as HTMLInputElement;
-   // alert(customerModel1)
-    customerModel1.style.display = "flex";
+  openCustomerHistory(customer: any) {
+    this.selectedCustomer = customer;
+    const tmp = `${customer.Id}**${customer.cname}**${customer.MobileNumber}`;
     this.objCustSer.statusOpeningAcco();
     this.objCustSer.SendCustId(tmp);
+    this.displayDialog = true;
+  }
+
+  closeDialog() {
+    this.displayDialog = false;
   }
 }

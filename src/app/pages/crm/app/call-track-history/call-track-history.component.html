@@ -1,32 +1,84 @@
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink " >Lead Creator : {{leadcrname}}</span><br/>
-        <br/>
-<div class="tableContainer rounded mBorder overflow-x-auto">
-    <table class="table font-w-600 color-initial mb-0">
-        <tr class="bg-color-ContHead">
-            <!--<th ng-repeat="(key, val) in myArray[0]">{{ key }}</th>-->
-            <th class="color-gray min-w-200">CallOn<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-            <th class="color-gray min-w-150">Apppointment Date<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
-            <th class="color-gray min-w-150">Notes<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow"/></th>
-            <th class="color-gray min-w-150">Status<br /><input type="text" class="rounded w-100 px-1 py-1 color-initial border-header bg-color-input boxShadow" /></th>
+<p-toast></p-toast>
+
+<div class="flex flex-column gap-3 p-3">
+  <span class="rounded border-0 py-1 px-3 font-w-600 color-white bg-color-pink">
+    Lead Creator: {{ leadcrname }}
+  </span>
+
+  <div class="bg-color-ContBody1 p-3 rounded">
+    <p-table
+      [value]="LeadTrackList"
+      [paginator]="true"
+      [rows]="rows"
+      [first]="first"
+      [rowsPerPageOptions]="[5,10,20]"
+      (onPage)="onPageChange($event)"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>
+            CallOn
+            <p-floatLabel>
+              <input
+                pInputText
+                [(ngModel)]="searchCallOn"
+                placeholder=""
+                class="w-full"
+              />
+              <label>Filter</label>
+            </p-floatLabel>
+          </th>
+          <th>
+            Appointment Date
+            <p-floatLabel>
+              <input
+                pInputText
+                [(ngModel)]="searchAppointmentDate"
+                placeholder=""
+                class="w-full"
+              />
+              <label>Filter</label>
+            </p-floatLabel>
+          </th>
+          <th>
+            Notes
+            <p-floatLabel>
+              <input
+                pInputText
+                [(ngModel)]="searchNotes"
+                placeholder=""
+                class="w-full"
+              />
+              <label>Filter</label>
+            </p-floatLabel>
+          </th>
+          <th>
+            Status
+            <p-floatLabel>
+              <input
+                pInputText
+                [(ngModel)]="searchStatus"
+                placeholder=""
+                class="w-full"
+              />
+              <label>Filter</label>
+            </p-floatLabel>
+          </th>
         </tr>
-        <tr *ngFor="let objTrack of LeadTrackList; let i= index;">
-
-            <td>{{objTrack.CallOn| date : "dd-MM-yyyy HH:mm"}}</td>
-            <td>{{objTrack.AppointmentDate| date : "dd-MM-yyyy HH:mm"}}</td>
-            <td>{{objTrack.Notes}}</td>
-            <td><span class="py-2 px-3 bg-color-yellow color-white-fix rounded">{{objTrack.Status|lowercase}}</span></td>
-
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.CallOn | date: 'dd-MM-yyyy HH:mm' }}</td>
+          <td>{{ row.AppointmentDate | date: 'dd-MM-yyyy HH:mm' }}</td>
+          <td>{{ row.Notes }}</td>
+          <td>
+            <span class="py-2 px-3 bg-color-yellow color-white-fix rounded">
+              {{ row.Status | lowercase }}
+            </span>
+          </td>
         </tr>
-
-    </table>
-</div>
-<div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing 1 to 10 of 50 Records</div>
-    <div class="paginationBtnContainer text-center">
-        <button class="border-header mr-2 bg-color-input color-initial rounded"><i class="fas fa-chevron-left"></i></button>
-        <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
-        <input type="text" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center" onkeypress="return (event.charCode > 46 && event.charCode < 58)" />
-        <span class="mr-2 color-initial font-w-600 font-size-14">of 50 pages</span>
-        <button class="border-header bg-color-input color-initial rounded"><i class="fas fa-chevron-right"></i></button>
-    </div>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

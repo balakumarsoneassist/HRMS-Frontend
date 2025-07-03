@@ -1,67 +1,82 @@
 import { Component, OnInit } from '@angular/core';
 import { CatReportService } from '../services/custcategory/catreportservice';
 import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { SearchpipePipe } from "../pipe/searchpipe.pipe";
-import { MultiloancustomersdetComponent } from "../multiloancustomersdet/multiloancustomersdet.component";
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { MultiloancustomersdetComponent } from '../multiloancustomersdet/multiloancustomersdet.component';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule, SearchpipePipe, MultiloancustomersdetComponent],
+  standalone: true,
   selector: 'app-multiloancustomers',
   templateUrl: './multiloancustomers.component.html',
-  styleUrls: ['./multiloancustomers.component.css']
+  styleUrls: ['./multiloancustomers.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    ToastModule,
+    InputTextModule,
+    DialogModule,
+    ButtonModule,
+    MultiloancustomersdetComponent,
+    FormsModule,
+    ReactiveFormsModule
+  ],
+  providers: [MessageService]
 })
 export class MultiloancustomersComponent implements OnInit {
+  categoryList: any[] = [];
+  searchForm!: FormGroup;
+  displayDialog: boolean = false;
+  selectedProduct: string = '';
 
-  CategoryList: any;
-  ptype: any;
+  constructor(
+    private catReportService: CatReportService,
+    private router: Router,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {}
 
-  searchStr:string;
-
-  constructor(private _objRepService:CatReportService,private router: Router) {
-    this.searchStr = "";
-  }
-
-  statusFilter: any
   ngOnInit(): void {
-    localStorage.setItem('categorytype',"");
-
-    this.GetMultiLoanList();
+    this.searchForm = this.fb.group({
+      searchStr: ['']
+    });
+    localStorage.setItem('categorytype', '');
+    this.getMultiLoanList();
   }
-  GetMultiLoanList() {
-    this._objRepService.getMultiloanReport().subscribe(
-      response => {
-        this.CategoryList = response
 
-        console.log(response)
-     //   console.log('cat report')
+  get searchStr() : FormControl {
+    return this.searchForm.get('searchStr') as FormControl;
+  }
 
+  getMultiLoanList() {
+    this.catReportService.getMultiloanReport().subscribe({
+      next: (res) => {
+        this.categoryList = res;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load multi-loan report'
+        });
+      }
+    });
   }
 
-  callStatus(cname,mno) {
-
-     let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-     leadFormModel.style.display = "flex";
-   // localStorage.setItem('segname', ctype);
-      this.ptype = cname + "--"+ mno;
-      this._objRepService.SendMLCCode(this.ptype);
-      this._objRepService.statusOpeningAcco();
-     //this.router.navigate(['home/custratingdet']);
-
-
-
+  callStatus(cname: string, mno: string) {
+    this.selectedProduct = `${cname}--${mno}`;
+    this.catReportService.SendMLCCode(this.selectedProduct);
+    this.catReportService.statusOpeningAcco();
+    this.displayDialog = true;
   }
 
-  closeModel() {
-    let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    leadFormModel.removeAttribute('style');
+  closeDialog() {
+    this.displayDialog = false;
   }
-
-
-
 }

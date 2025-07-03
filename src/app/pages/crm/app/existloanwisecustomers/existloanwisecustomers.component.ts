@@ -1,41 +1,52 @@
 import { Component, OnInit } from '@angular/core';
 import { CatReportService } from '../services/custcategory/catreportservice';
 import { PWCModel } from '../model/report/dailyreport';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    selector: 'app-existloanwisecustomers',
-    templateUrl: './existloanwisecustomers.component.html',
-    styleUrls: ['./existloanwisecustomers.component.css']
+  standalone: true,
+  selector: 'app-existloanwisecustomers',
+  templateUrl: './existloanwisecustomers.component.html',
+  styleUrls: ['./existloanwisecustomers.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 export class ExistloanwisecustomersComponent implements OnInit {
-    PWCList: any;
-    prodModel: PWCModel = new PWCModel();
+  pwcList: any[] = [];
+  prodModel: PWCModel = new PWCModel();
 
-    constructor(private service: CatReportService) { }
+  constructor(
+    private service: CatReportService,
+    private messageService: MessageService
+  ) {}
 
-    ngOnInit(): void {
-        this.service.prodSendObservable.subscribe(response => {
-            //  console.log("result -- " +response);
-            //alert("result -- " +response)
-            this.GetPWcust(response);
-        })
-    }
-    GetPWcust(pcode: string) {
-        //alert(pcode)
-        this.prodModel.product = pcode;
-        this.service.getLoanwiseDetailReport(this.prodModel).subscribe(
-            response => {
-                console.log(response);
-                this.PWCList = response;
-            },
-            error => alert('Internal Server Error')
-        )
-    }
+  ngOnInit(): void {
+    this.service.prodSendObservable.subscribe((response) => {
+      this.getPWcust(response);
+    });
+  }
 
-
+  getPWcust(pcode: string) {
+    this.prodModel.product = pcode;
+    this.service.getLoanwiseDetailReport(this.prodModel).subscribe({
+      next: (res) => {
+        this.pwcList = res;
+        console.log(res);
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load product-wise customer details'
+        });
+      }
+    });
+  }
 }

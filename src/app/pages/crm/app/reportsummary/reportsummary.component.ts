@@ -1,186 +1,127 @@
 import { Component, OnInit } from '@angular/core';
-import { DailyReportModel, DailyReportSummaryModel, SummaryRepInModel } from '../model/report/dailyreport';
-//import { DailyReportModel } from '../model/report/dailyreport';
-import { PaginationModel1 } from '../model/report/dailyreport';
-import { ReportService } from '../services/report/reportservice';
-import { LeadService } from '../services/lead/lead.service';
-import { FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
-
-import { Chart,registerables  } from 'chart.js';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { Chart, registerables } from 'chart.js';
+import { ReportService } from '../services/report/reportservice';
+import { DailyReportSummaryModel, SummaryRepInModel } from '../model/report/dailyreport';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-    standalone: true,
-      imports: [CommonModule,FormsModule,CalendarModule,ReactiveFormsModule],
   selector: 'app-reportsummary',
-  templateUrl: './reportsummary.component.html',
-  styleUrls: ['./reportsummary.component.css']
+  standalone: true,
+   templateUrl: './reportsummary.component.html',
+  styleUrls: ['./reportsummary.component.css'],
+  imports: [
+    CommonModule,
+    FloatLabelModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    TableModule,
+    ToastModule,
+    ButtonModule,
+    InputTextModule
+  ],
+  providers: [MessageService]
 })
 export class ReportsummaryComponent implements OnInit {
-  selDt:any;
-  model!:DailyReportSummaryModel[];
-  resList!:DailyReportSummaryModel[];
+  reportForm!: FormGroup;
+  model: DailyReportSummaryModel[] = [];
+  chart!: Chart;
+  displayChart = false;
+  loading = false;
 
-  _objModel:SummaryRepInModel = {} as SummaryRepInModel;
+  xData: any[] = [];
+  yDataTL: any[] = [];
+  yDataTC: any[] = [];
+  yDataAC: any[] = [];
+  yDataRC: any[] = [];
+  yDataPC: any[] = [];
 
-  fcfrdt: any = new FormControl('');
-  myChart!:Chart;
-
-  public xData!: any[];
-  public yDataMain!: string[];
-  public yData!:number[];
-  public bgcolor!: string[];
-  public yDataTL!:any[];
-  public yDataTC!:any[];
-  public yDataAC!:any[];
-  public yDataRC!:any[];
-  public yDataPC!:any[];
-  dvdisp!:string;
-
-
-  dmonyr:any;
-  yDataMani!:string;
-
-  constructor(private repService:ReportService) {
+  constructor(
+    private fb: FormBuilder,
+    private repService: ReportService,
+    private messageService: MessageService
+  ) {
     Chart.register(...registerables);
   }
 
-  ngOnInit(): void {
-    this.dvdisp = "display:none;"
+  ngOnInit() {
+    this.reportForm = this.fb.group({
+      date: [null, Validators.required]
+    });
   }
 
-  getSReport(){
-    console.log('pv1');
-    this._objModel.flag = 'admin';
-    this._objModel.stDate = this.fcfrdt.value;
-    this.selDt = this.fcfrdt.value.toString().substring(0,15);
+  getSReport() {
+    if (this.reportForm.invalid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Validation',
+        detail: 'Please select a date'
+      });
+      return;
+    }
 
-    console.log('ori val  ' + this.fcfrdt.value + "-----" );
+    const req: SummaryRepInModel = {
+      flag: 'admin',
+      stDate: this.reportForm.value.date
+    };
 
-    console.log(this._objModel);
-    this.repService.getDailyReportSummary(this._objModel).subscribe(
-      response => {
+    this.loading = true;
 
-          this.resList = response
-          this.model=response;
-          console.log('pv3---' + this.model);
-          this.ProcessData();
-
-
+    this.repService.getDailyReportSummary(req).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.model = response;
+        this.prepareChartData();
+        this.displayChart = true;
       },
-      error => alert('Server Error')
-    )
-
-
-  }
-
-  ProcessData() {
-    this.xData = [];
-    this.yData = [];
-    this.yDataMain = [];
-    this.bgcolor = [];
-    this.yDataTC = [];
-    this.yDataTL = [];
-    this.yDataRC = [];
-    this.yDataAC = [];
-    this.yDataPC = [];
-    for(var i=0; i<this.resList.length; i++){
-
-       this.xData.push(this.resList[i].Name);
-      /* Data in diff way reverse bar chart
-       this.yData.splice(0,5);
-       this.yData.push(this.resList[i].TotalLeadDayCount);
-       this.yData.push(this.resList[i].TotalCallDayCount);
-       this.yData.push(this.resList[i].AttendCallDayCount);
-       this.yData.push(this.resList[i].RejectCallDayCount);
-       this.yData.push(this.resList[i].PendingCallDayCount);
-       this.yDataMani = '[' + this.yData + ']'
-       console.log(this.xData + "-------" + this.yDataMani);
-       this.yDataMain.push(this.yDataMani);*/
-
-       this.yDataTL.push(this.resList[i].TotalLeadDayCount);
-       this.yDataTC.push(this.resList[i].TotalCallDayCount);
-       this.yDataAC.push(this.resList[i].AttendCallDayCount);
-       this.yDataRC.push(this.resList[i].RejectCallDayCount);
-       this.yDataPC.push(this.resList[i].PendingCallDayCount);
-    }
-    console.log('test--' + this.xData);
-    console.log('test1--' + this.yDataTC);
-    this.dvdisp = "display:block;"
-    this.DrawLineChart();
-  }
-
-  DrawLineChart(){
-    console.log('inside chart');
-    if (this.myChart != undefined){
-      this.myChart.destroy();
-    }
-    this.myChart = new Chart('line-chart', {
-      //new Chart(myElement, {
-          type: 'bar',
-
-          data: {
-           // labels: this.xData,
-            labels: this.xData,
-
-            datasets: [
-              {
-                label: "TotalLeadDayCount",
-                backgroundColor: "#8e5ea2",
-
-                data: this.yDataTL
-            },
-            {
-                label: "TotalCallDayCount",
-                backgroundColor: "#3e95cd",
-
-
-                data: this.yDataTC
-            },
-            {
-                label: "AttendCallDayCount",
-                backgroundColor: "green",
-
-                data: this.yDataAC
-            },
-            {
-              label: "RejectCallDayCount",
-              backgroundColor: "red",
-
-              data: this.yDataRC
-          },
-          {
-              label: "PendingCallDayCount",
-              backgroundColor: "#c4a350",
-
-              data: this.yDataPC
-          }
-            /*  {
-                data: this.yData,
-                label: this.dmonyr,
-                backgroundColor: this.bgcolor,
-                borderColor: this.bgcolor,
-                borderWidth: 1,
-                barThickness: 20
-
-
-                //fill: false
-              }*/
-            ]
-          },
-          options: {
-            layout: {
-              padding: 20
-          }
-          }
+      error: (err) => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Server Error'
         });
-
-
-
-
-
+        console.error(err);
+      }
+    });
   }
 
+  prepareChartData() {
+    this.xData = this.model.map(item => item.Name);
+    this.yDataTL = this.model.map(item => item.TotalLeadDayCount);
+    this.yDataTC = this.model.map(item => item.TotalCallDayCount);
+    this.yDataAC = this.model.map(item => item.AttendCallDayCount);
+    this.yDataRC = this.model.map(item => item.RejectCallDayCount);
+    this.yDataPC = this.model.map(item => item.PendingCallDayCount);
+
+    if (this.chart) this.chart.destroy();
+
+    this.chart = new Chart('line-chart', {
+      type: 'bar',
+      data: {
+        labels: this.xData,
+        datasets: [
+          { label: 'TotalLeadDayCount', data: this.yDataTL, backgroundColor: '#8e5ea2' },
+          { label: 'TotalCallDayCount', data: this.yDataTC, backgroundColor: '#3e95cd' },
+          { label: 'AttendCallDayCount', data: this.yDataAC, backgroundColor: 'green' },
+          { label: 'RejectCallDayCount', data: this.yDataRC, backgroundColor: 'red' },
+          { label: 'PendingCallDayCount', data: this.yDataPC, backgroundColor: '#c4a350' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' }
+        },
+        layout: { padding: 20 }
+      }
+    });
+  }
 }

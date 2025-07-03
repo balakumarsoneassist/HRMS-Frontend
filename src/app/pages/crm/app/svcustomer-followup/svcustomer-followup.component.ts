@@ -1,66 +1,74 @@
 import { Component, OnInit } from '@angular/core';
-
-
 import { SalesVisitService } from '../services/salesvisit/salesvisit.service';
-
-
+import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { SalesvisitComponent } from '../salesvisit/salesvisit.component';
+import { CustomerextComponent } from '../customerext/customerext.component';
 import { FormsModule } from '@angular/forms';
-import { SalesvisitComponent } from "../salesvisit/salesvisit.component";
-import { CustomerextComponent } from "../customerext/customerext.component";
+import { SearchpipePipe } from "../pipe/searchpipe.pipe";
 
 @Component({
-    standalone: true,
-      imports: [CommonModule, FormsModule, SalesvisitComponent, CustomerextComponent],
+  standalone: true,
   selector: 'app-svcustomer-followup',
   templateUrl: './svcustomer-followup.component.html',
-  styleUrls: ['./svcustomer-followup.component.css']
+  styleUrls: ['./svcustomer-followup.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    ToastModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    SalesvisitComponent,
+    FormsModule,
+    CustomerextComponent,
+    SearchpipePipe
+],
+  providers: [MessageService]
 })
 export class SvcustomerFollowupComponent implements OnInit {
-  SVcustomerList:any;
+  SVcustomerList: any[] = [];
+  searchStr = '';
+  displayCustomerDialog = false;
+  selectedCustomer: string | null = null;
 
-
-  constructor(private _objSVService:SalesVisitService) {
-
-   }
+  constructor(
+    private svService: SalesVisitService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.GetCustomerList();
+    this.getCustomerList();
   }
 
-  // callStatus(Id) {
-  //   let customerModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-  //   customerModel.style.display = "flex";
-  //   this._objSVService.statusOpeningAcco();
-  //   this._objSVService.SendCustId(Id);
-
-  // }
-
-  callStatus(Id:number,name:string,mno:string) {
-    if (Id == null){Id=0;}
-    console.log(Id)
-    var tmp = Id + '**' + name + '**' + mno;
-    let customerModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    customerModel.style.display = "flex";
-    this._objSVService.statusOpeningAcco();
-    this._objSVService.SendCustId(tmp);
+  getCustomerList() {
+    this.svService.GetSVcustomerlist().subscribe({
+      next: (res) => {
+        this.SVcustomerList = res;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Unable to load customer list'
+        });
+      }
+    });
   }
 
-  CloseCustomerModel() {
-    let customerModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    customerModel.removeAttribute('style');
+  callStatus(id: number, name: string, mno: string) {
+    const tmp = `${id}**${name}**${mno}`;
+    this.svService.statusOpeningAcco();
+    this.svService.SendCustId(tmp);
+    this.displayCustomerDialog = true;
   }
 
-
-  GetCustomerList(){
-
-    this._objSVService.GetSVcustomerlist().subscribe(
-      response => {
-        this.SVcustomerList = response;
-
-      })
+  closeCustomerDialog() {
+    this.displayCustomerDialog = false;
   }
-
-
-
 }

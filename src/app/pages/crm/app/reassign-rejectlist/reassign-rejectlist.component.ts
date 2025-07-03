@@ -1,217 +1,207 @@
 import { Component, OnInit } from '@angular/core';
-
 import { ReassignService } from '../services/reassignreport/reassignservice';
-
-
-import { Router } from '@angular/router';
-
-import { FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
-
 import { EmployeeService } from '../services/employee/employee.service';
-import { CommonModule } from '@angular/common';
-import { RejectbyModel, RejectInpModel } from '../model/report/dailyreport';
 import { ContactService } from '../services/contact/contact.service';
+import { RejectbyModel, RejectInpModel } from '../model/report/dailyreport';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
+import { CallTrackHistoryComponent } from '../call-track-history/call-track-history.component';
+import { LeadFormModelComponent } from '../lead-form-model/lead-form-model.component';
 import { SearchpipePipe } from "../pipe/searchpipe.pipe";
-import { CallTrackHistoryComponent } from "../call-track-history/call-track-history.component";
-import { LeadFormModelComponent } from "../lead-form-model/lead-form-model.component";
 
 @Component({
-    standalone: true,
-      imports: [CommonModule, FormsModule, ReactiveFormsModule, SearchpipePipe, CallTrackHistoryComponent, LeadFormModelComponent],
+  standalone: true,
   selector: 'app-reassign-rejectlist',
   templateUrl: './reassign-rejectlist.component.html',
-  styleUrls: ['./reassign-rejectlist.component.css']
+  styleUrls: ['./reassign-rejectlist.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    InputTextModule,
+    ToastModule,
+    DialogModule,
+    ButtonModule,
+    DropdownModule,
+    CheckboxModule,
+    CallTrackHistoryComponent,
+    LeadFormModelComponent,
+    FormsModule,
+    SearchpipePipe,
+    ReactiveFormsModule
+],
+  providers: [MessageService]
 })
 export class ReassignRejectlistComponent implements OnInit {
+  statusList: any[] = [];
+  rejectList: any[] = [];
+  rejEmpList: any[] = [];
+  empList: any[] = [];
+  searchStr: string = '';
 
-  StatusList: any;
-  StatusType:string = "";
+  fcForm!: FormGroup;
+  displayLeadDialog = false;
+  displayTrackDialog = false;
 
-  Reject_list ;any = [];
+  constructor(
+    private reassignService: ReassignService,
+    private empService: EmployeeService,
+    private contactService: ContactService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {}
 
-  inpModel: RejectInpModel = {} as RejectInpModel;
-
-  rmodel:RejectbyModel = {} as RejectbyModel;
-
-  chkstatus:boolean = false;
-
-  searchStr:string;
-  rejEmpList:any;
-  EmpList:any;
-  fcemp : any = new FormControl('');
-  fcContactfby : any = new FormControl('');
-  constructor(private _objRepService:ReassignService,private router: Router,private contactSevice: ContactService,private _objEmpService:EmployeeService  ) {
-    this.searchStr = "";
-   }
-  connectorFilter: any
   ngOnInit(): void {
+    this.fcForm = this.fb.group({
+      rejectedBy: [0],
+      reassignto: [0]
+    });
 
     this.getRejectedbylist();
-    this.GetEmpNameList();
-
-  //  this.GetRejectList()
-  /*  this._objRepService.StatusSendObservable.subscribe(response=>{
-     console.log(response + '-----pvr----');
-      this. GetLFAllList(response);
-
-     })*/
-   // this.GetLFAllList();
+    this.getEmpNameList();
   }
-  GetRejectList() {
-    this.rmodel.empid = this.fcemp.value;
-//console.log(this.rmodel)
-    this._objRepService.getrejectListReport(this.rmodel).subscribe(
-      response => {
-     //   console.log('----yes----')
-  //      console.log(response);
-        this.StatusList = response
-        //console.log('end')
+
+  getRejectList() {
+    const empId = this.fcForm.value.rejectedBy;
+    const model: RejectbyModel = { empid: empId };
+    this.reassignService.getrejectListReport(model).subscribe({
+      next: (res) => {
+        this.statusList = res;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error fetching rejected records'
+        });
+      }
+    });
   }
 
-  getRejectedbylist(){
-    this._objRepService.getrejectbyempList().subscribe(
-      response => {
-          this.rejEmpList=response;
-   //       console.log(this.rejEmpList);
+  getRejectedbylist() {
+    this.reassignService.getrejectbyempList().subscribe({
+      next: (res) => {
+        this.rejEmpList = res;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error loading rejected by employee list'
+        });
+      }
+    });
   }
 
-
-  callStatus(TrackId: string, Id) {
-    let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    leadFormModel.style.display = "flex";
-    console.log(Id + "------" + TrackId);
-    this.contactSevice.SendLeadId(Id);
-    this.contactSevice.SendLeadTrack(TrackId);
+  getEmpNameList() {
+    this.empService.GetActiveEmpList().subscribe({
+      next: (res) => {
+        this.empList = res;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error loading employees'
+        });
+      }
+    });
   }
 
-OpenTrackHistoryModel(TrackNumber) {
-    let leadFormModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    leadFormModel.style.display = "flex";
-    this.contactSevice.SendLeadTrack(TrackNumber);
-  }
-  CloseTrackHistoryModel() {
-    let leadFormModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    leadFormModel.removeAttribute('style');
+  callStatus(trackId: any, id: any) {
+    this.contactService.SendLeadId(id);
+    this.contactService.SendLeadTrack(trackId);
+    this.displayLeadDialog = true;
   }
 
-/*
-  onCheckUser(Id:any, event:any) {
-    const checked = event.target.checked; // stored checked value true or false
-     if (checked) {
-       this.Reject_list.push(Id); // push the Id in array if checked
+  openTrackHistory(trackNumber: string) {
+    this.contactService.SendLeadTrack(trackNumber);
+    this.displayTrackDialog = true;
+  }
+
+  closeLeadDialog() {
+    this.displayLeadDialog = false;
+  }
+
+  closeTrackDialog() {
+    this.displayTrackDialog = false;
+  }
+
+  isAllSelected() {
+    return this.statusList.every(item => item.checkstatus === true);
+  }
+
+  toggleAll(ev: any) {
+    const checked = ev.target.checked;
+    this.statusList.forEach(item => item.checkstatus = checked);
+    this.rejectList = checked ? this.statusList.map(x => x.id) : [];
+  }
+
+  toggleItem(val: any) {
+    const index = this.rejectList.indexOf(val);
+    if (index === -1) {
+      this.rejectList.push(val);
+    } else {
+      this.rejectList.splice(index, 1);
+    }
+  }
+
+  reassign() {
+    const rejectedBy = this.fcForm.value.rejectedBy;
+    const reassignto = this.fcForm.value.reassignto;
+
+    if (rejectedBy === reassignto) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Rejected By and Reassign To cannot be the same'
+      });
+      return;
+    }
+    if (this.rejectList.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Please select at least one record'
+      });
+      return;
+    }
+    const selvalues = this.rejectList.join(',');
+    const input: RejectInpModel = {
+      followedby: reassignto,
+      selvalues
+    };
+    this.reassignService.reassignRecords(input).subscribe({
+      next: (res) => {
+        if (res) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Records reassigned'
+          });
+          this.getRejectList();
         } else {
-        const index = this.Reject_list.findIndex(Id);//Find the index of stored id
-        this.Reject_list.splice(index, 1); // Then remove
-      }
-   }*/
-
-   selChk(val:any) {
-
-    var index = this.Reject_list.indexOf(val);
-    if(index === -1){
-      // val not found, pushing onto array
-      this.Reject_list.push(val);
-    }else{
-      // val is found, removing from array
-      this.Reject_list.splice(index,1);
-    }
-    //alert(this.Reject_list)
-   }
-
-
-
-
-  checkAllCheckBox(ev: any) { // Angular 13
-    if (this.StatusList != null) {
-		this.StatusList.forEach(x => x.checkstatus = ev.target.checked)
-    //alert(ev.target.checked)
-    this.processChecked(ev.target.checked);
-    }
-	}
-
-	isAllCheckBoxChecked() {
-    if (this.StatusList!= null) {
-		return this.StatusList.every(p => p.checkstatus);
-  }
-	}
-
-  processChecked(val:boolean) {
-
-    if(val){
-      this.Reject_list.splice(0,this.Reject_list.length);
-      for(var j=0; j<this.StatusList.length; j++){
-        this.Reject_list.push(this.StatusList[j].id);
-      }
-
-    }
-    else {
-      this.Reject_list.splice(0,this.Reject_list.length);
-    }
-   // alert(this.Reject_list)
-  }
-
-  Reassign(){
-    var selval = "";
-    if (this.fcemp.value == this.fcContactfby.value) {
-      alert("Rejected by and Assigned to are Same...!")
-    }
-    else
-    {
-          if (this.Reject_list.length == 0) {
-            alert('Pls select atleast one record...');
-          }
-          else {
-            for(var k=0; k<this.Reject_list.length; k++){
-              if (selval == ""){
-                selval = this.Reject_list[k];
-              }
-              else{
-                selval = selval + "," + this.Reject_list[k];
-              }
-              if  (k > 100) {
-                break;
-              }
-          }
-          this.inpModel.followedby = this.fcContactfby.value;
-            this.inpModel.selvalues = selval;
-            this.Reject_list.splice(0,this.Reject_list.length);
-            this._objRepService.reassignRecords(this.inpModel).subscribe(
-              response => {
-            //   console.log('----yes----')
-                console.log(response);
-                if (response) {
-                  alert("Records Reassigned...!");
-                  this.GetRejectList();
-                }
-                else {
-                  alert("Err while Reassign..")
-                }
-              // this.StatusList = response
-                //console.log('end')
-              },
-              error => alert('InternalServer Error')
-            )
-
-          }
-          //alert(selval)
-      }
-
-  }
-
-  GetEmpNameList(){
-    this._objEmpService.GetActiveEmpList().subscribe(
-      response => {
-          this.EmpList=response;
-          console.log(this.EmpList);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error while reassigning'
+          });
+        }
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Internal server error'
+        });
+      }
+    });
   }
-
 }

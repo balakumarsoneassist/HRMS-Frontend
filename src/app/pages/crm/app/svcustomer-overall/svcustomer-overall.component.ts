@@ -1,56 +1,61 @@
 import { Component, OnInit } from '@angular/core';
 import { SalesVisitService } from '../services/salesvisit/salesvisit.service';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { InputTextModule } from 'primeng/inputtext';
 import { SearchpipePipe } from "../pipe/searchpipe.pipe";
+import { FormsModule } from '@angular/forms';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule, SearchpipePipe],
+  standalone: true,
   selector: 'app-svcustomer-overall',
   templateUrl: './svcustomer-overall.component.html',
-  styleUrls: ['./svcustomer-overall.component.css']
+  styleUrls: ['./svcustomer-overall.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    ToastModule,
+    InputTextModule,
+    FormsModule,
+    SearchpipePipe
+],
+  providers: [MessageService]
 })
 export class SvcustomerOverallComponent implements OnInit {
-  CustList: any;
+  custList: any[] = [];
+  searchStr = '';
 
-  searchStr:string;
-  constructor(private objSalesService:SalesVisitService, private router:Router) {
-    this.searchStr = ""
-  }
+  constructor(
+    private objSalesService: SalesVisitService,
+    private router: Router,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.GetCustomerList();
+    this.getCustomerList();
   }
 
-  GetCustomerList() {
-    this.objSalesService.GetSVoveralllist().subscribe(
-      response => {
-        this.CustList = response
-
-        console.log(response)
-       // console.log('Customer list')
-
+  getCustomerList() {
+    this.objSalesService.GetSVoveralllist().subscribe({
+      next: (res) => {
+        this.custList = res;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Internal server error while fetching customer data'
+        });
+      }
+    });
   }
 
- // OpenEmpTrack(Id:any){}
-
-  OpenEmpTrack(Id:any,Ename:any) {//,TrackNumber
-
-    localStorage.setItem('empid1', Id);
-    localStorage.setItem('followerName1',Ename)
-    //console.log('venkat');
-
-      //console.log('yes');
-      //this.router.navigate(['home/ncfempreport']);
-
-      this.router.navigate(['home/svcmycust']);
-
-
+  openEmpTrack(id: any, ename: any) {
+    localStorage.setItem('empid1', id);
+    localStorage.setItem('followerName1', ename);
+    this.router.navigate(['home/svcmycust']);
   }
-
 }

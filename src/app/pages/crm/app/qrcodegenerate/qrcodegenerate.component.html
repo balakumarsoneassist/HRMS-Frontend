@@ -1,78 +1,72 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-          <div class="bg-color-ContHead d-flex py-2 px-3 font-w-600 border-b rounded">
-            <div class="font-size-19">QR Code Generation</div>
-          </div>
-          <form class="p-3 bg-color-ContBody1 font-w-600" #qrgenerate="ngForm">
-            <div class="formContainer d-flex flex-row flex-wrap">
-
-                <div class="mb-3 formItem">
-                    <label class="mb-1">QR Code For</label><br>
-                    <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" name="referedby" [(ngModel)]="model.CustomerId">
-                        <option *ngFor="let item of CustList;" value={{item.Id}}>{{item.Name}}</option>
-                      </select>
-                </div>
-
-                <div class="mb-3 formItem">
-                    <label class="mb-1">Offer Code</label><br>
-                    <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Offer Code" name="OfferCode"[(ngModel)]="model.OfferCode" #OfferCode="ngModel" >
-
-
-                </div>
-
-                <div class="mb-3 formItem">
-  <label class="mb-1">Valid From</label><br>
-  <p-calendar
-    [(ngModel)]="model.ValidFrom"
-    name="vfr"
-    inputId="vfr"
-    showIcon="true"
-    dateFormat="yy-mm-dd"
-    class="w-100"
-    [showButtonBar]="true">
-  </p-calendar>
-</div>
-
-<div class="mb-3 formItem">
-  <label class="mb-1">Valid Upto</label><br>
-  <p-calendar
-    [(ngModel)]="model.ValidTo"
-    name="vto"
-    inputId="vto"
-    showIcon="true"
-    dateFormat="yy-mm-dd"
-    class="w-100"
-    [showButtonBar]="true">
-  </p-calendar>
-</div>
-
-
-
-                    <div class="mb-3 formItem">
-                        <label class="mb-1">QR Code Name</label><br>
-                        <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="QR Code Name" name="qrname"[(ngModel)]="model.QRcodefile" #Qrname="ngModel" [class.is-invalid]="Qrname.invalid && Qrname.touched">
-                            <div *ngIf="Qrname.errors && (Qrname.dirty || Qrname.touched)" class="text-danger mt-1">
-                                <div *ngIf="Qrname.errors?.['pattern']">
-                                    QR Code Name is required.
-                                </div>
-                            </div>
-                    </div>
-
-
-
-
-
-
-
-                    <div class="d-flex justify-content-end py-2 px-3">
-                        <button type="submit" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600" [disabled]="qrgenerate.invalid" (click)="QrCodeSubmit();qrgenerate.reset();">Submit</button>
-                    </div>
-            </div>
-        </form>
-      </div>
+<p-toast></p-toast>
+<div class="container">
+  <div class="flex flex-column gap-3 p-3">
+    <div class="bg-color-ContHead flex align-items-center py-2 px-3 font-w-600 border-b rounded">
+      <div class="text-xl">QR Code Generation</div>
     </div>
+
+    <form [formGroup]="qrForm" (ngSubmit)="onSubmit()" class="p-3 bg-color-ContBody1 font-w-600 flex flex-column gap-4">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <p-dropdown
+              [options]="custList"
+              optionLabel="Name"
+              optionValue="Id"
+              placeholder="Select Shop"
+              formControlName="CustomerId"
+            ></p-dropdown>
+            <label>QR Code For*</label>
+          </p-floatLabel>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input pInputText formControlName="OfferCode" />
+            <label>Offer Code</label>
+          </p-floatLabel>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <p-calendar
+              formControlName="ValidFrom"
+              showIcon="true"
+              dateFormat="yy-mm-dd"
+              [showButtonBar]="true"
+            ></p-calendar>
+            <label>Valid From</label>
+          </p-floatLabel>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <p-calendar
+              formControlName="ValidTo"
+              showIcon="true"
+              dateFormat="yy-mm-dd"
+              [showButtonBar]="true"
+            ></p-calendar>
+            <label>Valid Upto</label>
+          </p-floatLabel>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input pInputText formControlName="QRcodefile" />
+            <label>QR Code Name*</label>
+          </p-floatLabel>
+          <p-message
+            severity="error"
+            *ngIf="qrForm.controls['QRcodefile'].invalid && qrForm.controls['QRcodefile'].touched"
+            text="QR Code Name is required"
+          ></p-message>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end mt-2">
+        <button pButton type="submit" label="Generate" [disabled]="qrForm.invalid"></button>
+      </div>
+    </form>
   </div>
-  <!-- <app-employee-list> </app-employee-list> -->
-
-
+</div>

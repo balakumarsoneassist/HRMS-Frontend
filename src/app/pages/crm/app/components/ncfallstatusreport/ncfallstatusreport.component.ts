@@ -1,69 +1,133 @@
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReportService } from '../../services/report/reportservice';
 import { MagarepModel } from '../../model/report/dailyreport';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { SearchpipePipe } from '../../pipe/searchpipe.pipe';
 
 @Component({
-standalone: true,
-  imports:[CommonModule,FormsModule,SearchpipePipe],
   selector: 'app-ncfallstatusreport',
-  templateUrl: './ncfallstatusreport.component.html',
-  styleUrls: ['./ncfallstatusreport.component.css']
+  standalone: true,
+  template: `
+    <p-toast></p-toast>
+    <div class="container">
+      <div class="flex flex-column gap-3 p-3">
+        <div class="bg-color-ContHead flex justify-content-between align-items-center py-2 px-3 font-w-600 border-b rounded">
+          <div class="text-xl">Contact Status Report - {{ StatusType }}</div>
+        </div>
+
+        <div class="bg-color-ContBody1 p-3 rounded">
+          <div class="flex align-items-center gap-3 mb-3">
+            <p-floatLabel class="w-full sm:w-20rem">
+              <input
+                pInputText
+                id="search"
+                type="text"
+                [(ngModel)]="searchStr"
+                placeholder=""
+                class="w-full"
+              />
+              <label for="search">Search</label>
+            </p-floatLabel>
+          </div>
+
+          <p-table
+            [value]="StatusList | searchpipe : searchStr"
+            responsiveLayout="scroll"
+            class="font-w-600"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.total }}</td>
+                <td>
+                  <button
+                    pButton
+                    label="Details"
+                    size="small"
+                    (click)="callStatus(row.contactfollowedby, row.name)"
+                  ></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./ncfallstatusreport.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    FloatLabelModule,
+    FormsModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    ToastModule,
+    SearchpipePipe
+  ]
 })
 export class NcfallstatusreportComponent implements OnInit {
-
   StatusList: any;
-  StatusType:any = "";
+  StatusType: string = '';
+  searchStr: string = '';
+  scode!: number;
 
-  resInpModel:MagarepModel = {} as MagarepModel;
-  scode!:number;
-  searchStr:string;
-  constructor(private _objRepService:ReportService,private router: Router ) {
-    this.searchStr = "";
-  }
-  connectorFilter: any
+  resInpModel: MagarepModel = {} as MagarepModel;
+
+  constructor(
+    private reportService: ReportService,
+    private router: Router,
+    private messageService: MessageService
+  ) {}
+
   ngOnInit(): void {
-
-    this.StatusType = localStorage.getItem('statustype');
-    this.scode = Number(localStorage.getItem('statuscode'))
-    this. GetLFAllList(this.scode)
-
+    this.StatusType = localStorage.getItem('statustype') || '';
+    this.scode = Number(localStorage.getItem('statuscode'));
+    this.GetLFAllList(this.scode);
   }
-  GetLFAllList(code) {
+
+  GetLFAllList(code: number) {
     this.resInpModel.statuscode = code;
     this.resInpModel.Empid = 0;
-    console.log(this.resInpModel)
-    this._objRepService.getCFAllStatusReport(this.resInpModel).subscribe(
-      response => {
-     //   console.log('----yes----')
-       // console.log(response);
-        this.StatusList = response
 
-
-        //console.log('end')
+    this.reportService.getCFAllStatusReport(this.resInpModel).subscribe({
+      next: (response) => {
+        this.StatusList = response;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Internal Server Error'
+        });
+      }
+    });
   }
 
-
-
-  callStatus(Id,Ename) {//,TrackNumber
+  callStatus(Id: string, Ename: string) {
     localStorage.setItem('empid', Id);
-    localStorage.setItem('followerName',Ename)
-    //console.log('venkat');
-    if (this.scode < 11)
-    {
-      console.log('call contact');
+    localStorage.setItem('followerName', Ename);
+
+    if (this.scode < 11) {
       this.router.navigate(['home/ncfempreport']);
-    }
-    else {
-      console.log('call lead');
+    } else {
       this.router.navigate(['home/nlfempreport']);
     }
-
   }
 }
