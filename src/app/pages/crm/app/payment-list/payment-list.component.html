@@ -1,80 +1,67 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-                <div class="font-size-19">Payment List</div>
-            </div>
-            <div class="bg-color-ContBody1 px-3 py-3 rounded">
-                <div class="assignContactTaCont tableContainer rounded mBorder overflow-x-auto">
-                    <table class="table font-w-600 color-initial mb-0">
-                        <tr class="bg-color-ContHead">
-                            <th class="color-gray min-w-150" >TrackNumber<br /></th>
-                            <th class="color-gray min-w-200" >FirstName<br /></th>
-                            <th class="color-gray min-w-200" >LastName<br /></th>
-                            <th class="color-gray min-w-150" >Mobile Number<br /></th>
-                            <th class="color-gray min-w-150" >Status<br /></th>
-                            <th class="color-gray min-w-150" >Sanction Amount<br /></th>
-                            <th class="color-gray min-w-150" >PayoutPercent<br /></th>
-                            <th class="color-gray min-w-150" >PayoutAmount<br /></th>
-                            <th class="color-gray min-w-150" >Connector<br /></th>
-                             <!-- <th class="color-gray min-w-200">IsPaid</th> -->
-                                 <!-- <input type="checkbox" (click)="getSel()" >select all<br /> -->
-                            <th class="color-gray min-w-200" >Action<br /></th>
-                        </tr>
-                        <tr *ngFor="let p of paymentList">
-                            <td>
-                                {{p.TrackNumber}}
-                             </td>
-                            <td>
-                               {{p.FirstName}}
-                            </td>
-                            <td>
-                                {{p.LastName}}
-                             </td>
-                             <td>
-                                {{p.MobileNumber}}
-                             </td>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+<p-toast></p-toast>
 
+<div class="card p-4">
+  <h2 class="mb-4 text-xl font-bold">Payment List</h2>
 
-
-
-
-                             
-                             <td>
-                                {{p.Status}}
-                             </td>
-                             <td>
-                                {{p.SanctionValue}}
-                             </td>
-                             <td>
-                                {{p.PayoutPercent}}
-                             </td>
-                             <td>
-                                {{((p.PayoutPercent/100)*p.SanctionValue)| number : '1.2'}}
-                             </td>
-                             <td>
-                                {{p.ConnectorName}}
-                             </td>
-                             <td [hidden]='p.IsPaid==true'>
-                                <button [hidden]='p.Status!="completed"' (click)="updateConnectorPayment(p.Id)" class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix">Pay</button>
-                             </td>
-                             <td [hidden]='p.IsPaid==false'>
-                                Paid
-                             </td>
-                        </tr>
-                    </table>
-                </div> 
-            </div>
-    
-        </div>
-    </div>
-</div>            
-
-                        
-
-                       
-                        
-                        
-                   
-                
-            
+  <p-table
+    [value]="paymentList"
+    [paginator]="true"
+    [rows]="10"
+    [loading]="loading"
+    [rowsPerPageOptions]="[10,20,50]"
+    responsiveLayout="scroll"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Track Number</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Mobile Number</th>
+        <th>Status</th>
+        <th>Sanction Amount</th>
+        <th>Payout %</th>
+        <th>Payout Amount</th>
+        <th>Connector</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-p>
+      <tr>
+        <td>{{ p.TrackNumber }}</td>
+        <td>{{ p.FirstName }}</td>
+        <td>{{ p.LastName }}</td>
+        <td>{{ p.MobileNumber }}</td>
+        <td>
+          <span
+            class="badge"
+            [ngClass]="{
+              'bg-green-100 text-green-800': p.Status === 'completed',
+              'bg-red-100 text-red-800': p.Status !== 'completed'
+            }"
+          >
+            {{ p.Status }}
+          </span>
+        </td>
+        <td>{{ p.SanctionValue | number: '1.0-2' }}</td>
+        <td>{{ p.PayoutPercent }}%</td>
+        <td>{{ (p.PayoutPercent / 100) * p.SanctionValue | number: '1.2' }}</td>
+        <td>{{ p.ConnectorName }}</td>
+        <td>
+          <ng-container *ngIf="!p.IsPaid; else paidBlock">
+            <button
+              pButton
+              icon="pi pi-money-bill"
+              label="Pay"
+              class="p-button-success p-button-sm"
+              [disabled]="p.Status !== 'completed'"
+              (click)="updateConnectorPayment(p.Id)"
+            ></button>
+          </ng-container>
+          <ng-template #paidBlock>
+            <span class="text-green-600 font-semibold">Paid</span>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

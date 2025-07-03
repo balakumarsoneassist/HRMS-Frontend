@@ -1,88 +1,112 @@
-<div class="container-fluid">
-    <div>
-        <div class="col-lg-12">
-            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
-                <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
-                    <div>Connector</div>
-                </div>
-                <form class="p-3 bg-color-ContBody1 px-3 py-3" #addConnector="ngForm">
-                    <div class="formContainer  d-flex flex-row flex-wrap">
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">FirstName</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter FirstName" name="FirstName" [(ngModel)]="model.FirstName" #FirstName="ngModel">
-                        </div>
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">LastName</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter LastName" name="LastName" [(ngModel)]="model.LastName" #LastName="ngModel">
-                        </div>
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">Mobile Number</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Mobile Number" name="MobileNumber"[(ngModel)]="model.MobileNumber" #MobileNumber="ngModel">
-                        </div>   
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">EmailId</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter EmailId" name="EmailId" [(ngModel)]="model.EmailId" #EmailId="ngModel">
-                        </div>
-                       <!-- <div class="mb-3 formItem">
-                            <label class="mb-1">Address</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"placeholder="Enter Address" name="Address" [(ngModel)]="model.Address" #Address="ngModel">
-                        </div>-->
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">Bank Name</label><br>
-                            <select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header form-control" name="Bank" [(ngModel)]="model.BankId">
-                                <option *ngFor="let item of BankList;" value={{item.Id}}>{{item.BankName}}</option>                   
-                              </select>
-                            <!-- <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter BankName" name="Bank" [(ngModel)]="model.BankId" #BankId="ngModel"> -->
-                        </div>
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">Account Number</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"placeholder="Enter AccountNumber" name="AccountNumber" [(ngModel)]="model.AccountNumber" #AccountNumber="ngModel">
-                        </div>
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">IFSC Code</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100"placeholder="Enter IFSC Code" name="IFSCCode" [(ngModel)]="model.IFSCCode" #IFSCCOde="ngModel">
-                        </div>
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">Percentage</label><br>
-                            <input type="text" class="px-1 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Percentage" name="Percentage" [(ngModel)]="model.PayoutPercentage" #PayoutPercentage="ngModel">
-                        </div>
+<p-toast></p-toast>
 
-                        <div class="mb-3 formItem">
-                            <label class="mb-1">Branch</label><br>
-                            <select class="px-2 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Branch" [(ngModel)]="model.BranchId" #branch="ngModel" name="BranchId">
-                                <option *ngFor="let item of BranchList;" value={{item.value}}>{{item.display}}</option>
-                            </select>
-                        </div>
-                        <div class="mb-3 formItem">
-                            <!-- <input type="checkbox" id="" [(ngModel)]="model.IsActive" #IsActive="ngModel">
-                            <label class="mb-1">Is Active </label>  -->
-                            <label class="checkboxLabel mb-0 mr-5">
-                                <input type="checkbox" [(ngModel)]="model.IsActive"  #IsActive="ngModel" name="isActive"/>
-                                <span class="checkBoxName">IsActive</span>
-                                <span class="checkboxCheckmark"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end py-2 px-3">
-                        <input type="submit" value="Submit" (click)="SaveConnectorDetail();addConnector.reset()" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
-                    </div>   
-                </form>
-            </div>
-        </div>
-    </div>
-</div>    
-                       
-                        
-                        
-                        
-                       
-                    
+<div class="card p-4">
+  <h2 class="mb-4 text-xl font-bold">Add Connector</h2>
 
-                
-                  
-                
+ <form [formGroup]="connectorForm" (ngSubmit)="SaveConnectorDetail()" class="formgrid grid p-fluid">
+  <!-- First Name -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="FirstName" formControlName="FirstName" />
+      <label for="FirstName">First Name*</label>
+    </p-floatLabel>
+    <small class="p-error" *ngIf="connectorForm.get('FirstName')?.invalid && connectorForm.get('FirstName')?.touched">First name required</small>
+  </div>
 
+  <!-- Last Name -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="LastName" formControlName="LastName" />
+      <label for="LastName">Last Name*</label>
+    </p-floatLabel>
+    <small class="p-error" *ngIf="connectorForm.get('LastName')?.invalid && connectorForm.get('LastName')?.touched">Last name required</small>
+  </div>
 
+  <!-- Mobile Number -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="MobileNumber" formControlName="MobileNumber" />
+      <label for="MobileNumber">Mobile Number*</label>
+    </p-floatLabel>
+    <small class="p-error" *ngIf="connectorForm.get('MobileNumber')?.invalid && connectorForm.get('MobileNumber')?.touched">Valid 10-digit mobile required</small>
+  </div>
 
+  <!-- Email -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="EmailId" formControlName="EmailId" />
+      <label for="EmailId">Email*</label>
+    </p-floatLabel>
+    <small class="p-error" *ngIf="connectorForm.get('EmailId')?.invalid && connectorForm.get('EmailId')?.touched">Valid email required</small>
+  </div>
 
+  <!-- Bank -->
+  <div class="field col-12 md:col-4">
+    <p-dropdown
+      inputId="BankId"
+      formControlName="BankId"
+      [options]="BankList"
+      optionLabel="BankName"
+      optionValue="Id"
+      placeholder="Select Bank"
+    ></p-dropdown>
+    <small class="p-error" *ngIf="connectorForm.get('BankId')?.invalid && connectorForm.get('BankId')?.touched">Bank required</small>
+  </div>
 
+  <!-- Account Number -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="AccountNumber" formControlName="AccountNumber" />
+      <label for="AccountNumber">Account Number*</label>
+    </p-floatLabel>
+  </div>
+
+  <!-- IFSC -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="IFSCCode" formControlName="IFSCCode" />
+      <label for="IFSCCode">IFSC Code*</label>
+    </p-floatLabel>
+  </div>
+
+  <!-- Payout % -->
+  <div class="field col-12 md:col-4">
+    <p-floatLabel>
+      <input pInputText id="PayoutPercentage" formControlName="PayoutPercentage" />
+      <label for="PayoutPercentage">Payout %*</label>
+    </p-floatLabel>
+  </div>
+
+  <!-- Branch -->
+  <div class="field col-12 md:col-4">
+    <p-dropdown
+      inputId="BranchId"
+      formControlName="BranchId"
+      [options]="BranchList"
+      optionLabel="display"
+      optionValue="value"
+      placeholder="Select Branch"
+    ></p-dropdown>
+    <small class="p-error" *ngIf="connectorForm.get('BranchId')?.invalid && connectorForm.get('BranchId')?.touched">Branch required</small>
+  </div>
+
+  <!-- IsActive -->
+  <div class="field col-12 md:col-4 flex align-items-center">
+    <p-checkbox inputId="IsActive" formControlName="IsActive" binary="true"></p-checkbox>
+    <label for="IsActive" class="ml-2">Active</label>
+  </div>
+
+  <!-- Submit -->
+  <div class="col-12 flex justify-content-end mt-3">
+    <button
+      pButton
+      type="submit"
+      icon="pi pi-save"
+      label="Submit"
+      class="p-button-success"
+      [disabled]="connectorForm.invalid"
+    ></button>
+  </div>
+</form>
+
+</div>

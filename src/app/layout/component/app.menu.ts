@@ -109,9 +109,9 @@ export class AppMenu implements OnInit {
     items: [
       { label: 'Add', icon: 'pi pi-fw pi-plus', routerLink: ['/home/leadForm'] },
       { label: 'Unassigned', icon: 'pi pi-fw pi-user-minus', routerLink: ['/home/unAssignLeads'] },
-      { label: 'Icici Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/IciciLeadList'] },
-      { label: 'Bajaj Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/bajajlist'] },
-      { label: 'Lead Creators', icon: 'pi pi-fw pi-users', routerLink: ['/home/leadcreaterep'] }
+    //   { label: 'Icici Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/IciciLeadList'] },
+    //   { label: 'Bajaj Lead List', icon: 'pi pi-fw pi-briefcase', routerLink: ['/home/bajajlist'] },
+    //   { label: 'Lead Creators', icon: 'pi pi-fw pi-users', routerLink: ['/home/leadcreaterep'] }
     ]
   },
   {
@@ -176,14 +176,14 @@ export class AppMenu implements OnInit {
       { label: 'Bulk SMS', icon: 'pi pi-fw pi-envelope', routerLink: ['/home/bulksms'] }
     ]
   },
-  {
-    label: 'QR Code (Contact)',
-    visible: this.objEmployeeModel?.IsContactRights,
-    items: [
-      { label: 'QR Code Customers', icon: 'pi pi-fw pi-users', routerLink: ['/home/qrlist'] },
-      { label: 'QR Code Download', icon: 'pi pi-fw pi-download', routerLink: ['/home/qrdownload'] }
-    ]
-  },
+//   {
+//     label: 'QR Code (Contact)',
+//     visible: this.objEmployeeModel?.IsContactRights,
+//     items: [
+//       { label: 'QR Code Customers', icon: 'pi pi-fw pi-users', routerLink: ['/home/qrlist'] },
+//       { label: 'QR Code Download', icon: 'pi pi-fw pi-download', routerLink: ['/home/qrdownload'] }
+//     ]
+//   },
   {
     label: 'Customers',
     visible: this.objEmployeeModel?.IsContactRights,

@@ -1,74 +1,80 @@
-<div class="float-container" *ngIf="loaderService.showLoader && loadSpin > 0">
-    <div class="float-child">
-         &nbsp;        
-    </div>
-    <div class="float-child1">
-        <div *ngIf="loaderService.showLoader && loadSpin > 0" class="loader"> 
-        </div>
-    </div>
-</div>
-<div class="tableContainer rounded mBorder overflow-x-auto">
-    <table class="table font-w-600 color-initial mb-0">
-        <th colspan="12" class="color-gray min-w-200 S-R">Search  : <input type="text" [(ngModel)]="SearchText" (change)="getUnassignedLeadList()" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" />
-   </th> 
-        <tr class="bg-color-ContHead">
-            <th class="color-gray min-w-200">Name</th>
-            <th class="color-gray min-w-150">Mobile Number</th>                      
-            <th class="color-gray min-w-200">Track Number</th>
-            <th class="color-gray min-w-150">Location<br /></th>
-            <th class="color-gray min-w-200">Occupation</th>
-            <th class="color-gray min-w-200">Income Amount</th>
-            <th class="color-gray min-w-150"></th>
-            <th class="color-gray min-w-150"></th>
-            <th class="color-gray min-w-200"></th>
-        </tr>
-        <tr *ngFor="let objUnassignedLeadList of model.UnassignedLeadList">
-            <td>{{objUnassignedLeadList.TrackNumber}}
-                <br [hidden]='objUnassignedLeadList.ReferenceName == null' />
-                 <span [hidden]='objUnassignedLeadList.ReferenceName == null' >(Refer By:{{objUnassignedLeadList.ReferenceName}})</span>
-            </td>
-            <td>{{objUnassignedLeadList.MobileNumber}}</td>
-            <td>{{objUnassignedLeadList.Name}}</td>
-            <td>{{objUnassignedLeadList.Location}}</td>
-            <td>{{objUnassignedLeadList.Occupation}}</td>
-            <td>{{objUnassignedLeadList.IncomeAmount}}</td>
-            <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="AssignEmployee(objUnassignedLeadList.Id,objUnassignedLeadList.Name)" [disabled]="loaderService.showLoader">Assign to Me</button>
-            </td>
-            <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="openCibilReportModel(objUnassignedLeadList.Id)">Assign to Icici</button></td>
-            <td><button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix" (click)="openCibilReportModel1(objUnassignedLeadList.Id)">Assign to BAJAJ</button></td>
-        </tr> 
-    </table>
-</div>
-<div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-    <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
-    <div class="paginationBtnContainer text-center">
-        <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
-        <!--<button class="border-header mr-2 bg-color-logo color-white-fix rounded font-w-600">1</button>-->
-        <!-- <input type="text" [(ngModel)]="ManualPageInput" class="rounded mr-2 px-2 py-1 color-initial border-header bg-color-input boxShadow align-top text-center"  onkeydown="ChangePageNumber(this.ManualPageInput)" /> -->
-        <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
-        <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
-    </div>
-</div>
-<div class="myModel cibilReportModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-    <div class="modelContent bg-color-white boxShadow rounded">
-      <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-          <div>Add Icici Lead</div>
-          <div (click)="closeModel()">
-              <i class="fas fa-times cursor-pointer"></i>
-          </div>
-      </div>
-      <app-add-icici-form></app-add-icici-form>
-    </div>
-</div>
+<p-toast></p-toast>
 
-<div class="myModel cibilReportModel1  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-    <div class="modelContent bg-color-white boxShadow rounded">
-      <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-          <div>Add Bajaj Lead</div>
-          <div (click)="closeModel1()">
-              <i class="fas fa-times cursor-pointer"></i>
-          </div>
-      </div>
-      <app-add-bajaj-form></app-add-bajaj-form>
+<div class="card p-4">
+  <h2 class="mb-4 text-2xl font-bold">Unassigned Leads</h2>
+
+  <div class="flex justify-content-between mb-3">
+    <div class="w-full md:w-30rem">
+      <div [formGroup]="form">
+  <p-floatLabel>
+    <input
+      pInputText
+      id="SearchText"
+      formControlName="SearchText"
+      placeholder="Search"
+      (keyup.enter)="getUnassignedLeadList()"
+    />
+    <label for="SearchText">Search</label>
+  </p-floatLabel>
+</div>
     </div>
+    <div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-search"
+        label="Search"
+        (click)="getUnassignedLeadList()"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </div>
+
+  <p-table
+   [value]="model.UnassignedLeadList ?? []"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="TotalRecordNo"
+    [loading]="loaderService.showLoader"
+    [rowsPerPageOptions]="[10,20,50]"
+    [lazy]="true"
+    (onLazyLoad)="lazyLoad($event)"
+    [responsiveLayout]="'scroll'"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Mobile Number</th>
+        <th>Track Number</th>
+        <th>Location</th>
+        <th>Occupation</th>
+        <th>Income Amount</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-lead>
+      <tr>
+        <td>
+          {{ lead.TrackNumber }}
+          <br *ngIf="lead.ReferenceName">
+          <span *ngIf="lead.ReferenceName" class="font-italic">Refer By: {{ lead.ReferenceName }}</span>
+        </td>
+        <td>{{ lead.MobileNumber }}</td>
+        <td>{{ lead.Name }}</td>
+        <td>{{ lead.Location }}</td>
+        <td>{{ lead.Occupation }}</td>
+        <td>{{ lead.IncomeAmount }}</td>
+        <td>
+          <button
+            pButton
+            icon="pi pi-user-plus"
+            class="p-button-sm p-button-success"
+            label="Assign to Me"
+            (click)="AssignEmployee(lead.Id,lead.Name)"
+            [disabled]="loaderService.showLoader"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

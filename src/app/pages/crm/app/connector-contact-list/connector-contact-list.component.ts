@@ -1,151 +1,101 @@
-import { Component, OnInit } from '@angular/core';
-import { ContactModel, PaginationModel } from '../model/Contact/ContactModel';
-import { ContactService } from '../services/contact/contact.service';
-import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
-import { LocationServiceService } from '../services/location/location-service.service';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LeadFollowUp } from '../model/leadFollowUp/lead-follow-up';
-//import { LoginService } from '../services/login/login.service';
+import { FormsModule } from '@angular/forms';
+import { Table } from 'primeng/table';
+import { TableModule } from 'primeng/table';
+import { DropdownModule } from 'primeng/dropdown';
+import { ButtonModule } from 'primeng/button';
+import {  MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+
+import { ContactService } from '../services/contact/contact.service';
+import { LocationServiceService } from '../services/location/location-service.service';
+import { PaginationModel } from '../model/Contact/ContactModel';
+import { ToastModule } from 'primeng/toast';
+
 @Component({
-    standalone: true,
-      imports:[CommonModule,FormsModule],
+  standalone: true,
   selector: 'app-connector-contact-list',
   templateUrl: './connector-contact-list.component.html',
-  styleUrls: ['./connector-contact-list.component.css']
+  styleUrls: ['./connector-contact-list.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    DropdownModule,
+    ButtonModule,
+    ToastModule,
+    InputTextModule
+  ]
 })
 export class ConnectorContactListComponent implements OnInit {
-  LocationList:any;
-  SearchText:any;
-  ManualPageInput:any;
-  IsbtnPreviousEnable:boolean=false;
-  IsbtnNextEnable:boolean=true;
-  PageNumber:number=0;
-  TotalRecordNo:Number=0;
-  StartNo!:number;
-  EndNo!:number;
-  TotalNumberOfPages=1;
+  @ViewChild('dt') table!: Table;
 
+  connectorList: any[] = [];
+  locationOptions: { label: string; value: any }[] = [];
+  totalRecords = 0;
+  loading = false;
 
-  model: ContactModel;
-  contactList:any;
-  _objLeadFollowUp:LeadFollowUp;
-  _objPageModel:PaginationModel;
+  globalFilterValue = '';
+  _objPageModel = new PaginationModel();
+
   constructor(
     private contactService: ContactService,
-   // private loginService:LoginService,
-    private leadTrackService:LeadtrackService,
-    private objLocationService:LocationServiceService
-    ) {
-    this.model = new ContactModel;
-    this._objPageModel=new PaginationModel;
-    this._objLeadFollowUp=new LeadFollowUp;
-
-  }
+    private locationService: LocationServiceService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-      this.getConnectorContactList();
-      this.EnablePageButton();
-      this.GetLocationList();
+    this.loadLocations();
+    // initial load: will be triggered by lazy on table init
   }
-getConnectorContactList(){
-  this._objPageModel.PageNumber=this.PageNumber;
-  this._objPageModel.SearchText = this.SearchText;
-  this.contactService.GetConnectorContactList(this._objPageModel).subscribe(
-    response => {
-        this.contactList=response;
-        //this.model.UnassignedContactList=this.contactList;
-        if(this.contactList.length==0){
-          this.PageNumber=0;
-          this.TotalRecordNo=0;
-          this.TotalNumberOfPages=0;
-          this.StartNo=0;
-          this.EndNo=0;
-          return;
-        }
-        this.TotalRecordNo=this.model.UnassignedContactList[0].TotalRows;
-        this.ManualPageInput=this.PageNumber+1;
-        this.PageFooterCalculation();
-    },
-    error => alert('InternalServer Error')
-  )
-}
-updateConnectorContact(Id,LocationId)
-{
-  this.model.LocationId=LocationId;
-  this.model.Id=Id;
-  this.contactService.updateConnectorContact(this.model).subscribe(
-    response=>{
-                  if(response==true)
-                  {
-                    alert('LocationId updated successfully in connectorcontact.');
-                    this.getConnectorContactList();
-                  }
-              },
-    error =>alert('InternalServer Error')
-  )
-}
-GoToNextPage()
-{
-  if(this.PageNumber<this.TotalNumberOfPages)
-  {
-    this.PageNumber=this.PageNumber+1;
-  }
-this.getConnectorContactList();
-this.EnablePageButton();
-}
-GoToPreviousPage()
-{
-  if(this.PageNumber>0){
-    this.PageNumber=this.PageNumber-1;
-  }
-  else
-  {
-    this.IsbtnPreviousEnable=false;
-  }
-  this.getConnectorContactList();
-  this.EnablePageButton();
-}
-EnablePageButton()
-{
 
-  if(this.PageNumber>0){
-    this.IsbtnPreviousEnable=true;
-  }
-  else{
-    this.IsbtnPreviousEnable=false;
-  }
-  if(this.PageNumber+1<this.TotalNumberOfPages||this.PageNumber==0){
+  /**
+   * Called on paginator, sort or filter events
+   */
+  loadConnectorContacts(event: any): void {
+    this.loading = true;
+    this._objPageModel.PageNumber = event.first / event.rows;
+    this._objPageModel.PageRange = event.rows;
+    this._objPageModel.SearchText = this.globalFilterValue;
 
-    this.IsbtnNextEnable=true;
+    this.contactService.GetConnectorContactList(this._objPageModel).subscribe({
+      next: (res: any[]) => {
+        this.connectorList = res;
+        this.totalRecords = res?.[0]?.TotalRows || 0;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load contacts' });
+      }
+    });
   }
-  else{
-    this.IsbtnNextEnable=false;
-  }
-}
-PageFooterCalculation()
-{
-  this.StartNo=(this.PageNumber*10)+1;
-  this.EndNo=(this.PageNumber*10)+10;
-  this.TotalNumberOfPages=Math.floor(this.model.UnassignedContactList[0].TotalRows/10);
-  if((this.model.UnassignedContactList[0].TotalRows%10)>0)
-  {
-    this.TotalNumberOfPages=this.TotalNumberOfPages+1;
-  }
-}
-ChangePageNumber(pageIndex:number){
-  //if(pageIndex<=this.TotalNumberOfPages){
-    this.PageNumber=(pageIndex*1)-1;
-    this.getConnectorContactList();
-  //}
 
-}
-GetLocationList(){
-  this.objLocationService.GetLocationList().subscribe(
-    response=>{
-      this.LocationList=response;
-    },
-    error=>alert('Internal Server Error'+error)
-  )
-}
+  private loadLocations(): void {
+    this.locationService.GetLocationList().subscribe({
+      next: (res) => {
+        this.locationOptions = res.map((loc: any) => ({ label: loc.Location, value: loc.Id }));
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load locations' });
+      }
+    });
+  }
+
+  onLocationChange(id: number, locationId: any): void {
+    this.loading = true;
+    this.contactService.updateConnectorContact({ Id: id, LocationId: locationId }).subscribe({
+      next: (ok: boolean) => {
+        this.loading = false;
+        this.messageService.add({ severity: ok ? 'success' : 'warn', summary: ok ? 'Updated' : 'No Change', detail: ok ? 'Location updated.' : 'No update performed.' });
+        this.table.reset();
+      },
+      error: () => {
+        this.loading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
+      }
+    });
+  }
 }

@@ -1,37 +1,62 @@
 import { Component, OnInit } from '@angular/core';
 import { LocationModel } from '../model/Location/location-model';
 import { LocationServiceService } from '../services/location/location-service.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { FilterPipe } from "../pipe/filtering.pipe";
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, FormsModule, FilterPipe],
+  standalone: true,
   selector: 'app-location-name-list',
   templateUrl: './location-name-list.component.html',
-  styleUrls: ['./location-name-list.component.css']
+  styleUrls: ['./location-name-list.component.css'],
+  imports: [
+    CommonModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    ReactiveFormsModule,
+    FloatLabelModule
+  ]
 })
 export class LocationNameListComponent implements OnInit {
-  LocationListFilter:any;
-  LocationList!:LocationModel[];
-  constructor(private objLocationService:LocationServiceService,private router : Router) { }
+  form: FormGroup;
+  LocationList: LocationModel[] = [];
+  loading = false;
+
+  constructor(
+    private locationService: LocationServiceService,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      search: [''],
+    });
+  }
 
   ngOnInit(): void {
     this.GetLocationNameList();
+    this.locationService.locationRefreshObservable.subscribe(() => {
+      this.GetLocationNameList();
+    });
   }
-  GetLocationNameList(){
-    this.objLocationService.GetLocationList().subscribe(
-      response => {
-          this.LocationList=response
 
+  GetLocationNameList() {
+    this.loading = true;
+    this.locationService.GetLocationList().subscribe({
+      next: (response) => {
+        this.LocationList = response;
+        this.loading = false;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
-  editLocation(locationdetail) {
-    // this._PatientService.sendPatientDetail(patientDetail);
-    this.objLocationService.locationEdit({locationdetail});
+
+  editLocation(locationdetail: LocationModel) {
+    this.locationService.locationEdit({ locationdetail });
   }
 }

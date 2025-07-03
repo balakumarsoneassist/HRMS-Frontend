@@ -1,193 +1,183 @@
+import { ButtonModule } from 'primeng/button';
 import { Component, OnInit } from '@angular/core';
-import { ContactModel, PaginationModel } from '../model/Contact/ContactModel';
-import { LeadFollowUp } from '../model/leadFollowUp/lead-follow-up';
-
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ContactService } from '../services/contact/contact.service';
 import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
-
-import { FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { EmployeeService } from '../services/employee/employee.service';
 import { CommonModule } from '@angular/common';
-import { CallTrackHistoryComponent } from "../call-track-history/call-track-history.component";
-import { LeadFormModelComponent } from "../lead-form-model/lead-form-model.component";
-
+import { CallTrackHistoryComponent } from '../call-track-history/call-track-history.component';
+import { LeadFormModelComponent } from '../lead-form-model/lead-form-model.component';
+import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
-     standalone: true,
-  imports: [CommonModule,ReactiveFormsModule , FormsModule, CallTrackHistoryComponent, LeadFormModelComponent],
   selector: 'app-assigned-contacts',
   templateUrl: './assigned-contacts.component.html',
-  styleUrls: ['./assigned-contacts.component.css']
+  styleUrls: ['./assigned-contacts.component.css'],
+  providers: [MessageService,ConfirmationService],
+  imports: [CommonModule,ReactiveFormsModule , FormsModule, CallTrackHistoryComponent, LeadFormModelComponent, ButtonModule,ToastModule, ConfirmDialogModule,DropdownModule,TableModule, DialogModule],
+
 })
 export class AssignedContactsComponent implements OnInit {
-  ContactList: any;
-  model: ContactModel;
-  _objLeadFollowUp: LeadFollowUp;
-  ManualPageInput: any;
-  PageNumber: number = 0;
-  TotalNumberOfPages = 1;
-  TotalRecordNo: Number = 0;
-  IsbtnPreviousEnable: boolean = true;
-  IsbtnNextEnable: boolean = true;
-  StartNo: number | undefined;
-  EndNo: number | undefined;
-  _objPageModel: PaginationModel;
-  ContactListFilter: any;
+  filterForm!: FormGroup;
+  ContactList: any[] = [];
+  EmpList: any[] = [];
+  StatusList: any[] = [];
+  ContactListFilter: string = '';
 
-  fcContactfby : any = new FormControl('');
-  fcStatus : any = new FormControl('');
+  loading: boolean = false;
+  TotalRecordNo = 0;
+  PageNumber = 0;
+  displayLeadForm: boolean = false;
 
-  EmpList:any;
-  StatusList:any;
+  constructor(
+    private fb: FormBuilder,
+    private contactService: ContactService,
+    private leadTrackService: LeadtrackService,
+    private employeeService: EmployeeService,
+    private messageService: MessageService,
+     private confirmationService: ConfirmationService,
+  ) {}
 
+  ngOnInit() {
+    this.filterForm = this.fb.group({
+      AssigneeName: [''],
+      Status: ['']
+    });
 
-  constructor(private contactSevice: ContactService, private leadTrackService: LeadtrackService,private _objEmpService:EmployeeService) {
-    this.model = new ContactModel;
-    this._objLeadFollowUp = new LeadFollowUp
-    this._objPageModel = new PaginationModel;
+    this.loadEmployeeList();
+    this.loadStatusList();
+
+    this.leadTrackService.leadTrackSubjectObservable.subscribe({
+      next: () => {
+        this.getContactList();
+      }
+    });
+
+    this.getContactList();
   }
 
-  ngOnInit(): void {
-    this.leadTrackService.leadTrackSubjectObservable.subscribe(response => {
-      this.GetContactList();
-      this.EnablePageButton();
-    })
-
-    this.GetEmpNameList();
-    this.GetStatusList();
+  loadEmployeeList() {
+    this.employeeService.GetAssigneeList().subscribe({
+      next: (res) => {
+        this.EmpList = res.map((x: string) => ({ label: x, value: x }));
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error loading employees' });
+      }
+    });
   }
 
-    getAssignedReport(){
-      this.GetContactList();
-
-    }
-
-    //fill combobox
-    GetEmpNameList(){
-      this._objEmpService.GetAssigneeList().subscribe(
-        response => {
-            this.EmpList=response;console.log(this.EmpList);
-            console.log(this.EmpList);
-        },
-        error => alert('InternalServer Error')
-      )
-    }
-
-    GetStatusList(){
-      this.contactSevice.GetStatusList().subscribe(
-        response => {
-            this.StatusList=response;console.log(this.StatusList);
-            console.log(this.EmpList);
-        },
-        error => alert('InternalServer Error')
-      )
-    }
-
-  callStatus(TrackId: string, Id) {
-    let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    leadFormModel.style.display = "flex";
-    this.contactSevice.SendLeadId(Id);
-    this.contactSevice.SendLeadTrack(TrackId);
+  loadStatusList() {
+    this.contactService.GetStatusList().subscribe({
+      next: (res) => {
+        this.StatusList = res.map((x: string) => ({ label: x, value: x }));
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error loading status list' });
+      }
+    });
   }
 
-  GetContactList() {
-    console.log('test code')
-    this._objPageModel.Status = this.fcStatus.value;
-    this._objPageModel.AssigneeName = this.fcContactfby.value;
-    this._objPageModel.PageNumber = this.PageNumber;
-    this._objPageModel.SearchText = this.ContactListFilter;
-    console.log(this._objPageModel);
-    this.contactSevice.GetContactList(this._objPageModel).subscribe(
-      response => {
-        this.ContactList = response;
-        if (this.ContactList.length == 0) {
-          this.PageNumber = 0;
+  getAssignedReport() {
+    this.PageNumber = 0;
+    this.getContactList();
+  }
+
+  onLazyLoad(event: any) {
+    this.PageNumber = event.first / event.rows;
+    this.getContactList();
+  }
+
+  onSearchChange() {
+    this.PageNumber = 0;
+    this.getContactList();
+  }
+
+  getContactList() {
+    this.loading = true;
+    const payload = {
+      Status: this.filterForm.value.Status,
+      AssigneeName: this.filterForm.value.AssigneeName,
+      PageNumber: this.PageNumber,
+      SearchText: this.ContactListFilter
+    };
+
+    this.contactService.GetContactList(payload).subscribe({
+      next: (res) => {
+        this.ContactList = res;
+        if (this.ContactList.length) {
+          this.TotalRecordNo = this.ContactList[0].TotalRows;
+        } else {
           this.TotalRecordNo = 0;
-          this.TotalNumberOfPages = 0;
-          this.StartNo = 0;
-          this.EndNo = 0;
-          return;
         }
-        this.TotalRecordNo = this.ContactList[0].TotalRows;
-        this.ManualPageInput = this.PageNumber + 1;
-        this.PageFooterCalculation();
-        this.EnablePageButton();
-      }),
-      error => ('Internal Server Error')
+        this.loading = false;
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error loading contacts' });
+        this.loading = false;
+      }
+    });
   }
-  AssignEmployee(Id,IsConnectorContact) {
-    this._objLeadFollowUp.LeadId = Id;
-    this._objLeadFollowUp.IsConnectorContact = IsConnectorContact;
-    this._objLeadFollowUp.ContactFollowedBy = 1;
-    this.leadTrackService.AssignEmployeeToContact(this._objLeadFollowUp).subscribe(
-      response => {
-        if (response == true) {
-          alert('Contact Assigned Successfully');
-          this.GetContactList();
+
+  AssignEmployee(Id: number, IsConnectorContact: boolean) {
+    this.leadTrackService.AssignEmployeeToContact({
+      LeadId: Id,
+      IsConnectorContact,
+      ContactFollowedBy: 1
+    }).subscribe({
+      next: (res) => {
+        if (res) {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Contact assigned' });
+          this.getContactList();
         }
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Assignment failed' });
+      }
+    });
   }
-  OpenTrackHistoryModel(TrackNumber) {
-    let leadFormModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    leadFormModel.style.display = "flex";
-    this.contactSevice.SendLeadTrack(TrackNumber);
-  }
-  CloseTrackHistoryModel() {
-    let leadFormModel = document.querySelector('.callHistoryModel') as HTMLInputElement;
-    leadFormModel.removeAttribute('style');
-  }
-  GoToNextPage() {
-    if (this.PageNumber < this.TotalNumberOfPages) {
-      this.PageNumber = this.PageNumber + 1;
-    }
-    this.GetContactList();
-    this.EnablePageButton();
-  }
-  GoToPreviousPage() {
-    if (this.PageNumber > 0) {
-      this.PageNumber = this.PageNumber - 1;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
-    }
-    this.GetContactList();
-    this.EnablePageButton();
-  }
-  EnablePageButton() {
 
-    if (this.PageNumber > 0) {
-      this.IsbtnPreviousEnable = true;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
-    }
-    if (this.PageNumber + 1 < this.TotalNumberOfPages || this.PageNumber == 0) {
+  callStatus(TrackId: string, Id: number) {
+     this.displayLeadForm = true;
+    this.contactService.SendLeadId(Id);
+    this.contactService.SendLeadTrack(TrackId);
+  }
 
-      this.IsbtnNextEnable = true;
-    }
-    else {
-      this.IsbtnNextEnable = false;
-    }
+  OpenTrackHistoryModel(TrackNumber: string) {
+    this.contactService.SendLeadTrack(TrackNumber);
   }
-  PageFooterCalculation() {
 
-    this.StartNo = (this.PageNumber * 10) + 1;
-    this.EndNo = (this.PageNumber * 10) + 10;
-    this.TotalNumberOfPages = Math.floor(this.ContactList[0].TotalRows / 10);
-    if ((this.ContactList[0].TotalRows % 10) > 0) {
-      this.TotalNumberOfPages = this.TotalNumberOfPages + 1;
+  deleteRow(id: number) {
+  this.confirmationService.confirm({
+    message: 'Are you sure you want to delete this contact?',
+    header: 'Confirm Delete',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      this.ContactList = this.ContactList.filter(x => x.Id !== id);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Deleted',
+        detail: 'Contact removed from view'
+      });
+    },
+    reject: () => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Delete action cancelled'
+      });
     }
-  }
-  ChangePageNumber(pageIndex) {
-    this._objPageModel.PageNumber = pageIndex;
-    this.GetContactList();
-  }
-  deleteRow(x) {
-    var delBtn = confirm(" Do you want to delete ?");
-    if (delBtn == true) {
-      this.ContactList.splice(x, 1);
-    }
+  });
+}
+
+  onLeadFormClose() {
+    this.displayLeadForm = false;
+    // optionally reload the list:
+    this.getContactList();
   }
 }

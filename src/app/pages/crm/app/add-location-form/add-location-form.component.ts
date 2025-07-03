@@ -2,65 +2,103 @@ import { Component, OnInit } from '@angular/core';
 import { LocationModel } from '../model/Location/location-model';
 import { BranchServiceService } from '../services/branch/branch-service.service';
 import { LocationServiceService } from '../services/location/location-service.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { LocationNameListComponent } from "../location-name-list/location-name-list.component";
+import { ReactiveFormsModule } from '@angular/forms';
+import { LocationNameListComponent } from '../location-name-list/location-name-list.component';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
+  standalone: true,
   selector: 'app-add-location-form',
-   standalone: true,
-    imports: [CommonModule, FormsModule, LocationNameListComponent],
   templateUrl: './add-location-form.component.html',
-  styleUrls: ['./add-location-form.component.css']
+  styleUrls: ['./add-location-form.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LocationNameListComponent,
+    ToastModule,
+    InputTextModule,
+    ButtonModule,
+    DropdownModule,
+    FloatLabelModule
+  ]
 })
 export class AddLocationFormComponent implements OnInit {
-model:LocationModel
-BranchList:any[] | undefined;
-  constructor(private objBranchService:BranchServiceService,private objLocationServeice:LocationServiceService,private route: ActivatedRoute, private router : Router) {this.model=new LocationModel }
-  ngOnInit(): void {
+  locationForm: FormGroup;
+  BranchList: any[] = [];
 
-    this.objLocationServeice.locationObservable.subscribe(
-      response => {
-        this.model=response.locationdetail;
-
-      })
-    this.GetBranchList();
+  constructor(
+    private branchService: BranchServiceService,
+    private locationService: LocationServiceService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.locationForm = this.fb.group({
+      Location: ['', Validators.required],
+      BranchId: [null, Validators.required]
+    });
   }
 
-  SaveLocationDetails(){
-    this.objLocationServeice.SaveLocationDetails(this.model).subscribe(
-      response => {
-        if(response == true) {
-        alert("Location Saved Sucessfully");
-         }
-         else{
-          alert("Location Name Already Exist");
+  ngOnInit(): void {
+    this.getBranchList();
+    this.locationService.locationObservable.subscribe((response) => {
+      if (response && response.locationdetail) {
+        this.locationForm.patchValue(response.locationdetail);
+      }
+    });
+  }
+
+  getBranchList() {
+    this.branchService.GetBranchList().subscribe({
+      next: (res) => (this.BranchList = res),
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Unable to load branches'
+        })
+    });
+  }
+
+  SaveLocationDetails() {
+    if (this.locationForm.invalid) {
+      this.locationForm.markAllAsTouched();
+      return;
+    }
+
+    const payload: LocationModel = this.locationForm.value;
+
+    this.locationService.SaveLocationDetails(payload).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'Location saved successfully'
+          });
+          this.locationForm.reset();
+          this.locationService.locationListRefresh();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Duplicate',
+            detail: 'Location name already exists'
+          });
         }
       },
-      error => alert('Internal Server Error')
-  )
-    }
-    GetBranchList(){
-      this.objBranchService.GetBranchList().subscribe(
-        response => {
-
-         this.BranchList=response;
-        },
-        error => alert('Internal Server Error')
-      )
-    }
-
-    // GetLocationById(Id)
-    // {
-
-    //   this.model.Id=Id;
-    //   this.objLocationServeice.GetLocationById(this.model).subscribe(
-    //     response => {
-    //      this.model=response[0];
-    //     },
-    //     error => alert('Internal Server Error')
-    //   )
-    // }
-
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot save location'
+        })
+    });
+  }
 }

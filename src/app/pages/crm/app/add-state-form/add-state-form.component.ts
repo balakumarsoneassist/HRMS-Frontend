@@ -1,62 +1,85 @@
-import { state } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { State } from '../model/state/state';
 import { StateService } from '../services/state/state.service';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { StateNameListComponent } from "../state-name-list/state-name-list.component";
+import { ReactiveFormsModule } from '@angular/forms';
+import { StateNameListComponent } from '../state-name-list/state-name-list.component';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-     standalone: true,
-      imports: [CommonModule, FormsModule, StateNameListComponent],
+  standalone: true,
   selector: 'app-add-state-form',
   templateUrl: './add-state-form.component.html',
-  styleUrls: ['./add-state-form.component.css']
+  styleUrls: ['./add-state-form.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    StateNameListComponent,
+    ToastModule,
+    FloatLabelModule,
+    InputTextModule,
+    ButtonModule
+  ]
 })
 export class AddStateFormComponent implements OnInit {
-  model: State;
-  StateId: any;
+  stateForm: FormGroup;
 
-  constructor(private objstateservice: StateService, private route: ActivatedRoute, private router: Router) {
-    this.model = new State;
-
+  constructor(
+    private stateService: StateService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.stateForm = this.fb.group({
+      StateName: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]{1,32}$/)]],
+    });
   }
+
   ngOnInit(): void {
-    this.objstateservice.stateObservable.subscribe(
-      response => {
-        this.model=response.statedetail;
-      })
-    this.StateId = this.route.snapshot.queryParamMap.get('id');
-    if (this.StateId != null && this.StateId != "") {
-      this.StateId = this.StateId * 1;
-      this.GetStateById(this.StateId);
+    this.stateService.stateObservable.subscribe((response) => {
+      if (response && response.statedetail) {
+        this.stateForm.patchValue(response.statedetail);
+      }
+    });
+  }
+
+  SaveStateDetails() {
+    if (this.stateForm.invalid) {
+      this.stateForm.markAllAsTouched();
+      return;
     }
 
-  }
-  SaveStateDetails() {
-    this.objstateservice.SaveStateDetails(this.model).subscribe(
-      Response => {
-        if (Response == true) {
-          alert("StateName Save Sucess")
+    const payload: State = this.stateForm.value;
+
+    this.stateService.SaveStateDetails(payload).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'State saved successfully'
+          });
+          this.stateForm.reset();
+          this.stateService.stateListRefresh();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Duplicate',
+            detail: 'State name already exists'
+          });
         }
-        else {
-          alert("StateName Already Exist");
-        }
-      }
-    )
-    error => alert('Internal Server Error')
-  }
-  GetStateById(Id) {
-    this.objstateservice.GetStateById(Id).subscribe(
-      response => {
-        this.model = response[0];
       },
-      error => {
-        alert('Internal Server Error')
-      }
-    )
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot save state'
+        })
+    });
   }
 }
-
-

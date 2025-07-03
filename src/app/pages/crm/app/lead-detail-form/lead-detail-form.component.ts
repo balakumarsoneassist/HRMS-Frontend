@@ -1,266 +1,202 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { LeadModel, OccupationModel } from '../model/lead/lead-model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, FormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { AccordionModule } from 'primeng/accordion';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
+import { MessageService } from 'primeng/api';
+
 import { LeadService } from '../services/lead/lead.service';
 import { ContactService } from '../services/contact/contact.service';
 import { BankService } from '../services/bank/bank.service';
-import { Observable } from 'rxjs';
 import { LeadtrackService } from '../services/leadtrack/leadtrack.service';
-import { formatDate } from '@angular/common';
-import { BranchServiceService } from '../services/branch/branch-service.service';
 import { LocationServiceService } from '../services/location/location-service.service';
-import { CalendarModule } from 'primeng/calendar';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   standalone: true,
-  imports:[CommonModule,FormsModule,CalendarModule],
   selector: 'app-lead-detail-form',
   templateUrl: './lead-detail-form.component.html',
-  styleUrls: ['./lead-detail-form.component.css']
+  styleUrls: ['./lead-detail-form.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    AccordionModule,
+    ButtonModule,
+    DropdownModule,
+    InputTextModule,
+    AvatarModule,
+    BadgeModule,
+    FormsModule,
+    FloatLabelModule
+  ]
 })
 export class LeadDetailFormComponent implements OnInit {
-  model: LeadModel | any;
-  _objOccupationModel:OccupationModel | undefined
-  BankList:any;
-  LocationList!:any[];
-  @Input() isSaveAndClose!: boolean;
+  @Input() isSaveAndClose = false;
+  form: FormGroup;
+  BankList: any[] = [];
+  LocationList: any[] = [];
+
   constructor(
+    private fb: FormBuilder,
     private leadService: LeadService,
-    private contactSevice:ContactService,
-    private _objBankService:BankService,
-    private _objLeadTrackService:LeadtrackService,
-    private objLocationService:LocationServiceService
-    ) {
-    this.model = new LeadModel();
+    private contactService: ContactService,
+    private bankService: BankService,
+    private leadTrackService: LeadtrackService,
+    private locationService: LocationServiceService,
+    private messageService: MessageService
+  ) {
+    this.form = this.fb.group({
+      personal: this.fb.group({
+        FirstName: ['', Validators.required],
+        LastName: ['', Validators.required],
+        MobileNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+        Email: ['', [Validators.required, Validators.email]],
+        LocationId: [null, Validators.required],
+        DateOfBirth: [null],
+        PanNumber: [''],
+        AadharNumber: [''],
+        PresentAddress: [''],
+        PermanentAddress: [''],
+        Gender: [''],
+        MaterialStatus: [''],
+        NoOfDependent: [''],
+        EducationalQualification: ['']
+      }),
+     occupation: this.fb.array([this.createOccupation()]),     // <-- push one default
+    bankDetails: this.fb.array([this.createBank()]),          // <-- push one default
+    loanHistory: this.fb.array([this.createLoan()])
+    });
   }
 
   ngOnInit(): void {
-  this.GetLocationList();
-    this.contactSevice.leadSendObservable.subscribe(response=>{
-      this.GetLeadPersonalDetails(response);
-    })
-    this.GetBankNameList();
-      /* accodian - start */
-    let acc = document.getElementsByClassName("accordion");
-    for (let i = 0; i < acc.length; i++) {
-       acc[i].addEventListener("click", (event: Event) => {
-  const target = event.currentTarget as HTMLElement;
-  target.classList.toggle("active");
-  const panel :any = target.nextElementSibling as HTMLElement;
-  if (panel.style.maxHeight) {
-    panel.style.maxHeight = null;
-  } else {
-    panel.style.maxHeight = panel.scrollHeight + "px";
+    this.loadLocations();
+    this.contactService.leadSendObservable.subscribe(id => this.loadLeadDetails(id));
+    this.loadBanks();
+
+ // ADD this to show at least one default row:
+  if (this.occupation.length === 0) {
+    this.addOccupation();
   }
-});
-
-
-    }
-    /* accodian - end */
+  if (this.bankDetails.length === 0) {
+    this.addBank();
+  }
+  if (this.loanHistory.length === 0) {
+    this.addLoan();
+  }
   }
 
-  addFormGroup() {
-    this.model.OccupationDetails.push({Occupation:"", CompanyName: "", CompanyAddress: "", Designation:"", JoiningDate: "", OfficeTelNo: "", CompanyGSTIN: "", Income: "", OtherIncome: ""});
-    setTimeout(function () {
-        let panel = document.querySelector(".occupationPanel") as HTMLInputElement;
-        let overFlow = document.querySelector(".occupationPanelOverFlow") as HTMLInputElement;
-        panel.style.maxHeight = overFlow.scrollHeight + "px";
+  /** Getters for form groups and arrays **/
+  get personal(): FormGroup {
+    return this.form.get('personal') as FormGroup;
+  }
+  get occupation(): FormArray {
+    return this.form.get('occupation') as FormArray;
+  }
+  get bankDetails(): FormArray {
+    return this.form.get('bankDetails') as FormArray;
+  }
+  get loanHistory(): FormArray {
+    return this.form.get('loanHistory') as FormArray;
+  }
+
+  loadLeadDetails(id: number): void {
+    this.leadService.GetLeadPersonalDetails(id).subscribe({
+      next: data => {
+        if(data){
+            const model = data[0];
+        this.personal.patchValue(model);
+        this.resetArray(this.occupation);
+        model.OccupationDetails.forEach((o: any) => this.occupation.push(this.createOccupation(o)));
+        this.resetArray(this.bankDetails);
+        model.BankDetails.forEach((b: any) => this.bankDetails.push(this.createBank(b)));
+        this.resetArray(this.loanHistory);
+        model.LoanHistory.forEach((l: any) => this.loanHistory.push(this.createLoan(l)));
+        }
+      },
+      error: () => this.messageService.add({severity:'error', summary:'Error', detail:'Load failed'})
     });
   }
 
-  deleteFormGroup(index: number) {
-    this.model.OccupationDetails.splice(index, 1);
+  loadBanks(): void {
+    this.bankService.GetBankList().subscribe({ next: banks => this.BankList = banks });
+  }
+  loadLocations(): void {
+    this.locationService.GetLocationList().subscribe({ next: locs => this.LocationList = locs });
   }
 
-  addBankRow() {
-    this.model.BankDetails.push({BankName: "", Branch: "", IfscCode: "", AccNo: ""});
-    setTimeout(function () {
-        let panel = document.querySelector(".bankPanel") as HTMLInputElement;
-        let overFlow = document.querySelector(".bankPanelOverFlow") as HTMLInputElement;
-        panel.style.maxHeight = overFlow.scrollHeight + "px";
+  createOccupation(o: any = {}): FormGroup {
+    return this.fb.group({
+      Occupation: [o.Occupation || ''],
+      CompanyName: [o.CompanyName || ''],
+      CompanyAddress: [o.CompanyAddress || ''],
+      Designation: [o.Designation || ''],
+      JoiningDate: [o.JoiningDate || null],
+      OfficeTelephoneNumber: [o.OfficeTelephoneNumber || ''],
+      CompanyGSTINNumber: [o.CompanyGSTINNumber || ''],
+      IncomeAmount: [o.IncomeAmount || ''],
+      OtherIncomeAmount: [o.OtherIncomeAmount || '']
     });
   }
 
-  deleteBankRow(index: number) {
-    this.model.BankDetails.splice(index, 1);
-  }
-
-  addLoanRow() {
-    this.model.LoanHistory.push({LoanType: "", LoanAmount: "", Bank: "", Branch: "", Tenure: "", SantionDate: ""});
-    setTimeout(function () {
-        let panel = document.querySelector(".loanPanel") as HTMLInputElement;
-        let overFlow = document.querySelector(".loanPanelOverFlow") as HTMLInputElement;
-        panel.style.maxHeight = overFlow.scrollHeight + "px";
+  createBank(b: any = {}): FormGroup {
+    return this.fb.group({
+      BankName: [b.BankName || ''],
+      Branch: [b.Branch || ''],
+      IfscCode: [b.IfscCode || ''],
+      AccountNumber: [b.AccountNumber || '']
     });
   }
 
-  deleteLoanRow(index: number) {
-    this.model.LoanHistory.splice(index, 1);
-    // setTimeout(function () {
-    // let panel = document.querySelector(".loanPanel") as HTMLInputElement;
-    // let overFlow = document.querySelector(".loanPanelOverFlow") as HTMLInputElement;
-    // console.log(overFlow.scrollHeight)
-    // panel.style.maxHeight = overFlow.scrollHeight + "px";
-    // });
+  createLoan(l: any = {}): FormGroup {
+    return this.fb.group({
+      LoanType: [l.LoanType || ''],
+      LoanAmount: [l.LoanAmount || ''],
+      ROI: [l.ROI || ''],
+      Tenure: [l.Tenure || ''],
+      SanctionDate: [l.SanctionDate || null]
+    });
   }
-  LeadPersonalDetailSubmit(IsClose) {
-    if(this.IsValidPersonalDetails()==false)
-    {
+
+  private resetArray(arr: FormArray): void {
+    while (arr.length) arr.removeAt(0);
+  }
+
+  addOccupation(): void { this.occupation.push(this.createOccupation()); }
+  deleteOccupation(i: number): void { this.occupation.removeAt(i); }
+  addBank(): void { this.bankDetails.push(this.createBank()); }
+  deleteBank(i: number): void { this.bankDetails.removeAt(i); }
+  addLoan(): void { this.loanHistory.push(this.createLoan()); }
+  deleteLoan(i: number): void { this.loanHistory.removeAt(i); }
+
+  saveDetails(isClose: boolean): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    if(this.IsOccupationValid()==false)
-    {
-      return;
-    }
-    if(this.IsBankDetailValid()==false)
-    {
-      return;
-    }
-    // if(this.IsLoanDetailValid()==false)
-    // {
-    //   alert('Enter the Valid Loan Details');
-    //   return;
-    // }
-    // var displayName=this.model.FirstName;
-    this.leadService.saveLeadPersonalDetails(this.model).subscribe(
-      response => {
-        if(response == true) {
-        alert("Saved Sucessfully");
-        this._objLeadTrackService.LeadListRefresh();
-        if(IsClose==true)
-        {
-          this.closeModel();
-        }
-        this.model=null;
-         }
+    const payload = {
+      ...this.personal.value,
+      OccupationDetails: this.occupation.value,
+      BankDetails: this.bankDetails.value,
+      LoanHistory: this.loanHistory.value
+    };
+    this.leadService.saveLeadPersonalDetails(payload).subscribe({
+      next: () => {
+        this.messageService.add({severity:'success', summary:'Saved', detail:'Details saved'});
+        this.leadTrackService.LeadListRefresh();
+        if (isClose) this.closeModel();
       },
-      error => alert('Cant Save')
-    )
+      error: () => this.messageService.add({severity:'error', summary:'Error', detail:'Save failed'})
+    });
   }
 
-  GetLeadPersonalDetails(Id)
-  {
-    this.leadService.GetLeadPersonalDetails(Id).subscribe(
-      response => {
-        this.model=response[0];
-        if(this.model.OccupationDetails.length==0)
-        {
-           this.addFormGroup();
-        }
-        if(this.model.LoanHistory.length==0)
-        {
-          this.addLoanRow();
-        }
-        if(this.model.BankDetails.length==0)
-        {
-          this.addBankRow();
-        }
-      },
-      error => alert('InternalSever Error')
-    )
+  closeModel(): void {
+    // implement close logic or emit event
   }
-  GetLeadOccupationDetails(Id)
-  {
-    this.leadService.GetLeadOccupationDetails(Id).subscribe(
-      response => {
-      },
-      error => alert('InternalSever Error')
-    )
-  }
-  GetBankNameList(){
-    this._objBankService.GetBankList().subscribe(
-      response => {
-          this.BankList=response;
-      },
-      error => alert('InternalServer Error')
-    )
-  }
-  closeModel() {
-    let leadFormModel = document.querySelector('.leadInputModel') as HTMLInputElement;
-    leadFormModel.removeAttribute('style');
-  }
-
-
- IsBankDetailValid(): boolean {
-  if (this.model.BankDetails.length > 0) {
-    for (let i = 0; i < this.model.BankDetails.length; i++) {
-      const detail = this.model.BankDetails[i];
-      if (!detail.BankName) {
-        alert('Enter the BankName');
-        return false;
-      }
-    }
-  }
-  return true; // <-- added return value
 }
-
- IsLoanDetailValid(): boolean {
-  if (this.model.LoanHistory.length > 0) {
-    for (let i = 0; i < this.model.LoanHistory.length; i++) {
-      const loan = this.model.LoanHistory[i];
-      if (!loan.LoanType || !loan.LoanAmount || !loan.BranchName || !loan.Tenure || !loan.SanctionDate || !loan.ROI) {
-        return false;
-      }
-    }
-  }
-  return true; // <-- added return value
-}
-
-
-  IsOccupationValid(): boolean {
-  for (let i = 0; i < this.model.OccupationDetails.length; i++) {
-    const occ = this.model.OccupationDetails[i];
-    if (!occ.Occupation) {
-      alert('Enter the Occupation');
-      return false;
-    }
-    if (!occ.IncomeAmount) {
-      alert('Enter the Income Amount');
-      return false;
-    }
-    if (!occ.IncomeType) {
-      alert('Enter the Income type');
-      return false;
-    }
-  }
-  return true; // <-- added return value
-}
-
- IsValidPersonalDetails(): boolean {
-  if (!this.model.FirstName) {
-    alert('Enter the first Name');
-    return false;
-  }
-  if (!this.model.LastName) {
-    alert('Enter the Last Name');
-    return false;
-  }
-  if (!this.model.MobileNumber) {
-    alert('Enter the Mobile Number');
-    return false;
-  }
-  if (!this.model.Email) {
-    alert('Enter the Email');
-    return false;
-  }
-  if (!this.model.LocationId) {
-    alert('Enter the Location');
-    return false;
-  }
-  return true; // <-- added return value
-}
-
-  GetLocationList(){
-    this.objLocationService.GetLocationList().subscribe(
-      response=>{
-        this.LocationList=response;
-      },
-      error=>alert('Internal Server Error'+error)
-    )
-  }
-
-}
-
-
-

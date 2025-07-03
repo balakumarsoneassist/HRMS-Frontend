@@ -1,78 +1,154 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, input, OnInit } from '@angular/core';
 import { Employee } from '../model/employee/employee';
 import { EmployeeService } from '../services/employee/employee.service';
-
-
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { TagInputModule } from 'ngx-chips';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-    standalone: true,
-      imports:[CommonModule,FormsModule,CalendarModule,TagInputModule],
+  standalone: true,
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
-  styleUrls: ['./employee-form.component.css']
+  styleUrls: ['./employee-form.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    CalendarModule,
+    ButtonModule,
+    InputTextModule,
+    CheckboxModule,
+    ToastModule,
+    TagInputModule,
+    FloatLabelModule,
+    ReactiveFormsModule    // optionally ReactiveFormsModule if you use reactive
+  ],
 })
 export class EmployeeFormComponent implements OnInit {
+  employeeForm: FormGroup;
+  tagInputList: any[] = [];
+  stateData: any;
+  @Input() model: Employee = new Employee();
 
-  constructor(private employeeService: EmployeeService) {
-    this.model = new Employee();
+
+  constructor(
+    private employeeService: EmployeeService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.employeeForm = this.fb.group({
+      Name: ['', Validators.required],
+      Qualification: [''],
+      DateOfBirth: [null],
+      JoinDate: [null],
+      Dept: [''],
+      Designation: [''],
+      PresentAddress: [''],
+      PermanentAddress: [''],
+      MobileNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      EmailId: ['', [Validators.email]],
+      ContactPerson: [''],
+      ContactNumber: ['', [Validators.pattern(/^[0-9]{10}$/)]],
+      Branch: [[]],
+      IsActive: [false],
+      IsAdminRights: [false],
+      IsContactRights: [false],
+      IsLeadRights: [false],
+      IsCibilRights: [false],
+      IsIciciRights: [false],
+      IsSplRights: [false],
+      IsReassignRights: [false],
+    });
   }
 
   ngOnInit(): void {
     this.stateData = history.state.data;
-    if(this.stateData) {
-      this.model = this.stateData;
+    console.log(this.stateData);
+
+    if (this.stateData) {
+      this.employeeForm.patchValue(this.stateData);
     }
     this.GetBranchList();
-    this.employeeService.EmployeeSubjectObservable.subscribe(response=>{
-      this.GetEmployeeById(response);
-    })
+    this.employeeService.EmployeeSubjectObservable.subscribe((id) => {
+        console.log(id);
 
+      this.GetEmployeeById(id);
+    });
   }
-  stateData: any;
-  model: Employee;
-  tagInputList: any[] = [];
+
   employeeSubmit() {
-     var displayName=this.model.Name;
-     console.log(this.model)
-    this.employeeService.SaveEmployeeDetails(this.model).subscribe(
-      response => {
-        if(response == true) {
-        alert(displayName + " Saved Sucessfully");
-        this.employeeService.EmployeeListRefresh();
-        this.closeModel();
-         }
-         else{
-          alert("EmailId Already Exist");
-         }
+    if (this.employeeForm.invalid) {
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
+
+    const payload: Employee = this.employeeForm.value;
+
+    this.employeeService.SaveEmployeeDetails(payload).subscribe({
+      next: (response) => {
+        if (response === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: `${payload.Name} saved successfully`,
+          });
+          this.employeeService.EmployeeListRefresh();
+          this.closeModel();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Duplicate',
+            detail: 'Email ID already exists',
+          });
+        }
       },
-      error => alert('Cant Save')
-    )
-  }
-  GetEmployeeById(EmployeeId)
-  {
-    this.employeeService.GetEmployeeById(EmployeeId).subscribe(
-      response => {
-       this.model=response[0];
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot save',
+        });
       },
-      error => alert('Cant Save')
-    )
-  }
-  closeModel() {
-    let cibilReportModel = document.querySelector('.cibilReportModel') as HTMLInputElement;
-    cibilReportModel.removeAttribute('style');
+    });
   }
 
-  GetBranchList()
-  {
-    this.employeeService.GetBranchList().subscribe(
-      response => {
-       this.tagInputList=response;
+  GetEmployeeById(EmployeeId: any) {
+    this.employeeService.GetEmployeeById(EmployeeId).subscribe({
+      next: (response) => {
+        if (response && response[0]) {
+          this.employeeForm.patchValue(response[0]);
+        }
       },
-      error => alert('Cant Save')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot fetch employee',
+        });
+      },
+    });
+  }
+
+  closeModel() {
+    const modal = document.querySelector('.cibilReportModel') as HTMLElement;
+    modal?.removeAttribute('style');
+  }
+
+  GetBranchList() {
+    this.employeeService.GetBranchList().subscribe({
+      next: (res) => (this.tagInputList = res),
+      error: () =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot load branch list',
+        }),
+    });
   }
 }

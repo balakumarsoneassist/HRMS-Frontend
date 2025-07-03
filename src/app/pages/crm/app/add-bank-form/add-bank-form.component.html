@@ -1,49 +1,37 @@
-  <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="modelContent newContactContainer bg-color-white boxShadow rounded  overflow-auto">
-                <div class="modelHeader d-flex flex-row py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead">
-                     <div>Bank</div>
-                </div>
-                <form class="p-3 bg-color-ContBody1" #addIciici="ngForm">
-                    <div class="formContainer d-flex flex-row flex-wrap">
-                    <div class="mb-3 formItem">
-                        <div class="col-lg-6">
-                        <label class="mb-1">Bank Name*</label></div>
-                        <div class="col-lg-6">
-                        <input type="text" class="px-2 py-1 rounded mBorder bg-color-input color-initial border-header w-100" placeholder="Enter Bank Name" pattern="[A-Za-z]{1,32}" [(ngModel)]="model.BankName" #firstName="ngModel" name="firstName" required [class.is-invalid]="firstName.invalid && firstName.touched">
-                        <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched)" class="text-danger mt-1">
-                            <div *ngIf="firstName.errors?.['required']">
-                                Bank Name is required.
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="d-flex justify-content-end py-2 px-3" style="margin-top: -65px;">
-                        <input type="submit" value="Submit" (click)="SaveBankDetails()" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
-                    </div>
-                </form>
+<p-toast></p-toast>
 
+<div class="card p-4">
+  <h2 class="mb-4 text-xl font-bold">Add Bank</h2>
 
-        </div>
+  <form [formGroup]="bankForm" (ngSubmit)="SaveBankDetails()" class="grid gap-3">
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="BankName"
+          formControlName="BankName"
+          placeholder="Bank Name"
+        />
+        <label for="BankName">Bank Name*</label>
+      </p-floatLabel>
+      <small class="p-error" *ngIf="bankForm.get('BankName')?.invalid && bankForm.get('BankName')?.touched">
+        Valid bank name required (letters only)
+      </small>
+    </div>
 
-     </div>
-</div>
-</div>
-
-<div class="row">
-<div class="col-lg-12" style="margin-top:25px">
-<app-bank-name-list></app-bank-name-list>
-</div>
+    <div class="col-12 flex justify-content-end">
+      <button
+        pButton
+        type="submit"
+        label="Submit"
+        icon="pi pi-save"
+        class="p-button-success"
+        [disabled]="bankForm.invalid"
+      ></button>
+    </div>
+  </form>
 </div>
 
-
-
-
-
-
-
-
-
-
+<div class="mt-4">
+  <app-bank-name-list></app-bank-name-list>
+</div>

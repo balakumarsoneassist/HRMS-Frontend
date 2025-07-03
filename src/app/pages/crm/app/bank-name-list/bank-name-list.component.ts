@@ -2,44 +2,73 @@ import { Component, OnInit } from '@angular/core';
 import { BankService } from '../services/bank/bank.service';
 import { Bank } from '../model/bank/bank';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FilterPipe } from '../pipe/filtering.pipe';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-     standalone: true,
-      imports:[CommonModule,FormsModule,FilterPipe],
+  standalone: true,
   selector: 'app-bank-name-list',
   templateUrl: './bank-name-list.component.html',
-  styleUrls: ['./bank-name-list.component.css']
+  styleUrls: ['./bank-name-list.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    ToastModule,
+    FloatLabelModule
+  ]
 })
 export class BankNameListComponent implements OnInit {
-  BankListFilter: any;
-  BankList!: Bank[];
-  model!: Bank;
-  totalRec: any;
-  constructor(private _objBankService: BankService, private router: Router) { }
+  form: FormGroup;
+  BankList: Bank[] = [];
+  loading = false;
 
+  constructor(
+    private bankService: BankService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.form = this.fb.group({
+      search: [''],
+    });
+  }
 
   ngOnInit(): void {
+     this.GetBankNameList();
+  this.bankService.bankRefreshObservable.subscribe(() => {
     this.GetBankNameList();
+  });
   }
+
   GetBankNameList() {
-    this._objBankService.GetBankList().subscribe(
-      response => {
-        this.BankList = response
-
+    this.loading = true;
+    this.bankService.GetBankList().subscribe({
+      next: (response) => {
+        this.BankList = response;
+        this.loading = false;
       },
-      error => alert('InternalServer Error')
-    )
+      error: () => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load bank list',
+        });
+      },
+    });
   }
-  // editBank(Id) {
-  //   this.router.navigate(['/home/addbank'], { queryParams: { id: Id } });
-  // }
 
-  editBank(bankdetail) {
-    this._objBankService.bankEdit({bankdetail});
+  editBank(bankdetail: Bank) {
+    this.bankService.bankEdit({ bankdetail });
   }
-
 }

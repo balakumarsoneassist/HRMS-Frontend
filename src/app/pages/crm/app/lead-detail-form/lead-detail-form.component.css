@@ -1,0 +1,13 @@
+.p-accordion .p-accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.p-accordion .p-accordion-content {
+  padding: 1rem;
+}
+
+.field {
+  margin-bottom: 1rem;
+}

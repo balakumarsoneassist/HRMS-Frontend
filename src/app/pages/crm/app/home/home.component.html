@@ -150,8 +150,8 @@
       <!-- Contact with subpanels -->
       <p-tabpanel [value]="1">
         <div class="flex mb-2 gap-2 justify-end">
-          <p-button (onClick)="value = 1"  styleClass="w-auto h-8 p-0" [outlined]="value !== 1" label="Track" />
-          <p-button (onClick)="value = 2"  styleClass="w-auto h-8 p-0" [outlined]="value !== 2" label="UnTrack" />
+          <p-button (onClick)="value = 1"  class="p-button-sm"  [outlined]="value !== 1" label="Track" />
+          <p-button (onClick)="value = 2"  class="p-button-sm"  [outlined]="value !== 2" label="UnTrack" />
         </div>
         <ng-container *ngIf="value === 1">
           <app-on-track-contact></app-on-track-contact>
@@ -164,8 +164,8 @@
       <!-- Lead with subpanels -->
       <p-tabpanel [value]="2">
         <div class="flex mb-2 gap-2 justify-end">
-          <p-button (onClick)="values = 3"  styleClass="w-auto h-8 p-0" [outlined]="values !== 3" label="Track" />
-          <p-button (onClick)="values = 4"  styleClass="w-auto h-8 p-0" [outlined]="values !== 4" label="Untrack" />
+          <p-button (onClick)="values = 3"            class="p-button-sm" [outlined]="values !== 3" label="Track" />
+          <p-button (onClick)="values = 4"  class="p-button-sm"  [outlined]="values !== 4" label="Untrack" />
         </div>
         <ng-container *ngIf="values === 3">
           <app-on-track-lead></app-on-track-lead>

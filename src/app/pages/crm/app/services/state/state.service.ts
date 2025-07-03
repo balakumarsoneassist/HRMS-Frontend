@@ -1,32 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Api } from '../api';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StateService {
+  private SaveStateDetailsUrl = Api.SaveStateDetailsUrl;
+  private GetStateListUrl = Api.GetStateListUrl;
+  private GetStateByIdUrl = Api.GetStateByIdUrl;
 
-  constructor(private objAPI:Api) 
-  { }
-  private SaveStateDetailsUrl=Api.SaveStateDetailsUrl
-  private GetStateListUrl=Api.GetStateListUrl
-  private GetStateByIdUrl=Api.GetStateByIdUrl
-  
-  SaveStateDetails(stateDetails){
-    return this.objAPI.callPost(this.SaveStateDetailsUrl,stateDetails)
-  }
-  GetStateList(){
-   return this.objAPI.callPost(this.GetStateListUrl)
-   }
-   GetStateById(Id) {
-    return this.objAPI.callPost(this.GetStateByIdUrl, Id)
-   }
-
-  private stateSubject = new Subject<any>();
+  private stateSubject = new BehaviorSubject<any>(null);
   stateObservable = this.stateSubject.asObservable();
 
-  stateEdit(stateDetail) {
+  private stateRefreshSubject = new BehaviorSubject<any>(null);
+  stateRefreshObservable = this.stateRefreshSubject.asObservable();
+
+  constructor(private objAPI: Api) {}
+
+  SaveStateDetails(stateDetails: any) {
+    return this.objAPI.callPost(this.SaveStateDetailsUrl, stateDetails);
+  }
+
+  GetStateList() {
+    return this.objAPI.callPost(this.GetStateListUrl);
+  }
+
+  GetStateById(Id: any) {
+    return this.objAPI.callPost(this.GetStateByIdUrl, Id);
+  }
+
+  stateEdit(stateDetail: any) {
     this.stateSubject.next(stateDetail);
+  }
+
+  stateListRefresh() {
+    this.stateRefreshSubject.next(null);
   }
 }

@@ -1,133 +1,103 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { PaginationInstance } from 'ngx-pagination';
+import { Component, OnInit } from '@angular/core';
 import { EmployeeService } from '../services/employee/employee.service';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 import { Employee } from '../model/employee/employee';
 import { PaginationModel } from '../model/Contact/ContactModel';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { EmployeeFormComponent } from "../employee-form/employee-form.component";
+import { EmployeeFormComponent } from '../employee-form/employee-form.component';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-    standalone: true,
-      imports: [CommonModule, FormsModule, EmployeeFormComponent],
+  standalone: true,
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.css']
+  styleUrls: ['./employee-list.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    DialogModule,
+    ToastModule,
+    EmployeeFormComponent,
+    FloatLabelModule
+  ],
 })
 export class EmployeeListComponent implements OnInit {
-  model: Employee;
-  ManualPageInput: any;
-  PageNumber: number = 0;
-  TotalNumberOfPages = 1;
-  TotalRecordNo: Number = 0;
-  IsbtnPreviousEnable: boolean = true;
-  IsbtnNextEnable: boolean = true;
-  StartNo!: number;
-  EndNo!: number;
-  _objPageModel: PaginationModel;
-  employeeFilter: any;
-  constructor(private employeeService: EmployeeService, private router: Router) {
-    this.model = new Employee;
-    this._objPageModel = new PaginationModel;
+  form: FormGroup;
+  employees: Employee[] = [];
+  selectedEmployee!: Employee | null;
+  displayModal = false;
+  loading = false;
+  totalRecords = 0;
+
+  constructor(
+    private employeeService: EmployeeService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.form = this.fb.group({
+      search: [''],
+    });
   }
 
   ngOnInit(): void {
-    this.employeeService.EmployeeRefershObservable.subscribe(response => {
-      this.getEmployeeList();
-      this.EnablePageButton();
-    })
     this.getEmployeeList();
-  }
-
-  editEmployee(employee) {
-    // this.employeeService.
-    this.router.navigate(['/employeeForm'], { state: { data: employee } });
+    this.employeeService.EmployeeRefershObservable.subscribe(() => {
+      this.getEmployeeList();
+    });
   }
 
   getEmployeeList() {
-    this._objPageModel.PageNumber = this.PageNumber;
-    this._objPageModel.SearchText = this.employeeFilter;
-    this.employeeService.GetEmployeeList(this._objPageModel).subscribe(
-      response => {
-        this.model.EmployeeList = response;
-        let roes :any = this.model
-        this.TotalRecordNo = roes.EmployeeList[0].TotalRows;
-        if (roes.EmployeeList.length == 0) {
-          this.PageNumber = 0;
-          this.TotalRecordNo = 0;
-          this.TotalNumberOfPages = 0;
-          this.StartNo = 0;
-          this.EndNo = 0;
-          return;
+    this.loading = true;
+    const model = new PaginationModel();
+    model.PageNumber = 0;
+    model.SearchText = this.form.get('search')?.value;
+
+    this.employeeService.GetEmployeeList(model).subscribe({
+      next: (response) => {
+        this.employees = response;
+        if (this.employees.length > 0) {
+          this.totalRecords = response[0].TotalRows;
+        } else {
+          this.totalRecords = 0;
         }
-        this.TotalRecordNo = roes.EmployeeList[0].TotalRows;
-        this.ManualPageInput = this.PageNumber + 1;
-        this.PageFooterCalculation();
-        this.EnablePageButton();
+        this.loading = false;
       },
-      error => alert('Internel Server Error')
-    )
+      error: () => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load employees',
+        });
+      },
+    });
   }
 
-  openEmployeeModel(Id) {
-    let cibilReportModel = document.querySelector('.cibilReportModel') as HTMLInputElement;
-    cibilReportModel.style.display = "flex";
-    this.employeeService.SendEmployeeId(Id);
+  openEmployeeModal(employee?: any) {
+    console.log(employee);
+
+    if (employee) {
+      this.selectedEmployee = employee;
+    } else {
+      this.selectedEmployee = null;
+    }
+    this.employeeService.SendEmployeeId(employee.Id);
+    this.displayModal = true;
   }
 
-  closeModel() {
-    let cibilReportModel = document.querySelector('.cibilReportModel') as HTMLInputElement;
-    cibilReportModel.removeAttribute('style');
-  }
-  GoToNextPage() {
-    if (this.PageNumber < this.TotalNumberOfPages) {
-      this.PageNumber = this.PageNumber + 1;
-    }
-    this.getEmployeeList();
-    this.EnablePageButton();
-  }
-  GoToPreviousPage() {
-    if (this.PageNumber > 0) {
-      this.PageNumber = this.PageNumber - 1;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
-    }
-    this.getEmployeeList();
-    this.EnablePageButton();
-  }
-  EnablePageButton() {
-    if (this.PageNumber > 0) {
-      this.IsbtnPreviousEnable = true;
-    }
-    else {
-      this.IsbtnPreviousEnable = false;
-    }
-    if(this.TotalNumberOfPages === 1){
-      this.IsbtnNextEnable = false;
-    }
-    else if (this.PageNumber + 1 < this.TotalNumberOfPages || this.PageNumber === 0) {
-
-      this.IsbtnNextEnable = true;
-    }
-    else {
-      this.IsbtnNextEnable = false;
-    }
-  }
-  PageFooterCalculation() {
-
-    this.StartNo = (this.PageNumber * 10) + 1;
-    this.EndNo = (this.PageNumber * 10) + 10;
-    let roes :any = this.model
-    this.TotalNumberOfPages = Math.floor(roes.EmployeeList[0].TotalRows / 10);
-    if ((roes.EmployeeList[0].TotalRows % 10) > 0) {
-      this.TotalNumberOfPages = this.TotalNumberOfPages + 1;
-    }
-  }
-  ChangePageNumber(pageIndex) {
-    this._objPageModel.PageNumber = pageIndex;
-    this.getEmployeeList();
+  closeEmployeeModal() {
+    this.displayModal = false;
   }
 }

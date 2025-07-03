@@ -1,54 +1,91 @@
-<div class="container-fluid">
-  <div class="row">
-      <div class="col-md-12">
-          <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-              <div class="font-size-19">Employee List</div>
-          </div>
-          <div class="bg-color-ContBody1 px-3 py-3 rounded">
+<p-toast></p-toast>
 
-              <div class="tableContainer rounded mBorder overflow-x-auto">
-                <table class="table font-w-600 color-initial mb-0">
-                  <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" [(ngModel)]="employeeFilter" (change)="getEmployeeList()" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th> 
-                      <tr class="bg-color-ContHead">
-                          <th class="color-gray min-w-150" >Name<br /></th>
-                          <th class="color-gray min-w-150" >Qualification<br /></th>
-                          <th class="color-gray min-w-150" >Designation<br /></th>
-                          <th class="color-gray min-w-150" >Joining Date<br /></th>
-                          <th class="color-gray min-w-150" >Mobile No.<br /></th>
-                          <th class="color-gray min-w-100" >Status<br /></th>
-                          <th class="color-gray min-w-100" >Action</th>
-                      </tr>
-                      <tr *ngFor="let employee of model.EmployeeList">
-                          <td>{{employee.Name}}</td>
-                          <td>{{employee.Qualification}}</td>
-                          <td>{{employee.Designation}}</td>
-                          <td>{{employee.JoinDate | date:'dd-MM-yyyy'}}</td>
-                          <td>{{employee.MobileNumber}}</td>
-                          <td>{{employee.IsActive==true?"Active":"InActive"}}</td>
-                          <td><i class="fas fa-pencil-alt" (click)='openEmployeeModel(employee.Id)'></i></td>
-                      </tr>
-                </table>
-            </div>
-            <div class="paginationContainer d-flex justify-content-between flex-wrap mt-4 mb-2 font-w-600">
-              <div class="align-self-center font-size-14 mb-3 mb-sm-0 text-center">Showing {{StartNo}} to {{EndNo}} of {{TotalRecordNo}} Records</div>
-              <div class="paginationBtnContainer text-center">
-                  <button class="border-header mr-2 bg-color-input color-initial rounded"  [hidden]="IsbtnPreviousEnable==false" (click)="GoToPreviousPage()"><i class="fas fa-chevron-left"></i></button>
-                  <span class="mr-2 color-initial font-w-600 font-size-14">{{ManualPageInput}} of {{TotalNumberOfPages}} pages</span>
-                  <button class="border-header bg-color-input color-initial rounded" [hidden]="IsbtnNextEnable==false" (click)="GoToNextPage()"><i class="fas fa-chevron-right"></i></button>
-              </div>
-          </div>
-            <div class="myModel cibilReportModel  position-fixed model-bg-color justify-content-center align-items-center w-100 h-100 model-bg-color z-index-3 overflow-auto">
-              <div class="modelContent bg-color-white boxShadow rounded">
-                <div class="d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 font-size-19 align-items-center border-b bg-color-ContHead rounded">
-                    <div></div>
-                    <div (click)="closeModel()">
-                        <i class="fas fa-times cursor-pointer"></i>
-                    </div>
-                </div>
-                <app-employee-form></app-employee-form>
-              </div>
-            </div>
-      </div>
+<div class="card p-4">
+  <h2 class="mb-4 text-xl font-bold">Employee List</h2>
+
+  <div class="flex flex-wrap gap-3 mb-3 align-items-end">
+    <div class="flex-1">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="search"
+          formControlName="search"
+          (keyup.enter)="getEmployeeList()"
+        />
+        <label for="search">Search</label>
+      </p-floatLabel>
+    </div>
+    <div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-search"
+        label="Search"
+        (click)="getEmployeeList()"
+      ></button>
+    </div>
+    <div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Add"
+        (click)="openEmployeeModal()"
+        class="p-button-success"
+      ></button>
     </div>
   </div>
+
+  <p-table
+    [value]="employees"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    [responsiveLayout]="'scroll'"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Qualification</th>
+        <th>Designation</th>
+        <th>Joining Date</th>
+        <th>Mobile No.</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-emp>
+      <tr>
+        <td>{{ emp.Name }}</td>
+        <td>{{ emp.Qualification }}</td>
+        <td>{{ emp.Designation }}</td>
+        <td>{{ emp.JoinDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ emp.MobileNumber }}</td>
+        <td>{{ emp.IsActive ? 'Active' : 'Inactive' }}</td>
+        <td>
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-text p-button-sm"
+            (click)="openEmployeeModal(emp)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
+
+<p-dialog
+  [(visible)]="displayModal"
+  header="Employee Details"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [closable]="true"
+  (onHide)="closeEmployeeModal()"
+>
+  <ng-container *ngIf="displayModal">
+    <app-employee-form></app-employee-form>
+  </ng-container>
+</p-dialog>

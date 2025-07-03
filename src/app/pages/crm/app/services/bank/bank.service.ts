@@ -1,31 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Api } from '../api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BankService {
-  public SaveBankNameUrl=Api.SaveBankNameUrl;
+  public SaveBankNameUrl = Api.SaveBankNameUrl;
   public GetBankListUrl = Api.GetBankNameList;
   public GetBankByIdUrl = Api.GetBankByIdUrl;
-  constructor(private _objApi:Api) { }      
-  SaveBankDetails(BankDetail)
-  {
-    return this._objApi.callPost(this.SaveBankNameUrl,BankDetail);
-  }
-  GetBankList()
-  {
-    return this._objApi.callPost(this.GetBankListUrl)
-  }
-  GetBankById(BankId) {
-    return this._objApi.callPost(this.GetBankByIdUrl, BankId)
-  }
-  private bankSubject = new Subject<any>();
+
+  private bankSubject = new BehaviorSubject<any>(null);
   bankObservable = this.bankSubject.asObservable();
 
-  bankEdit(BankDetail) {
+  constructor(private _objApi: Api) {}
+
+  SaveBankDetails(BankDetail: any) {
+    return this._objApi.callPost(this.SaveBankNameUrl, BankDetail);
+  }
+
+  GetBankList() {
+    return this._objApi.callPost(this.GetBankListUrl);
+  }
+
+  GetBankById(BankId: any) {
+    return this._objApi.callPost(this.GetBankByIdUrl, BankId);
+  }
+
+  bankEdit(BankDetail: any) {
     this.bankSubject.next(BankDetail);
   }
+
+  private bankRefreshSubject = new BehaviorSubject<any>(null);
+bankRefreshObservable = this.bankRefreshSubject.asObservable();
+
+bankListRefresh() {
+  this.bankRefreshSubject.next(null);
+}
 
 }

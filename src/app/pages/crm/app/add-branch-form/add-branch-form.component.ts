@@ -1,68 +1,100 @@
 import { Component, OnInit } from '@angular/core';
 import { BranchModel } from '../model/Branch/branch-model';
 import { BranchServiceService } from '../services/branch/branch-service.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BranchNameListComponent } from "../branch-name-list/branch-name-list.component";
+import { ReactiveFormsModule } from '@angular/forms';
+import { BranchNameListComponent } from '../branch-name-list/branch-name-list.component';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
-     standalone: true,
-      imports: [CommonModule, FormsModule, BranchNameListComponent],
+  standalone: true,
   selector: 'app-add-branch-form',
   templateUrl: './add-branch-form.component.html',
-  styleUrls: ['./add-branch-form.component.css']
+  styleUrls: ['./add-branch-form.component.css'],
+  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    BranchNameListComponent,
+    ToastModule,
+    InputTextModule,
+    ButtonModule,
+    FloatLabelModule
+  ]
 })
 export class AddBranchFormComponent implements OnInit {
-  model:BranchModel
-  constructor(private _objBranchService:BranchServiceService,private route: ActivatedRoute, private router : Router) {this.model=new BranchModel }
+  branchForm: FormGroup;
+    branchValue!: any;
+
+  constructor(
+    private branchService: BranchServiceService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.branchForm = this.fb.group({
+      Branch: ['', Validators.required]
+    });
+  }
+
   ngOnInit(): void {
-   this._objBranchService.BranchObservable.subscribe(
-     response=> {
+    this.branchService.BranchObservable.subscribe((response) => {
+        console.log(response);
 
-       this.model.Branch=response.branchdetail.display;
-       this.model.Id==response.branchdetail.value;
-     });
+      if (response && response.branchdetail) {
+        this.branchValue = response.branchdetail.value
+        this.branchForm.patchValue({
+          Branch: response.branchdetail.display
+        });
+      }
+    });
+  }
 
-    var branchId= this.route.snapshot.queryParamMap.get('id');
-    if(branchId!=null&&branchId!="")
-    {
-      this.GetBranchById(branchId);
+  SaveBranchDetails() {
+    if (this.branchForm.invalid) {
+      this.branchForm.markAllAsTouched();
+      return;
+    }
+    let payload: any = {
+      Branch: this.branchForm.get('Branch')?.value,
+    };
+    if(this.branchValue){
+ payload = {
+      Branch: this.branchForm.get('Branch')?.value,
+      value: this.branchValue
+    };
     }
 
-  }
 
-  SaveBranchDetails()
-  {
-    this._objBranchService.SaveBranchDetails(this.model).subscribe(
-      response => {
-
-        if(response == true) {
-        alert("Saved Sucessfully");
-         }
-         else{
-           alert("Branch Name Already Exist");
-         }
-
+    this.branchService.SaveBranchDetails(payload).subscribe({
+      next: (res) => {
+        if (res === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Saved',
+            detail: 'Branch saved successfully'
+          });
+          this.branchForm.reset();
+          this.branchService.BranchListRefresh();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Duplicate',
+            detail: 'Branch name already exists'
+          });
+        }
       },
-      error => alert('Internal Server Error')
-    )
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cannot save branch'
+        });
+      }
+    });
   }
-
-  GetBranchById(Id)
-  {
-
-    this.model.Id=Id;
-    this._objBranchService.GetBranchById(this.model).subscribe(
-      response => {
-       this.model=response[0];
-      },
-      error => alert('Internal Server Error')
-    )
-  }
-  EditBranchDeatils(Branch){
-    this._objBranchService.EditBranch({Branch});
-   }
-
-
 }

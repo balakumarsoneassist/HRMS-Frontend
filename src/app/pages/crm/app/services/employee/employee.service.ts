@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Api } from '../api';
 import { HttpClient } from '@angular/common/http';
 
@@ -7,58 +7,60 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class EmployeeService {
-private EmployeeListUrl=Api.GetEmployeeListUrl;
-private employeeSaveUrl:string=Api.SaveEmployeeDetailUrl;
-private EmployeeRightsUrl:string=Api.GetEmployeeRights;
-private GetEmployeeByIdUrl:string=Api.GetEmployeeByIdUrl;
-private GetBranchListUrl:string=Api.GetBranchListUrl;
-private ResetPasswordUrl:string=Api.ResetPasswordUrl;
-private AssigneeListUrl=Api.GetLassigneeListUrl;
+  private EmployeeListUrl = Api.GetEmployeeListUrl;
+  private employeeSaveUrl = Api.SaveEmployeeDetailUrl;
+  private EmployeeRightsUrl = Api.GetEmployeeRights;
+  private GetEmployeeByIdUrl = Api.GetEmployeeByIdUrl;
+  private GetBranchListUrl = Api.GetBranchListUrl;
+  private ResetPasswordUrl = Api.ResetPasswordUrl;
+  private AssigneeListUrl = Api.GetLassigneeListUrl;
+  private ActiveempListUrl = Api.GetActiveEmpListUrl;
 
-  constructor(private http:HttpClient,private objApi:Api) { }
-  private EmployeeSubject = new Subject<any>();
+  private EmployeeSubject = new BehaviorSubject<any>(null);
   EmployeeSubjectObservable = this.EmployeeSubject.asObservable();
 
-  private EmployeeRefreshSubject = new Subject<any>();
+  private EmployeeRefreshSubject = new BehaviorSubject<any>(null);
   EmployeeRefershObservable = this.EmployeeRefreshSubject.asObservable();
+
+  constructor(private http: HttpClient, private objApi: Api) {}
+
   EmployeeListRefresh() {
     this.EmployeeRefreshSubject.next(null);
   }
 
-  SendEmployeeId(Id)
-  {
+  SendEmployeeId(Id: any) {
     this.EmployeeSubject.next(Id);
   }
-  GetEmployeeList(PaginationModel){
-    return this.objApi.callPost(this.EmployeeListUrl, PaginationModel)
-  }
-  GetEmployeeRights()
-  {
-    return this.objApi.callPost(this.EmployeeRightsUrl)
-  }
-  SaveEmployeeDetails(employeeModel){
-    return this.objApi.callPost(this.employeeSaveUrl, employeeModel)
+
+  GetEmployeeList(paginationModel: any) {
+    return this.objApi.callPost(this.EmployeeListUrl, paginationModel);
   }
 
-  GetEmployeeById(EmployeeId){
-    return this.objApi.callPost(this.GetEmployeeByIdUrl,EmployeeId)
+  GetEmployeeRights() {
+    return this.objApi.callPost(this.EmployeeRightsUrl);
   }
-  GetBranchList()
-  {
-    return this.objApi.callPost(this.GetBranchListUrl)
+
+  SaveEmployeeDetails(employeeModel: any) {
+    return this.objApi.callPost(this.employeeSaveUrl, employeeModel);
   }
-  ResetPassword()
-  {
+
+  GetEmployeeById(employeeId: any) {
+    return this.objApi.callPost(this.GetEmployeeByIdUrl, employeeId);
+  }
+
+  GetBranchList() {
+    return this.objApi.callPost(this.GetBranchListUrl);
+  }
+
+  ResetPassword() {
     return this.objApi.callPost(this.ResetPasswordUrl);
   }
-  //--pvr
-  GetAssigneeList()
-  {
-    return this.objApi.callPost(this.AssigneeListUrl)
+
+  GetAssigneeList() {
+    return this.objApi.callPost(this.AssigneeListUrl);
   }
-  private ActiveempListUrl=Api.GetActiveEmpListUrl;
-  GetActiveEmpList()
-  {
-    return this.objApi.callPost(this.ActiveempListUrl)
+
+  GetActiveEmpList() {
+    return this.objApi.callPost(this.ActiveempListUrl);
   }
 }

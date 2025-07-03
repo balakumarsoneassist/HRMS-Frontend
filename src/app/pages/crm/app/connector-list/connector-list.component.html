@@ -1,63 +1,85 @@
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="bg-color-ContHead d-flex flex-row justify-content-between flex-nowrap py-2 px-3 font-w-600 align-items-center border-b rounded">
-                    <div class="font-size-19">Connector List</div>
-                </div>
-                <div class="bg-color-ContBody1 px-3 py-3 rounded">
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 
-                    <div class="tableContainer rounded mBorder overflow-x-auto">
-                    <table class="table font-w-600 color-initial mb-0">
-                        <th colspan="7" class="color-gray min-w-200 S-R">Search  : <input type="text" class="rounded px-1 py-1 color-initial border-header bg-color-input boxShadow s-r" /></th>
-                            <tr class="bg-color-ContHead">
-                                <th class="color-gray min-w-150" >Name<br /></th>
-                                <th class="color-gray min-w-150" >MobileNumber<br /></th>
-                                <th class="color-gray min-w-150" >EmailId<br /></th>
-                                <th class="color-gray min-w-150" >BankName<br /></th>
-                                <th class="color-gray min-w-150" >AccountNumber<br /></th>
-                                <th class="color-gray min-w-100" >IFSCCode<br /></th>
-                                <th class="color-gray min-w-100" >Status<br/></th>
-                                <th class="color-gray min-w-100" >Followed By<br/></th>
-                                <th class="color-gray min-w-100" >&nbsp;<br/></th>
-                            </tr>
-                            <tr *ngFor="let objConnecterList of ConnecterList">
-                            <td>
-                                {{objConnecterList.FirstName}}
-                            </td>
-                            <td>
-                                {{objConnecterList.MobileNumber}}
-                            </td>
-                            <td>
-                                {{objConnecterList.EmailId}}
-                            </td>
-                            <td>
-                                {{objConnecterList.BankName}}
-                            </td>
-                            <td>
-                                {{objConnecterList.AccountNumber}}
-                            </td>
-                            <td>
-                                {{objConnecterList.IFSCCode}}
-                            </td>
-                            <td>
-                                {{objConnecterList.IsActive==true?"Active":"InActive"}}
-                            </td>
-                            <td>
-                                {{objConnecterList.Address}}
-                            </td>
-                            <td class="text-center">
-                                <button class="rounded py-1 px-3 border-0 font-w-600 bg-color-logo color-white-fix"  (click)="callStatus(objConnecterList.Id)">Follow Up</button>
-                            </td>
-                        </tr>
-                    </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <app-connector-form-model></app-connector-form-model>
-    </div>
+<div class="card p-4">
+  <h2 class="mb-4 text-2xl font-bold">Connector List</h2>
 
+  <!-- Global Search -->
+  <div class="mb-3">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        #dtGlobalFilter
+        (input)="dt.filterGlobal(dtGlobalFilter.value, 'contains')"
+        placeholder="Global Search"
+        class="p-input-sm"
+      />
+    </span>
+  </div>
 
+  <p-table
+    #dt
+    [value]="connectorList"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    [globalFilterFields]="['FirstName','MobileNumber','EmailId','BankName','AccountNumber','IFSCCode','Address']"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Mobile</th>
+        <th>Email</th>
+        <th>Bank</th>
+        <th>Account No.</th>
+        <th>IFSC</th>
+        <th>Status</th>
+        <th>Address</th>
+        <th style="width: 120px">Action</th>
+      </tr>
+    </ng-template>
 
+    <ng-template pTemplate="body" let-conn>
+      <tr>
+        <td>{{ conn.FirstName }}</td>
+        <td>{{ conn.MobileNumber }}</td>
+        <td>{{ conn.EmailId }}</td>
+        <td>{{ conn.BankName }}</td>
+        <td>{{ conn.AccountNumber }}</td>
+        <td>{{ conn.IFSCCode }}</td>
+        <td>
+          <span
+            class="text-yellow-500 font-bold d-inline-flex justify-content-center align-items-center"
+            [style]="{ width: '80px', height: '30px', borderRadius: '0' }"
+          >
+            {{ conn.IsActive ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+        <td>{{ conn.Address }}</td>
+        <td class="text-center">
+          <p-button
+            label="Follow Up"
+            icon="pi pi-comments"
+            class="p-button-primary"
+            (onClick)="openConnectorForm(conn.Id)"
+            [style]="{ height: '36px', borderRadius: '0' }"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
 
-
+<!-- PrimeNG Dialog for the follow-up form -->
+<p-dialog
+  header="Connector Follow-Up"
+  [(visible)]="displayConnectorForm"
+  [modal]="true"
+  [style]="{ width: '50vw', minWidth: '300px' }"
+  (onHide)="onConnectorFormClose()"
+>
+  <app-connector-form-model
+  ></app-connector-form-model>
+</p-dialog>

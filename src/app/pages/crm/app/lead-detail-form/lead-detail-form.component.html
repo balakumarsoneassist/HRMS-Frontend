@@ -1,304 +1,578 @@
-<form id="leadForm" class="ng-pristine ng-invalid ng-invalid-required ng-valid-pattern ng-valid-maxlength" #leadForm="ngForm">
-    <div class="leadInputCategory mBorder rounded py-2 px-3 mb-3">
-        <div class="leadCategoryTitle color-logo font-size-17 font-w-600 accordion cursor-pointer position-relative"><i class="fas fa-user pr-2"></i>Personal Details</div>
-        <div class="panel">
-            <div class="leadIpFlexCont pt-3 d-flex flex-wrap">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">First Name*</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.FirstName" name="FirstName" id="FirstName" placeholder="Enter First Name" pattern="[A-Za-z]{1,32}">
-                    <span class="errorMsg">*Enter Valid Name</span>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Last Name*</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.LastName" name="LastName" placeholder="Enter Last Name" pattern="[A-Za-z]{1,32}">
-                    <span class="errorMsg">*Enter Valid Name</span>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Mobile Number*</label>
-                    <input type="text" appPhoneNo class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" maxlength="12" [(ngModel)]="model.MobileNumber" name="MobileNumber" placeholder="Enter Mobile No." pattern="[0-9]{10}">
-                    <span class="errorMsg">*Enter Valid Mobile Number</span>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Email*</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.Email" name="Email" placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-                    <span class="errorMsg">*Enter Valid Mail Id</span>
-                </div>
-                <div class="leadIpFitem formItem">
-                    <label class="mb-1">Location*</label><br>
-                    <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" placeholder="Enter Location" name="location" [(ngModel)]="model.LocationId" required #location="ngModel" [ngModelOptions]="{standalone: true}">
-                        <option *ngFor="let item of LocationList;" value={{item.Id}}>{{item.Location}}</option>
-                    </select>
-                    <span class="errorMsg">*Enter the Location</span>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">D.O.B</label>
-                   <p-calendar
-  [(ngModel)]="model.DateOfBirth"
-  name="DateOfBirth"
-  inputId="testingDob"
-  dateFormat="dd-mm-yy"
-  showIcon="true"
-  class="w-100 px-1 py-1 rounded mBorder bg-color-input color-initial border-header"
-  placeholder="Enter D.O.B dd-mm-yyyy">
-</p-calendar>
-
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Pan No.</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.PanNumber" name="PanNumber" placeholder="Enter Pan No." pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}">
-                    <span class="errorMsg">*Enter Valid Pan No.</span>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Addhar No.</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.AadharNumber" name="AadharNumber" placeholder="Enter Addhar No." pattern="^\d{4}\s\d{4}\s\d{4}$">
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Present Address</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.PresentAddress" name="PresentAddress" placeholder="Enter Present Address">
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Permenent Address</label>
-                    <input type="text" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.PermanentAddress" name="PermanentAddress" placeholder="Enter Permenent Address">
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Gender*</label>
-                    <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.Gender" name="Gender">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Mariatel Status</label>
-                    <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="model.MaterialStatus" name="MaterialStatus">
-                        <option value="Single">Single</option>
-                        <option value="Married">Married</option>
-                    </select>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">No. Of Dependent</label>
-                    <input type="text" placeholder="Enter No. Of Dependent" [(ngModel)]="model.NoOfDependent" name="NoOfDependent" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header">
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Education Qualifications</label>
-                    <input type="text" placeholder="Enter Education Qualifications" [(ngModel)]="model.EducationalQualification" name="EducationalQualification" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header">
-                </div>
-
+<form [formGroup]="form" (ngSubmit)="saveDetails(true)" class="p-fluid">
+  <div class="card flex justify-content-center">
+    <p-accordion value="0">
+      <!-- Personal Details -->
+      <p-accordion-panel value="0">
+        <p-accordion-header>
+          <ng-template #toggleicon let-active="active">
+            @if (active) {
+              <i class="pi pi-minus"></i>
+            } @else {
+              <i class="pi pi-plus"></i>
+            }
+          </ng-template>
+          <span class="flex items-center gap-2 w-full">
+            <i class="pi pi-user"></i>
+            <span class="font-bold whitespace-nowrap">Personal Details</span>
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>
+          <div [formGroup]="personal" class="grid">
+                 <div [formGroup]="personal" class="grid">
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="FirstName"
+                  formControlName="FirstName"
+                />
+                <label for="FirstName">First Name*</label>
+              </p-floatLabel>
+              <small
+                class="p-error"
+                *ngIf="personal.get('FirstName')?.touched && personal.get('FirstName')?.invalid"
+                >First name is required</small
+              >
             </div>
-        </div>
-    </div>
-    <div class="leadInputCategory mBorder rounded py-2 px-3 mb-3">
-        <div class="leadCategoryTitle color-logo font-size-17 font-w-600 cursor-pointer accordion position-relative"><i class="fas fa-user-tie pr-2"></i>Occupation Details</div>
-        <div class="panel occupationPanel">
-            <div class="overflowContainer occupationPanelOverFlow">
-                <div class="leadIpFlexCont pt-3 d-flex flex-wrap" *ngFor="let occupation of model.OccupationDetails; let i= index;">
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">OccupationType*</label>
-                        <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.Occupation" [ngModelOptions]="{standalone: true}">
-                            <option value="Salaried">Salaried</option>
-                            <option value="Self Employee">Self Employee</option>
-                        </select>
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">IncomeType*</label>
-                        <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.IncomeType" [ngModelOptions]="{standalone: true}">
-                            <option  value="Bank Transfer">Bank Transfer</option>
-                            <option  value="Cheque">Cheque</option>
-                            <option  value="Cash">Cash</option>
-                            <option  value="NonITR">NonITR</option>
-                            <option  value="ITR">ITR</option>
-                         <!--   <option *ngIf="occupation.Occupation=='Salaried'" value="Bank Transfer">Bank Transfer</option>
-                            <option *ngIf="occupation.Occupation=='Salaried'" value="Cheque">Cheque</option>
-                            <option *ngIf="occupation.Occupation=='Salaried'" value="Cash">Cash</option>
-                            <option *ngIf="occupation.Occupation=='Self Employee'" value="NonITR">NonITR</option>
-                            <option *ngIf="occupation.Occupation=='Self Employee'" value="ITR">ITR</option>   -->
-                        </select>
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1 ">Company Name</label>
-                        <input type="text" placeholder="Enter Company Name" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.CompanyName" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Company Address</label>
-                        <input type="text" placeholder="Enter Company Address" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.CompanyAddress" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Designation</label>
-                        <input type="text" placeholder="Enter Designation" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.Designation" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Joining Date</label>
-                       <p-calendar
-  [(ngModel)]="occupation.JoiningDate"
-  [ngModelOptions]="{standalone: true}"
-  placeholder="Enter Designation"
-  dateFormat="dd-mm-yy"
-  showIcon="true"
-  class="w-100 px-1 py-1 rounded mBorder bg-color-input color-initial border-header">
-</p-calendar>
-
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Office Tel No.</label>
-                        <input type="text" placeholder="Enter Office Tel No." class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.OfficeTelephoneNumber" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Company GSTIN</label>
-                        <input type="text" placeholder="Enter Company GSTIN" class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.CompanyGSTINNumber" [ngModelOptions]="{standalone: true}" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}">
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Income*</label>
-                        <div class="inputMoneyDiv position-relative">
-                            <input type="text" placeholder="Enter Income" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.IncomeAmount" [ngModelOptions]="{standalone: true}">
-                            <i class="fas fa-rupee-sign position-absolute"></i>
-                        </div>
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1">Other Income</label>
-                        <div class="inputMoneyDiv position-relative">
-                            <input type="text" placeholder="Enter Other Income" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="occupation.OtherIncomeAmount" [ngModelOptions]="{standalone: true}">
-                            <i class="fas fa-rupee-sign position-absolute"></i>
-                        </div>
-                    </div>
-                    <div class="leadIpFitem mb-3">
-                        <label class="mb-1 invisible">Action</label>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button class="border-0 px-3 py-1 font-w-600 color-white bg-color-logo rounded input-height" (click)="addFormGroup()">Add</button>
-                            <button *ngIf="i !== 0" class="border-0 px-3  py-1 font-w-600 bg-danger color-white rounded input-height" (click)="deleteFormGroup(i)">Delete</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="LastName"
+                  formControlName="LastName"
+                />
+                <label for="LastName">Last Name*</label>
+              </p-floatLabel>
+              <small
+                class="p-error"
+                *ngIf="personal.get('LastName')?.touched && personal.get('LastName')?.invalid"
+                >Last name is required</small
+              >
             </div>
-        </div>
-    </div>
-    <div class="leadInputCategory mBorder rounded py-2 px-3 mb-3">
-        <div class="leadCategoryTitle accordion color-logo font-size-17 font-w-600 cursor-pointer position-relative"><i class="fas fa-university pr-2"></i>Bank Details</div>
-        <div class="panel bankPanel">
-            <div class="overflowContainer pt-3 bankPanelOverFlow">
-                <table class="table font-w-600 color-initial mb-0">
-                    <tr class="bg-color-ContHead color-gray">
-                        <th>Bank Name</th>
-                        <th>Branch</th>
-                        <th>IFSC Code</th>
-                        <th>Acc No.</th>
-                        <th>Action</th>
-                    </tr>
-                    <tr *ngFor="let bank of model.BankDetails; let i= index;">
-                        <td><select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="bank.BankName" [ngModelOptions]="{standalone: true}">
-                            <option *ngFor="let item of BankList;" value={{item.BankName}}>{{item.BankName}}</option>
-                        </select></td>
-                        <!-- <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="bank.BankName" [ngModelOptions]="{standalone: true}"/></td> -->
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="bank.Branch" [ngModelOptions]="{standalone: true}"/></td>
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="bank.IfscCode" [ngModelOptions]="{standalone: true}" /></td>
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="bank.AccountNumber" [ngModelOptions]="{standalone: true}" /></td>
-                        <td class="min-w-110">
-                            <div class="d-flex justify-content-between">
-                                <i class="fas fa-plus bg-color-logo px-2 py-2 rounded cursor-pointer color-white"(click)="addBankRow()"></i>
-                                <i *ngIf="i !== 0" class="fas fa-trash bg-danger px-2 py-2 rounded cursor-pointer  color-white"(click)="deleteBankRow(i)"></i>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="MobileNumber"
+                  formControlName="MobileNumber"
+                />
+                <label for="MobileNumber">Mobile Number*</label>
+              </p-floatLabel>
+              <small
+                class="p-error"
+                *ngIf="personal.get('MobileNumber')?.touched && personal.get('MobileNumber')?.invalid"
+                >Valid 10-digit mobile number required</small
+              >
             </div>
-        </div>
-    </div>
-
-    <div class="existingLoanCon"></div>
-
-    <div class="leadInputCategory mBorder rounded py-2 px-3 mb-3">
-        <div class="leadCategoryTitle accordion color-logo font-size-17 font-w-600 cursor-pointer position-relative"><i class="fas fa-coins pr-2"></i>Loan Details</div>
-        <div class="panel loanPanel">
-            <!-- <div class="leadIpFlexCont d-flex flex-wrap pt-3">
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Loan Type</label>
-                    <input type="text" placeholder="Enter Loan Type" ng-model="leadLoadType" class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header">
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Loan Amount</label>
-                    <div class="inputMoneyDiv position-relative">
-                        <input type="text" placeholder="Enter Loan Amount" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header">
-                        <i class="fas fa-rupee-sign position-absolute"></i>
-                    </div>
-                </div>
-                <div class="leadIpFitem mb-3">
-                    <label class="mb-1">Desired Loans Amount</label>
-                    <div class="inputMoneyDiv position-relative">
-                        <input type="text" placeholder="Enter Loan Amount" class="pl-4 pr-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header">
-                        <i class="fas fa-rupee-sign position-absolute"></i>
-                    </div>
-                </div>
-
-            </div> -->
-            <div class="overflowContainer pt-3 loanPanelOverFlow">
-                <table class="table font-w-600 color-initial mb-0">
-                    <tr class="bg-color-ContHead color-gray testingClass">
-                        <th>Bank</th>
-                        <th>Branch</th>
-                        <th>Loan Type</th>
-                        <th>Loan Amount</th>
-                        <th>ROI</th>
-                        <th>Tenure (Year)</th>
-                        <th>Dibursement Date</th>
-                        <th>Action</th>
-                    </tr>
-                    <!-- <tr id="div1">
-                      <th id="p1" class="testingClass">This is a paragraph.</th>
-                      <th id="p2" class="testingClass">This is another paragraph.</th>
-                    </tr> -->
-                    <tr *ngFor="let loan of model.LoanHistory; let i= index;" class="testingClass">
-                        <td><select class="px-2 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="loan.BankName" [ngModelOptions]="{standalone: true}">
-                            <option *ngFor="let item of BankList;" value={{item.BankName}}>{{item.BankName}}</option>
-                        </select></td>
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="loan.BranchName" [ngModelOptions]="{standalone: true}" /></td>
-                        <td>
-                            <select class="px-1 py-1 rounded mBorder w-100 bg-color-input color-initial border-header" [(ngModel)]="loan.LoanType" [ngModelOptions]="{standalone: true}">
-                                <option>Personal Loan</option>
-                                <option>Business Loan</option>
-                                <option>Auto Loan-New</option>
-                                <option>Auto Loan-Used</option>
-                                <option>Jewel Loan</option>
-                                <option>LAP</option>
-                                <option>Home Loan-Self Construction</option>
-                                <option>Home Loan-Resale</option>
-                                <option>Home Loan-Builder Purchase</option>
-                                <option>Land Loan</option>
-                                <option>Land Loan+Construction</option>
-                                <option>NRP</option>
-                                <option>Commercial Vehicle Loan-New</option>
-                                <option>Commercial Vehicle Loan-Used</option>
-                            </select>
-                        </td>
-                        <!-- <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="loan.BankName" [ngModelOptions]="{standalone: true}" /></td> -->
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="loan.LoanAmount" [ngModelOptions]="{standalone: true}"/></td>
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="loan.ROI" [ngModelOptions]="{standalone: true}"/></td>
-                        <td><input type="text" class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow" [(ngModel)]="loan.Tenure" [ngModelOptions]="{standalone: true}" /></td>
-                        <td>
-                          <p-calendar
-  [(ngModel)]="loan.SanctionDate"
-  [ngModelOptions]="{standalone: true}"
-  placeholder="Select Sanction Date"
-  dateFormat="dd-mm-yy"
-  showIcon="true"
-  class="rounded w-100 px-2 py-1 color-initial border-header bg-color-input boxShadow">
-</p-calendar>
-
-                        </td>
-                        <td class="min-w-110">
-                            <div class="d-flex justify-content-between">
-                                <i class="fas fa-plus bg-color-logo px-2 py-2 rounded cursor-pointer color-white"(click)="addLoanRow()"></i>
-                                <i *ngIf="i !== 0" class="fas fa-trash bg-danger px-2 py-2 rounded cursor-pointer  color-white"(click)="deleteLoanRow(i)"></i>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="Email"
+                  formControlName="Email"
+                />
+                <label for="Email">Email*</label>
+              </p-floatLabel>
+              <small
+                class="p-error"
+                *ngIf="personal.get('Email')?.touched && personal.get('Email')?.invalid"
+                >Valid email required</small
+              >
             </div>
-        </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-dropdown
+                  inputId="LocationId"
+                  formControlName="LocationId"
+                  [options]="LocationList"
+                  optionLabel="Location"
+                  optionValue="Id"
+                  placeholder="Select Location"
+                ></p-dropdown>
+                <label for="LocationId">Location*</label>
+              </p-floatLabel>
+              <small
+                class="p-error"
+                *ngIf="personal.get('LocationId')?.touched && personal.get('LocationId')?.invalid"
+                >Location required</small
+              >
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-calendar
+                  id="DateOfBirth"
+                  formControlName="DateOfBirth"
+                  dateFormat="dd-mm-yy"
+                  showIcon="true"
+                  placeholder="Enter DOB"
+                ></p-calendar>
+                <label for="DateOfBirth">Date of Birth</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="PanNumber"
+                  formControlName="PanNumber"
+                />
+                <label for="PanNumber">PAN Number</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="AadharNumber"
+                  formControlName="AadharNumber"
+                />
+                <label for="AadharNumber">Aadhar Number</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="PresentAddress"
+                  formControlName="PresentAddress"
+                />
+                <label for="PresentAddress">Present Address</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="PermanentAddress"
+                  formControlName="PermanentAddress"
+                />
+                <label for="PermanentAddress">Permanent Address</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-dropdown
+                  inputId="Gender"
+                  formControlName="Gender"
+                  [options]="[
+                    { label: 'Male', value: 'Male' },
+                    { label: 'Female', value: 'Female' }
+                  ]"
+                  placeholder="Select Gender"
+                ></p-dropdown>
+                <label for="Gender">Gender</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-dropdown
+                  inputId="MaterialStatus"
+                  formControlName="MaterialStatus"
+                  [options]="[
+                    { label: 'Single', value: 'Single' },
+                    { label: 'Married', value: 'Married' }
+                  ]"
+                  placeholder="Select Status"
+                ></p-dropdown>
+                <label for="MaterialStatus">Marital Status</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="NoOfDependent"
+                  formControlName="NoOfDependent"
+                />
+                <label for="NoOfDependent">No. of Dependents</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="EducationalQualification"
+                  formControlName="EducationalQualification"
+                />
+                <label for="EducationalQualification">Educational Qualification</label>
+              </p-floatLabel>
+            </div>
+          </div>
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+
+      <!-- Occupation Details -->
+      <p-accordion-panel value="1">
+        <p-accordion-header>
+          <ng-template #toggleicon let-active="active">
+            @if (active) {
+              <i class="pi pi-minus"></i>
+            } @else {
+              <i class="pi pi-plus"></i>
+            }
+          </ng-template>
+          <span class="flex items-center gap-2 w-full">
+            <i class="pi pi-briefcase"></i>
+            <span class="font-bold whitespace-nowrap">Occupation Details</span>
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>
+            <ng-container *ngIf="occupation.length > 0">
+          <div
+            formArrayName="occupation">
+            <div
+
+            *ngFor="let occ of occupation.controls; let i = index"
+            [formGroupName]="i"
+            class="grid border rounded p-3 mb-3"
+          >
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-dropdown
+                  inputId="Occupation{{i}}"
+                  formControlName="Occupation"
+                  [options]="[
+                    { label: 'Salaried', value: 'Salaried' },
+                    { label: 'Self Employee', value: 'Self Employee' }
+                  ]"
+                  placeholder="Select Occupation"
+                ></p-dropdown>
+                <label for="Occupation{{i}}">Occupation*</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="CompanyName{{i}}"
+                  formControlName="CompanyName"
+                />
+                <label for="CompanyName{{i}}">Company Name</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="CompanyAddress{{i}}"
+                  formControlName="CompanyAddress"
+                />
+                <label for="CompanyAddress{{i}}">Company Address</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="Designation{{i}}"
+                  formControlName="Designation"
+                />
+                <label for="Designation{{i}}">Designation</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <p-calendar
+                  id="JoiningDate{{i}}"
+                  formControlName="JoiningDate"
+                  dateFormat="dd-mm-yy"
+                  showIcon="true"
+                ></p-calendar>
+                <label for="JoiningDate{{i}}">Joining Date</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="OfficeTelephoneNumber{{i}}"
+                  formControlName="OfficeTelephoneNumber"
+                />
+                <label for="OfficeTelephoneNumber{{i}}">Office Tel No.</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="CompanyGSTINNumber{{i}}"
+                  formControlName="CompanyGSTINNumber"
+                />
+                <label for="CompanyGSTINNumber{{i}}">Company GSTIN</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="IncomeAmount{{i}}"
+                  formControlName="IncomeAmount"
+                />
+                <label for="IncomeAmount{{i}}">Income</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-floatLabel>
+                <input
+                  pInputText
+                  id="OtherIncomeAmount{{i}}"
+                  formControlName="OtherIncomeAmount"
+                />
+                <label for="OtherIncomeAmount{{i}}">Other Income</label>
+              </p-floatLabel>
+            </div>
+            <div class="col-12 flex gap-2 mt-2">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-plus"
+                label="Add"
+                class="p-button-success"
+                (click)="addOccupation()"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                label="Remove"
+                class="p-button-danger"
+                *ngIf="occupation.length > 1"
+                (click)="deleteOccupation(i)"
+              ></button>
+            </div>
+          </div>
+          </div>
+          </ng-container>
+        </p-accordion-content>
+      </p-accordion-panel>
+
+      <!-- Bank Details -->
+      <p-accordion-panel value="2">
+        <p-accordion-header>
+          <ng-template #toggleicon let-active="active">
+            @if (active) {
+              <i class="pi pi-minus"></i>
+            } @else {
+              <i class="pi pi-plus"></i>
+            }
+          </ng-template>
+          <span class="flex items-center gap-2 p-2 w-full">
+            <i class="pi pi-credit-card"></i>
+            <span class="font-bold whitespace-nowrap">Bank Details</span>
+          </span>
+        </p-accordion-header>
+       <p-accordion-content>
+          <ng-container *ngIf="bankDetails.length > 0">
+  <div
+    formArrayName="bankDetails"><div
+    *ngFor="let bank of bankDetails.controls; let i = index"
+    [formGroupName]="i"
+    class="grid border rounded p-3 mb-3"
+  >
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <p-dropdown
+          inputId="BankName{{i}}"
+          formControlName="BankName"
+          [options]="BankList"
+          optionLabel="BankName"
+          placeholder="Select Bank"
+        ></p-dropdown>
+        <label for="BankName{{i}}">Bank Name</label>
+      </p-floatLabel>
     </div>
 
-    <div class="d-flex justify-content-end">
-        <input type="submit" value="Save" (click)="LeadPersonalDetailSubmit(true);" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
-        &nbsp;&nbsp;
-        <input type="submit" [hidden]="isSaveAndClose" value="Save & Close" (click)="LeadPersonalDetailSubmit(false);" class="leadInputSubmit bg-color-logo color-white border-0 rounded px-4 py-2 font-w-600">
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="Branch{{i}}"
+          formControlName="Branch"
+        />
+        <label for="Branch{{i}}">Branch</label>
+      </p-floatLabel>
     </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="IfscCode{{i}}"
+          formControlName="IfscCode"
+        />
+        <label for="IfscCode{{i}}">IFSC Code</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="AccountNumber{{i}}"
+          formControlName="AccountNumber"
+        />
+        <label for="AccountNumber{{i}}">Account Number</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 flex gap-2 mt-2">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Add"
+        class="p-button-success"
+        (click)="addBank()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        label="Remove"
+        class="p-button-danger"
+        *ngIf="bankDetails.length > 1"
+        (click)="deleteBank(i)"
+      ></button>
+    </div>
+  </div>
+  </div>
+  </ng-container>
+</p-accordion-content>
+
+      </p-accordion-panel>
+
+      <!-- Loan Details -->
+      <p-accordion-panel value="3">
+        <p-accordion-header>
+          <ng-template #toggleicon let-active="active">
+            @if (active) {
+              <i class="pi pi-minus"></i>
+            } @else {
+              <i class="pi pi-plus"></i>
+            }
+          </ng-template>
+          <span class="flex items-center gap-2 w-full">
+            <i class="pi pi-dollar"></i>
+            <span class="font-bold whitespace-nowrap">Loan Details</span>
+          </span>
+        </p-accordion-header>
+       <p-accordion-content>
+          <ng-container *ngIf="loanHistory.length > 0">
+  <div
+    formArrayName="loanHistory"><div
+    *ngFor="let loan of loanHistory.controls; let i = index"
+    [formGroupName]="i"
+    class="grid border rounded p-3 mb-3"
+  >
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <p-dropdown
+          inputId="LoanType{{i}}"
+          formControlName="LoanType"
+          [options]="[
+            { label: 'Personal Loan', value: 'Personal Loan' },
+            { label: 'Business Loan', value: 'Business Loan' },
+            { label: 'Auto Loan - New', value: 'Auto Loan - New' },
+            { label: 'Auto Loan - Used', value: 'Auto Loan - Used' },
+            { label: 'Home Loan', value: 'Home Loan' },
+            { label: 'Jewel Loan', value: 'Jewel Loan' }
+          ]"
+          placeholder="Select Loan Type"
+        ></p-dropdown>
+        <label for="LoanType{{i}}">Loan Type</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="LoanAmount{{i}}"
+          formControlName="LoanAmount"
+        />
+        <label for="LoanAmount{{i}}">Loan Amount</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="ROI{{i}}"
+          formControlName="ROI"
+        />
+        <label for="ROI{{i}}">Rate of Interest</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <input
+          pInputText
+          id="Tenure{{i}}"
+          formControlName="Tenure"
+        />
+        <label for="Tenure{{i}}">Tenure (Years)</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <p-floatLabel>
+        <p-calendar
+          id="SanctionDate{{i}}"
+          formControlName="SanctionDate"
+          dateFormat="dd-mm-yy"
+          showIcon="true"
+        ></p-calendar>
+        <label for="SanctionDate{{i}}">Sanction Date</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="col-12 flex gap-2 mt-2">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Add"
+        class="p-button-success"
+        (click)="addLoan()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        label="Remove"
+        class="p-button-danger"
+        *ngIf="loanHistory.length > 1"
+        (click)="deleteLoan(i)"
+      ></button>
+    </div>
+  </div>
+  </div>
+  </ng-container>
+</p-accordion-content>
+
+      </p-accordion-panel>
+    </p-accordion>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-4">
+    <button
+      pButton
+      type="submit"
+      label="Save"
+      icon="pi pi-save"
+      class="p-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save & Close"
+      icon="pi pi-check"
+      class="p-button-secondary"
+      (click)="saveDetails(false)"
+      [hidden]="isSaveAndClose"
+    ></button>
+  </div>
 </form>
-
-

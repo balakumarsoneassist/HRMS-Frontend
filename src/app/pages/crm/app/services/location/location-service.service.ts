@@ -1,31 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Api } from '../api';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationServiceService {
+  private SaveLocationDetailsUrl = Api.SaveLocationDetailsUrl;
+  private GetLocationListUrl = Api.GetLocationListUrl;
+  private GetLocationByIdUrl = Api.GetLocationByIdUrl;
 
-  constructor(private objApi:Api) { }
-  private SaveLocationDetailsUrl:string=Api.SaveLocationDetailsUrl;
-  private GetLocationListUrl=Api.GetLocationListUrl;
-  private GetLocationByIdUrl=Api.GetLocationByIdUrl;
-  SaveLocationDetails(LocationDetails){
-      return this.objApi.callPost(this.SaveLocationDetailsUrl,LocationDetails)
-  }
- GetLocationList(){
-    return this.objApi.callPost(this.GetLocationListUrl)
-}
-GetLocationById(locationDetails){
-  return this.objApi.callPost(this.GetLocationByIdUrl,locationDetails)
-}
-
-private locationSubject = new Subject<any>();
+  private locationSubject = new BehaviorSubject<any>(null);
   locationObservable = this.locationSubject.asObservable();
 
-  locationEdit(locationDetail) {
+  private locationRefreshSubject = new BehaviorSubject<any>(null);
+  locationRefreshObservable = this.locationRefreshSubject.asObservable();
+
+  constructor(private objApi: Api) {}
+
+  SaveLocationDetails(locationDetails: any) {
+    return this.objApi.callPost(this.SaveLocationDetailsUrl, locationDetails);
+  }
+
+  GetLocationList() {
+    return this.objApi.callPost(this.GetLocationListUrl);
+  }
+
+  GetLocationById(locationDetails: any) {
+    return this.objApi.callPost(this.GetLocationByIdUrl, locationDetails);
+  }
+
+  locationEdit(locationDetail: any) {
     this.locationSubject.next(locationDetail);
   }
 
+  locationListRefresh() {
+    this.locationRefreshSubject.next(null);
+  }
 }

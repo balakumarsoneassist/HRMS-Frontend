@@ -1,28 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Api } from '../api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BranchServiceService {
-private GetBranchNameListUrl=Api.GetBranchNameListUrl;
-public  SaveBranchDetailsUrl=Api.SaveBranchDetailsUrl;
-public GetBranchByIdUrl=Api.GetBranchByIdUrl;
-  constructor(private objApi:Api) { }
-  GetBranchList(){
-      return this.objApi.callPost(this.GetBranchNameListUrl)
-  }
-  SaveBranchDetails(branchDetails){
-    return this.objApi.callPost(this.SaveBranchDetailsUrl,branchDetails);
-  }
-  GetBranchById(branchDetails){
-    return this.objApi.callPost(this.GetBranchByIdUrl,branchDetails)
-}
-private BranchEdit =new Subject<any>();
-BranchObservable = this.BranchEdit.asObservable();
+  private GetBranchNameListUrl = Api.GetBranchNameListUrl;
+  private SaveBranchDetailsUrl = Api.SaveBranchDetailsUrl;
+  private GetBranchByIdUrl = Api.GetBranchByIdUrl;
 
-EditBranch(Id){
-this.BranchEdit.next(Id);
-}
+  private branchEditSubject = new BehaviorSubject<any>(null);
+  BranchObservable = this.branchEditSubject.asObservable();
+
+  private branchRefreshSubject = new BehaviorSubject<any>(null);
+  BranchRefreshObservable = this.branchRefreshSubject.asObservable();
+
+  constructor(private objApi: Api) {}
+
+  GetBranchList() {
+    return this.objApi.callPost(this.GetBranchNameListUrl);
+  }
+
+  SaveBranchDetails(branchDetails: any) {
+    return this.objApi.callPost(this.SaveBranchDetailsUrl, branchDetails);
+  }
+
+  GetBranchById(branchDetails: any) {
+    return this.objApi.callPost(this.GetBranchByIdUrl, branchDetails);
+  }
+
+  EditBranch(branchDetail: any) {
+    this.branchEditSubject.next(branchDetail);
+  }
+
+  BranchListRefresh() {
+    this.branchRefreshSubject.next(null);
+  }
 }
