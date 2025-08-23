@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IdleService } from './app/pages/donar-app/services/idle.service';
-import { LoginService } from './app/pages/donar-app/services/login.service';
-import { UserDetailsService } from './app/pages/donar-app/services/user-details.service';
+import { LoginService } from './app/pages/hrms/services/login/login.service';
+import { IdleService } from './app/pages/hrms/services/idle/idle.service';
+
 
 @Component({
     selector: 'app-root',
@@ -14,16 +14,16 @@ import { UserDetailsService } from './app/pages/donar-app/services/user-details.
 export class AppComponent {
 
 
-      constructor(private idleService: IdleService,private loginService: LoginService, private userStore: UserDetailsService) {}
+      constructor(private idleService: IdleService,private loginService: LoginService) {}
 
 ngOnInit() {
     const token = this.loginService.getToken();
     if (token) {
-        const payload = this.loginService['decodeToken'](token);
+        // const payload = this.loginService['decodeToken'](token);
          // or make decodeToken public
-        if (payload?.username && payload?.role == 'user') {
-            this.userStore.loadUser(payload.username, token);
-        }
+        // if (payload?.username && payload?.role == 'user') {
+        //     this.userStore.loadUser(payload.username, token);
+        // }
     }
 }
 

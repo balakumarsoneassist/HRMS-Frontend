@@ -5,7 +5,7 @@ import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScroll
 import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
-import { AuthInterceptor } from './app/pages/donar-app/services/auth.interceptor';
+import { AuthInterceptor } from './app/pages/hrms/services/auth/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
