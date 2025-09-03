@@ -29,43 +29,45 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2 ml-auto">
-        <p-tag [value]="profile()?.status ? 'Active' : 'Inactive'"
-               [severity]="profile()?.status ? 'success' : 'danger'"></p-tag>
+     <div class="flex items-center gap-2 ml-auto">
+  <p-tag [value]="profile()?.status ? 'Active' : 'Inactive'"
+         [severity]="profile()?.status ? 'success' : 'danger'"></p-tag>
 
-        <!-- Change Password (opens dialog) -->
-        <button
-          pButton
-          size="small"
-          label="Change Password"
-          icon="pi pi-key"
-          class="p-button-help"
-          (click)="openChangePassword()">
-        </button>
+  <!-- Change Password -->
+  <button
+    pButton
+    size="small"
+    label="Change Password"
+    icon="pi pi-key"
+    class="p-button-help"
+    (click)="openChangePassword()">
+  </button>
 
-        <!-- Clock In / Clock Out -->
-        <button
-          *ngIf="!checkStatus"
-          pButton
-          size="small"
-          label="Clock In"
-          icon="pi pi-sign-in"
-          class="p-button-success"
-          [disabled]="loading"
-          (click)="clockIn()">
-        </button>
+  <!-- Clock In -->
+  <button
+    *ngIf="!checkStatus"
+    pButton
+    size="small"
+    [label]="isHoliday ? 'Holiday Clock In' : 'Clock In'"
+    icon="pi pi-sign-in"
+    class="p-button-success"
+    [disabled]="loading"
+    (click)="clockIn()">
+  </button>
 
-        <button
-          *ngIf="checkStatus"
-          pButton
-          size="small"
-          label="Clock Out"
-          icon="pi pi-sign-out"
-          class="p-button-danger"
-          [disabled]="loading"
-          (click)="clockOut()">
-        </button>
-      </div>
+  <!-- Clock Out -->
+  <button
+    *ngIf="checkStatus"
+    pButton
+    size="small"
+    [label]="isHoliday ? 'Holiday Clock Out' : 'Clock Out'"
+    icon="pi pi-sign-out"
+    class="p-button-danger"
+    [disabled]="loading"
+    (click)="clockOut()">
+  </button>
+</div>
+
     </div>
   </div>
 
