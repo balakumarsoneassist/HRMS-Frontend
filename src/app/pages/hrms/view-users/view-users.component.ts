@@ -6,6 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { UserService } from '../services/user/user.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-view-users',
@@ -48,7 +49,7 @@ export class ViewUsersComponent implements OnInit {
     }
 
     this.http
-      .get<any>('http://localhost:8080/api/user', { params })
+      .get<any>(`${environment.apiUrl}/api/user`, { params })
       .subscribe({
         next: (res) => {
           this.userList = res.data;
