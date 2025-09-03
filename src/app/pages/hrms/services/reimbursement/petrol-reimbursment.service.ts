@@ -1,29 +1,33 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PetrolReimbursmentService {
+  private readonly baseUrl = `${environment.apiUrl}/api/petrol`;
 
-  private baseUrl = 'http://localhost:3000/api/petrol'; // change to your API URL
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  getClaims(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken') || '';
+    return new HttpHeaders({ Authorization: token ? `Bearer ${token}` : '' });
   }
 
-  addClaim(data: any): Observable<any> {
-    return this.http.post(this.baseUrl, data);
+  /** Get current month claims for a user */
+  getClaims(userId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/mypetrolcredits?userId=${userId}`, {
+      headers: this.authHeaders()
+    });
   }
 
-  updateClaim(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, data);
-  }
-
-  deleteClaim(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  /** Bulk upload claims for a user */
+  addBulkClaims(userId: string, records: any[]): Observable<any> {
+    const payload = { userId, records };
+    return this.http.post(`${this.baseUrl}/bulk-upload`, payload, {
+      headers: this.authHeaders()
+    });
   }
 }

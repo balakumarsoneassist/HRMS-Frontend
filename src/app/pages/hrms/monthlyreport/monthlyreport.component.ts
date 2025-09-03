@@ -47,7 +47,7 @@ export class MonthlyreportComponent implements OnInit {
     this.loading = true;
     const page = event.page !== undefined ? event.page + 1 : 1;
 
-    this.attendanceService.getMonthlyreport(page, this.limit, this.searchText).subscribe({
+    this.attendanceService.getMonthlyReport(page, this.limit, this.searchText).subscribe({
       next: (res) => {
         this.attendanceList = res.data;
         this.total = res.total;

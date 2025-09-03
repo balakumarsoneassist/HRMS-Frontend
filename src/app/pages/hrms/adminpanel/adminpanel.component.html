@@ -69,59 +69,5 @@
   [draggable]="false"
   [resizable]="false"
 >
-  <form [formGroup]="changeForm" (ngSubmit)="submitChangePassword()" class="p-fluid">
-    <!-- Current Password -->
-    <div class="field">
-      <label for="currentPassword">Current Password</label>
-      <p-password
-        inputId="currentPassword"
-        formControlName="currentPassword"
-        [toggleMask]="true"
-        [feedback]="false"
-        styleClass="w-full"
-      ></p-password>
-      <small class="p-error" *ngIf="touched('currentPassword') && invalid('currentPassword')">
-        Current password is required.
-      </small>
-    </div>
 
-    <!-- New Password -->
-    <div class="field">
-      <label for="newPassword">New Password</label>
-      <p-password
-        inputId="newPassword"
-        formControlName="newPassword"
-        [toggleMask]="true"
-        [feedback]="true"
-        promptLabel="Enter a strong password"
-        weakLabel="Weak"
-        mediumLabel="Medium"
-        strongLabel="Strong"
-        styleClass="w-full"
-      ></p-password>
-      <small class="p-error" *ngIf="touched('newPassword') && invalid('newPassword')">
-        Min 8 chars with A-Z, a-z, 0-9 and a special character.
-      </small>
-    </div>
-
-    <!-- Confirm Password -->
-    <div class="field">
-      <label for="confirmPassword">Confirm Password</label>
-      <p-password
-        inputId="confirmPassword"
-        formControlName="confirmPassword"
-        [toggleMask]="true"
-        [feedback]="false"
-        styleClass="w-full"
-      ></p-password>
-      <small class="p-error" *ngIf="touched('confirmPassword') && changeForm.hasError('mismatch')">
-        Passwords do not match.
-      </small>
-    </div>
-
-    <div class="flex justify-content-end gap-2 mt-3">
-      <button type="button" pButton label="Cancel" class="p-button-text" (click)="showChangePassword=false"></button>
-      <button type="submit" pButton label="Update Password" icon="pi pi-check" [disabled]="changeForm.invalid || savingPwd"></button>
-    </div>
-  </form>
 </p-dialog>

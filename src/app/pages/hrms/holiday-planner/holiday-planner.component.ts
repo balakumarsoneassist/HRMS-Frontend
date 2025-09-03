@@ -20,26 +20,10 @@ import { MessageService } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 import { TableModule } from 'primeng/table';
 
-type HolidayRule = {
-  id?: string;
-  _id?: string; // backend id
-  name: string;
-  color?: string;         // we store '#RRGGBB'
-  isEnabled: boolean;
-  isGovernment?: boolean;
-  date?: string;          // 'YYYY-MM-DD'
-  recurrence?: {
-    kind: 'nth-weekday-monthly' | 'weekly' | 'annual-fixed';
-    nths?: number[];
-    weekdays?: number[];
-    months?: number[];
-    startDate?: string;   // 'MM-DD' for annual-fixed
-    endDate?: string;
-  };
-};
 
 type HolidayOcc = { id?: string; name: string; color?: string; isRule: boolean; isGovernment?: boolean; };
 type DayCell = { date: Date; inMonth: boolean; key: string; isToday: boolean; holidays: HolidayOcc[]; };
+import { HolidayService, HolidayRule } from '../services/holiday/holiday.service';
 
 @Component({
   selector: 'app-holiday-planner',
@@ -55,10 +39,9 @@ type DayCell = { date: Date; inMonth: boolean; key: string; isToday: boolean; ho
   providers: [MessageService]
 })
 export class HolidayPlannerComponent implements OnInit {
-  constructor(private http: HttpClient, private fb: FormBuilder, private toast: MessageService) {}
 
-  // ===== Config =====
-  private baseUrl = 'http://localhost:8080/api/holidays';
+  constructor(private http: HttpClient,private holidayService: HolidayService, private fb: FormBuilder, private toast: MessageService) {}
+
 
   // ===== Auth header =====
   private authHeaders(): HttpHeaders {
@@ -148,40 +131,20 @@ export class HolidayPlannerComponent implements OnInit {
 
   // ===== API helpers =====
   private fetchRules() {
-    this.http.get<HolidayRule[]>(`${this.baseUrl}/rules`, { headers: this.authHeaders() })
-      .subscribe({
-        next: (res) => {
-          const list = (res || []).map(r => ({ ...r, id: (r as any)._id || r.id }));
-          this.rules.set(list);
-        },
-        error: () => {
-          this.rules.set([
-            { id: 'demo-1', name: '3rd & 4th Saturday Off', color: '#22d3ee', isEnabled: true,
-              recurrence: { kind:'nth-weekday-monthly', nths:[3,4], weekdays:[6] } }
-          ]);
-        }
-      });
-  }
-
-  private createRule(rule: HolidayRule) {
-    return this.http.post<HolidayRule>(`${this.baseUrl}/rules`, rule, { headers: this.authHeaders() });
-  }
-  private createRulesBulk(rules: HolidayRule[]) {
-    return this.http.post<{inserted: number; items: HolidayRule[]}>(`${this.baseUrl}/rules/bulk`, { rules }, { headers: this.authHeaders() });
-  }
-  private deleteRule(ruleId: string) {
-    return this.http.delete<void>(`${this.baseUrl}/rules/${ruleId}`, { headers: this.authHeaders() });
-  }
-  private setEnabled(ruleId: string, enabled: boolean) {
-    return this.http.patch<HolidayRule>(`${this.baseUrl}/rules/${ruleId}/enabled`, { isEnabled: enabled }, { headers: this.authHeaders() });
-  }
-  private importBulkFile(file: File) {
-    const fd = new FormData();
-    fd.append('file', file);
-    return this.http.post<{inserted: number; items: HolidayRule[]}>(`${this.baseUrl}/import-bulk`, fd, {
-      headers: this.authHeaders()
+     this.holidayService.getRules().subscribe({
+      next: (res) => {
+        const list = (res || []).map(r => ({ ...r, id: (r as any)._id || r.id }));
+        this.rules.set(list);
+      },
+      error: () => {
+        this.rules.set([
+          { id: 'demo-1', name: '3rd & 4th Saturday Off', color: '#22d3ee', isEnabled: true,
+            recurrence: { kind:'nth-weekday-monthly', nths:[3,4], weekdays:[6] } }
+        ]);
+      }
     });
   }
+
 
   // ===== Single =====
   openAddSingle(date?: Date) {
@@ -203,7 +166,7 @@ export class HolidayPlannerComponent implements OnInit {
     const iso = this.toISO(v.date);
     const rule: HolidayRule = { name: v.name, color: '#'+hex, isEnabled: true, date: iso };
 
-    this.createRule(rule).subscribe({
+    this.holidayService.createRule(rule).subscribe({
       next: () => {
         this.toast.add({ severity:'success', summary:'Holiday Added', detail:`${v.name} on ${iso}` });
         this.showAddSingle = false;
@@ -235,7 +198,7 @@ export class HolidayPlannerComponent implements OnInit {
       name: val.name, color: '#'+hex, isEnabled: true,
       recurrence: { kind:'nth-weekday-monthly', nths: val.nths, weekdays: val.weekdays, months: val.months }
     };
-    this.createRule(rule).subscribe({
+    this.holidayService.createRule(rule).subscribe({
       next: () => {
         this.toast.add({ severity:'success', summary:'Rule Added', detail: val.name });
         this.showAddRecurring = false;
@@ -253,7 +216,7 @@ export class HolidayPlannerComponent implements OnInit {
 
     const newVal = !rule.isEnabled;
     this.saving = true;
-    this.setEnabled(id, newVal).subscribe({
+    this.holidayService.setEnabled(id, newVal).subscribe({
       next: () => {
         this.toast.add({ severity: 'success', summary: newVal ? 'Enabled' : 'Disabled', detail: rule.name });
         this.refreshAll();
@@ -269,7 +232,7 @@ export class HolidayPlannerComponent implements OnInit {
     const id = rule.id || rule._id; if (!id) return;
 
     this.saving = true;
-    this.deleteRule(id).subscribe({
+    this.holidayService.deleteRule(id).subscribe({
       next: () => {
         this.toast.add({ severity:'success', summary:'Deleted', detail: rule.name });
         this.refreshAll();
@@ -327,7 +290,7 @@ export class HolidayPlannerComponent implements OnInit {
     this.saving = true;
 
     // Try bulk endpoint; fallback to sequential
-    this.createRulesBulk(payload).subscribe({
+    this.holidayService.createRulesBulk(payload).subscribe({
       next: () => {
         this.toast.add({ severity:'success', summary:'Added', detail:`${payload.length} holidays` });
         this.showAddMultiple = false;
@@ -337,7 +300,7 @@ export class HolidayPlannerComponent implements OnInit {
       error: () => {
         let done = 0, errors = 0;
         payload.forEach(p => {
-          this.createRule(p).subscribe({
+          this.holidayService.createRule(p).subscribe({
             next: () => { if (++done === payload.length) this.finishBulk(errors, payload.length); },
             error: () => { errors++; if (++done === payload.length) this.finishBulk(errors, payload.length); }
           });
@@ -363,7 +326,7 @@ export class HolidayPlannerComponent implements OnInit {
   uploadBulk() {
     if (!this.bulkFile || this.saving) return;
     this.saving = true;
-    this.importBulkFile(this.bulkFile).subscribe({
+    this.holidayService.importBulkFile(this.bulkFile).subscribe({
       next: (res) => {
         this.toast.add({ severity:'success', summary:'Imported', detail:`${res?.inserted ?? 0} holidays added` });
         this.showImportBulk = false;

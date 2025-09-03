@@ -8,34 +8,32 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { UserService } from '../services/user/user.service';
 import { AttendanceService } from '../services/attendance/attendance.service';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 
-
 @Component({
   selector: 'app-employeeleave-approval',
-    imports: [
-        FormsModule,
-        CommonModule,
-        ReactiveFormsModule,
-        InputTextModule,
-        DropdownModule,
-        CheckboxModule,
-        ButtonModule,
-        ToastModule,
-        FloatLabelModule,
-        TableModule,
-        DialogModule
-    ],
+  standalone: true,
+  imports: [
+    FormsModule,
+    CommonModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    DropdownModule,
+    CheckboxModule,
+    ButtonModule,
+    ToastModule,
+    FloatLabelModule,
+    TableModule,
+    DialogModule
+  ],
   templateUrl: './employeeleave-approval.component.html',
   styleUrl: './employeeleave-approval.component.scss',
-      providers: [MessageService]
-
+  providers: [MessageService]
 })
-export class EmployeeleaveApprovalComponent {
-attendanceList: any[] = [];
+export class EmployeeleaveApprovalComponent implements OnInit {
+  attendanceList: any[] = [];
   total: number = 0;
   limit: number = 10;
   loading = false;
@@ -44,7 +42,10 @@ attendanceList: any[] = [];
   approvalDialog: boolean = false;
   selectedAttendance: any = null;
 
-  constructor(private attendanceService: AttendanceService, private messageService: MessageService) {}
+  constructor(
+    private attendanceService: AttendanceService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadAttendance({ page: 0, rows: this.limit });
@@ -54,7 +55,7 @@ attendanceList: any[] = [];
     this.loading = true;
     const page = event.page !== undefined ? event.page + 1 : 1;
 
-    this.attendanceService.getAttendance(page, this.limit, this.searchText).subscribe({
+    this.attendanceService.getPendingAttendance(page, this.limit, this.searchText).subscribe({
       next: (res) => {
         this.attendanceList = res.data;
         this.total = res.total;
@@ -75,51 +76,49 @@ attendanceList: any[] = [];
     this.approvalDialog = true;
   }
 
-approveAttendance() {
-  if (!this.selectedAttendance || !this.selectedAttendance._id) return;
+  approveAttendance() {
+    if (!this.selectedAttendance || !this.selectedAttendance._id) return;
 
-  this.attendanceService.approveAttendance(this.selectedAttendance._id, true).subscribe({
-    next: () => {
-      this.selectedAttendance.approved = true;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Approved',
-        detail: 'Attendance approved successfully'
-      });
-      this.approvalDialog = false;
-    },
-    error: () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to approve attendance'
-      });
-    }
-  });
+    this.attendanceService.approveAttendance(this.selectedAttendance._id, true).subscribe({
+      next: () => {
+        this.selectedAttendance.approved = true;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Approved',
+          detail: 'Attendance approved successfully'
+        });
+        this.approvalDialog = false;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to approve attendance'
+        });
+      }
+    });
+  }
+
+  rejectAttendance() {
+    if (!this.selectedAttendance || !this.selectedAttendance._id) return;
+
+    this.attendanceService.approveAttendance(this.selectedAttendance._id, false).subscribe({
+      next: () => {
+        this.selectedAttendance.approved = false;
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Rejected',
+          detail: 'Attendance rejected'
+        });
+        this.approvalDialog = false;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to reject attendance'
+        });
+      }
+    });
+  }
 }
-
-rejectAttendance() {
-  if (!this.selectedAttendance || !this.selectedAttendance._id) return;
-
-  this.attendanceService.approveAttendance(this.selectedAttendance._id, false).subscribe({
-    next: () => {
-      this.selectedAttendance.approved = false;
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Rejected',
-        detail: 'Attendance rejected'
-      });
-      this.approvalDialog = false;
-    },
-    error: () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to reject attendance'
-      });
-    }
-  });
-}
-
-}
-
