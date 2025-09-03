@@ -17,6 +17,8 @@ import { AccessComponent } from './app/pages/hrms/access/access.component';
 import { AccessdefineComponent } from './app/pages/hrms/accessdefine/accessdefine.component';
 import { LeavePolicyAdminComponent } from './app/pages/hrms/leave-policy-admin/leave-policy-admin.component';
 import { HolidayPlannerComponent } from './app/pages/hrms/holiday-planner/holiday-planner.component';
+import { DailyAttendanceReportComponent } from './app/pages/hrms/daily-attendance-report/daily-attendance-report.component';
+import { MonthlyAttendanceReportComponent } from './app/monthly-attendance-report/monthly-attendance-report.component';
 
 export const appRoutes: Routes = [
   {
@@ -28,8 +30,8 @@ export const appRoutes: Routes = [
       { path: 'home/adduser', component: CreateUsersComponent, canActivate: [AuthGuard], data: { permission: 'Add User' } },
       { path: 'home/viewuser', component: ViewUsersComponent, canActivate: [AuthGuard], data: { permission: 'View Users' } },
       { path: 'home/petrolreimbursment', component: PetrolReimbursmentComponent, canActivate: [AuthGuard], data: { permission: 'Petrol Reimbursment' } },
-      { path: 'home/dailyreport', component: DailyreportComponent, canActivate: [AuthGuard], data: { permission: 'Daily Report' } },
-      { path: 'home/monthlyreport', component: MonthlyreportComponent, canActivate: [AuthGuard], data: { permission: 'Monthly Report' } },
+      { path: 'home/dailyreport', component: DailyAttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Daily Report' } },
+      { path: 'home/monthlyreport', component: MonthlyAttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Monthly Report' } },
       { path: 'home/attendance', component: AttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Attendance' } },
       { path: 'home/leaverequest', component: AttendanceManagemntComponent, canActivate: [AuthGuard], data: { permission: 'Leave Request' } },
       { path: 'home/leaveapproval', component: EmployeeleaveApprovalComponent, canActivate: [AuthGuard], data: { permission: 'Employee Leave Approval' } },
