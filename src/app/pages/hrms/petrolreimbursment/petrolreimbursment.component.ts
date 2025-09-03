@@ -12,7 +12,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { PetrolReimbursmentService } from '../services/reimbursement/petrol-reimbursment.service';
+
 
 @Component({
   selector: 'app-petrolreimbursment',
@@ -29,16 +30,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     DropdownModule,
     CalendarModule,
     InputNumberModule,
-    FormsModule,
-    HttpClientModule
+    FormsModule
   ],
   templateUrl: './petrolreimbursment.component.html',
   providers: [MessageService, ConfirmationService]
 })
 export class PetrolReimbursmentComponent implements OnInit {
   claims: any[] = [];
-  selectedClaims: any[] = [];
-  claimDialog: boolean = false;
+  claimDialog = false;
 
   transportModes = [
     { label: 'Public Transport', value: 'Public Transport' },
@@ -50,20 +49,22 @@ export class PetrolReimbursmentComponent implements OnInit {
     { amount: null, from: '', to: '', purposeofVisit: '', kms: null, modeoftransport: '', updatedAt: new Date() }
   ];
 
-  userId: any = '6884d238fbb2351b8786d26f';
+  userId: string = '';
 
-  constructor(private messageService: MessageService, private confirmationService: ConfirmationService, private http: HttpClient) {}
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private petrolService: PetrolReimbursmentService
+  ) {}
 
   ngOnInit() {
-    this.userId = localStorage.getItem('userId') || this.userId;
-    this.getPetrolCredits(); // ✅ Load data on page load
+    this.userId = localStorage.getItem('userId') || 'demo-user-id';
+    this.getPetrolCredits();
   }
 
-  // ✅ GET API to fetch current month's data
+  /** Fetch claims for this user */
   getPetrolCredits() {
-    this.http.get(`http://localhost:8080/api/petrol/mypetrolcredits?userId=${this.userId}`,
-         { headers: { Authorization: `Bearer ${this.getToken()}` } }
-    ).subscribe({
+    this.petrolService.getClaims(this.userId).subscribe({
       next: (res: any) => {
         this.claims = res.data || [];
       },
@@ -90,41 +91,28 @@ export class PetrolReimbursmentComponent implements OnInit {
     }
   }
 
-  private getToken(): string {
-    return localStorage.getItem('authToken') || '';
-  }
-
-saveBulkClaims() {
-  if (this.claimList.some(c =>
-    !c.amount || !c.from || !c.to || !c.purposeofVisit || !c.modeoftransport || !c.updatedAt
-  )) {
-    this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please fill all required fields.' });
-    return;
-  }
-
-  // optional: ensure dates are real Date objects/ISO strings
-  const records = this.claimList.map(r => ({
-    ...r,
-    updatedAt: r.updatedAt instanceof Date ? r.updatedAt : new Date(r.updatedAt)
-  }));
-
-  const payload = {
-    userId: this.userId,
-    records
-  };
-
-  // 🔐 send token
-  this.http.post('http://localhost:8080/api/petrol/bulk-upload', payload,
-      { headers: { Authorization: `Bearer ${this.getToken()}` } }).subscribe({
-    next: (res: any) => {
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Claims added successfully' });
-      this.claimDialog = false;
-      this.getPetrolCredits(); // refresh
-    },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add claims' });
+  saveBulkClaims() {
+    if (this.claimList.some(c =>
+      !c.amount || !c.from || !c.to || !c.purposeofVisit || !c.modeoftransport || !c.updatedAt
+    )) {
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please fill all required fields.' });
+      return;
     }
-  });
-}
 
+    const records = this.claimList.map(r => ({
+      ...r,
+      updatedAt: r.updatedAt instanceof Date ? r.updatedAt : new Date(r.updatedAt)
+    }));
+
+    this.petrolService.addBulkClaims(this.userId, records).subscribe({
+      next: (res: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Claims added successfully' });
+        this.claimDialog = false;
+        this.getPetrolCredits();
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add claims' });
+      }
+    });
+  }
 }

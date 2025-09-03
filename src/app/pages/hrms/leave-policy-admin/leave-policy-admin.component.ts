@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
+/* PrimeNG */
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -10,20 +11,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { LeavePoliciesService, Policy } from '../services/leavepolicy/leave-policies.service';
 
-type Policy = {
-  _id?: string;
-  role: string;
-  label:
-    | 'Sick Leave'
-    | 'Casual Leave'
-    | 'Planned Leave'
-    | 'Maternity Leave'
-    | 'Paternity Leave'
-    | 'Compoff Leave';
-  amount: number; // days
-  accrualType: 'monthly' | 'annual' | 'fixed';
-};
+/* Service */
 
 @Component({
   selector: 'app-leave-policy-admin',
@@ -44,9 +34,6 @@ type Policy = {
   providers: [MessageService],
 })
 export class LeavePolicyAdminComponent implements OnInit {
-  // API bases
-  basePolicyUrl = 'http://localhost:8080/api/leave-policies';
-
   // roles come from leave policy collection (distinct)
   policyRoles: string[] = [];
   selectedRoleName = '';
@@ -71,28 +58,24 @@ export class LeavePolicyAdminComponent implements OnInit {
   // add role inline
   newRoleName = '';
 
-  constructor(private http: HttpClient, private toast: MessageService) {}
+  constructor(
+    private leavePoliciesService: LeavePoliciesService,
+    private toast: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadPolicyRoles();
   }
 
-  private authHeaders() {
-    const token = localStorage.getItem('authToken') || '';
-    return { Authorization: `Bearer ${token}` };
-  }
-
   // Load distinct roles from LeavePolicy
   loadPolicyRoles() {
-    this.http
-      .get<string[]>(`${this.basePolicyUrl}/roles`, { headers: this.authHeaders() })
-      .subscribe({
-        next: (res) => {
-          this.policyRoles = (res || []).sort((a, b) => a.localeCompare(b));
-        },
-        error: () =>
-          this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load policy roles' }),
-      });
+    this.leavePoliciesService.getRoles().subscribe({
+      next: (res) => {
+        this.policyRoles = (res || []).sort((a, b) => a.localeCompare(b));
+      },
+      error: () =>
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load policy roles' }),
+    });
   }
 
   // When a role is selected, load its policies
@@ -102,17 +85,14 @@ export class LeavePolicyAdminComponent implements OnInit {
       this.newRows = [];
       return;
     }
-    const params = new HttpParams().set('role', this.selectedRoleName);
-    this.http
-      .get<Policy[]>(this.basePolicyUrl, { params, headers: this.authHeaders() })
-      .subscribe({
-        next: (res) => {
-          this.policies = res || [];
-          this.newRows = [];
-        },
-        error: () =>
-          this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load policies' }),
-      });
+    this.leavePoliciesService.getPolicies(this.selectedRoleName).subscribe({
+      next: (res) => {
+        this.policies = res || [];
+        this.newRows = [];
+      },
+      error: () =>
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load policies' }),
+    });
   }
 
   // Add a new role locally (becomes real once policies are saved)
@@ -147,9 +127,8 @@ export class LeavePolicyAdminComponent implements OnInit {
 
   saveAllNew() {
     if (!this.newRows.length) return;
-    const headers = this.authHeaders();
-    let done = 0,
-      failed = 0;
+
+    let done = 0, failed = 0;
 
     const next = () => {
       const row = this.newRows.shift();
@@ -169,12 +148,12 @@ export class LeavePolicyAdminComponent implements OnInit {
         amount: Number(row.amount),
         accrualType: row.accrualType,
       };
-      this.http.post<{ data: Policy }>(this.basePolicyUrl, body, { headers }).subscribe({
+      this.leavePoliciesService.createPolicy(body).subscribe({
         next: () => {
           done++;
           next();
         },
-        error: (e) => {
+        error: () => {
           failed++;
           next();
         },
@@ -193,34 +172,30 @@ export class LeavePolicyAdminComponent implements OnInit {
       amount: Number(row.amount),
       accrualType: row.accrualType,
     };
-    this.http
-      .put<{ data: Policy }>(`${this.basePolicyUrl}/${row._id}`, body, { headers: this.authHeaders() })
-      .subscribe({
-        next: (res) => {
-          // update local row
-          const idx = this.policies.findIndex((p) => p._id === row._id);
-          if (idx >= 0 && res?.data) this.policies[idx] = res.data;
-          this.policies = [...this.policies];
-          this.toast.add({ severity: 'success', summary: 'Saved', detail: 'Policy updated' });
-        },
-        error: (e) => {
-          const msg = e?.error?.message || 'Update failed';
-          this.toast.add({ severity: 'error', summary: 'Error', detail: msg });
-        },
-      });
+    this.leavePoliciesService.updatePolicy(row._id, body).subscribe({
+      next: (res) => {
+        // update local row
+        const idx = this.policies.findIndex((p) => p._id === row._id);
+        if (idx >= 0 && res?.data) this.policies[idx] = res.data;
+        this.policies = [...this.policies];
+        this.toast.add({ severity: 'success', summary: 'Saved', detail: 'Policy updated' });
+      },
+      error: (e) => {
+        const msg = e?.error?.message || 'Update failed';
+        this.toast.add({ severity: 'error', summary: 'Error', detail: msg });
+      },
+    });
   }
 
   deletePolicy(row: Policy) {
     if (!row._id) return;
-    this.http
-      .delete(`${this.basePolicyUrl}/${row._id}`, { headers: this.authHeaders() })
-      .subscribe({
-        next: () => {
-          this.policies = this.policies.filter((p) => p._id !== row._id);
-          this.toast.add({ severity: 'success', summary: 'Deleted', detail: 'Policy removed' });
-        },
-        error: () =>
-          this.toast.add({ severity: 'error', summary: 'Error', detail: 'Delete failed' }),
-      });
+    this.leavePoliciesService.deletePolicy(row._id).subscribe({
+      next: () => {
+        this.policies = this.policies.filter((p) => p._id !== row._id);
+        this.toast.add({ severity: 'success', summary: 'Deleted', detail: 'Policy removed' });
+      },
+      error: () =>
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Delete failed' }),
+    });
   }
 }

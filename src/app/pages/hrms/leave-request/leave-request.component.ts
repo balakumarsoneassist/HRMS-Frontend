@@ -6,11 +6,10 @@ import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { InputTextModule } from 'primeng/inputtext';
+import { HttpHeaders } from '@angular/common/http';
 
-type OccurrenceResponse = { dates?: string[]; items?: Array<{ date: string; name?: string }> };
-type HolidayCheck = { isHoliday: boolean; name?: string };
+import { LeaveService, HolidayCheck, OccurrenceResponse } from '../services/leave/leave.service';
 
 @Component({
   selector: 'app-leave-request',
@@ -49,7 +48,7 @@ export class LeaveRequestComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private leaveService: LeaveService,
     private messageService: MessageService
   ) {}
 
@@ -61,7 +60,7 @@ export class LeaveRequestComponent implements OnInit {
       reason:     ['', [Validators.required, Validators.minLength(5)]],
     });
 
-    // Preload current month holidays for both calendars
+    // Preload current month holidays
     const now = new Date();
     this.loadMonthHolidays('start', now.getFullYear(), now.getMonth());
     this.loadMonthHolidays('end',   now.getFullYear(), now.getMonth());
@@ -82,7 +81,7 @@ export class LeaveRequestComponent implements OnInit {
       return;
     }
 
-    // Final guard (in case of race)
+    // Final holiday guard
     if (this.isHolidayLocal('start', start) || this.isHolidayLocal('end', end)) {
       this.messageService.add({ severity: 'error', summary: 'Invalid Dates', detail: 'Selected date falls on a holiday' });
       return;
@@ -96,7 +95,7 @@ export class LeaveRequestComponent implements OnInit {
       status: 'Pending'
     };
 
-    this.http.post('http://localhost:8080/api/leave', payload, { headers: this.authHeaders() }).subscribe({
+    this.leaveService.submitLeave(payload).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Leave request submitted' });
         this.leaveForm.reset();
@@ -121,30 +120,25 @@ export class LeaveRequestComponent implements OnInit {
     }
   }
 
-  // ---------- Calendar: date select with API validation ----------
+  // ---------- Calendar: date select ----------
   onStartSelect(ev: any) {
     const date = this.extractDate(ev);
     if (!date) return;
-    console.log(date);
 
-    // quick local block (disabledDates) just in case
     if (this.isHolidayLocal('start', date)) {
       this.blockStartSelection(date, 'Holiday (cached)');
       return;
     }
 
-    // authoritative server check
-    this.isHolidayServer(date).subscribe({
+    this.leaveService.checkHoliday(this.toISO(date)).subscribe({
       next: (res) => {
         if (res?.isHoliday) {
           this.blockStartSelection(date, res.name || 'Holiday');
         } else {
-          // keep end calendar aligned with same month holidays
           this.loadMonthHolidays('end', date.getFullYear(), date.getMonth());
         }
       },
       error: () => {
-        // on API error, optional fallback to local behavior
         if (this.isHolidayLocal('start', date)) {
           this.blockStartSelection(date, 'Holiday');
         }
@@ -161,7 +155,7 @@ export class LeaveRequestComponent implements OnInit {
       return;
     }
 
-    this.isHolidayServer(date).subscribe({
+    this.leaveService.checkHoliday(this.toISO(date)).subscribe({
       next: (res) => {
         if (res?.isHoliday) {
           this.blockEndSelection(date, res.name || 'Holiday');
@@ -177,29 +171,17 @@ export class LeaveRequestComponent implements OnInit {
 
   private blockStartSelection(date: Date, reason: string) {
     this.leaveForm.get('startDate')?.setValue(null);
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Not allowed',
-      detail: `Start date (${this.toISO(date)}) is ${reason}.`
-    });
+    this.messageService.add({ severity: 'warn', summary: 'Not allowed', detail: `Start date (${this.toISO(date)}) is ${reason}.` });
   }
-
   private blockEndSelection(date: Date, reason: string) {
     this.leaveForm.get('endDate')?.setValue(null);
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Not allowed',
-      detail: `End date (${this.toISO(date)}) is ${reason}.`
-    });
+    this.messageService.add({ severity: 'warn', summary: 'Not allowed', detail: `End date (${this.toISO(date)}) is ${reason}.` });
   }
 
-  // ---------- Holidays fetch/logic ----------
+  // ---------- Holidays fetch ----------
   private loadMonthHolidays(target: 'start' | 'end', year: number, month: number) {
-    this.http.get<OccurrenceResponse>(`http://localhost:8080/api/holidays/occurrences`, {
-      headers: this.authHeaders(),
-      params: { year: String(year), month: String(month) }
-    }).subscribe({
-      next: (res) => {
+    this.leaveService.getMonthHolidays(year, month).subscribe({
+      next: (res: OccurrenceResponse) => {
         const isoDates =
           (res && Array.isArray(res.dates)) ? res.dates :
           Array.isArray((res as any)) ? (res as any) : [];
@@ -219,39 +201,22 @@ export class LeaveRequestComponent implements OnInit {
     });
   }
 
-  /** Server-side “is this date a holiday?” */
-  private isHolidayServer(date: Date) {
-    const iso = this.toISO(date);
-    return this.http.get<HolidayCheck>(`http://localhost:8080/api/holidays/is-holiday`, {
-      headers: this.authHeaders(),
-      params: { date: iso }
-    });
-  }
-
-  private isHolidayLocal(target: 'start' | 'end', date: Date | null): boolean {
-    if (!date) return false;
-    const iso = this.toISO(date);
-    return target === 'start' ? this.startHolidaySet.has(iso) : this.endHolidaySet.has(iso);
-  }
-
   // ---------- Utils ----------
   private extractDate(ev: any): Date | null {
-    // PrimeNG may emit Date directly or { value: Date }
     const raw = ev instanceof Date ? ev : ev?.value ?? ev;
     if (!raw) return null;
     const dt = raw instanceof Date ? raw : new Date(raw);
     return isNaN(+dt) ? null : dt;
   }
-
-  private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken') || '';
-    return new HttpHeaders({ 'Authorization': token ? `Bearer ${token}` : '' });
-  }
-
   private toISO(d: Date): string {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${dd}`;
+  }
+  private isHolidayLocal(target: 'start' | 'end', date: Date | null): boolean {
+    if (!date) return false;
+    const iso = this.toISO(date);
+    return target === 'start' ? this.startHolidaySet.has(iso) : this.endHolidaySet.has(iso);
   }
 }

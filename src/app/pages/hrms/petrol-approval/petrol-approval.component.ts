@@ -5,11 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
-import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { TabViewModule } from 'primeng/tabview';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+
+import { PetrolService } from '../services/petrol/petrol.service';
 
 @Component({
   selector: 'app-petrol-approval',
@@ -25,7 +26,6 @@ import { FormsModule } from '@angular/forms';
     DialogModule,
     ToastModule,
     FormsModule,
-    HttpClientModule,
     TabViewModule,
     InputTextModule
   ]
@@ -45,17 +45,13 @@ export class PetrolApprovalComponent implements OnInit {
   remarks = '';
   actionType: 'approve' | 'reject' = 'approve';
 
-  private readonly BASE = 'http://localhost:8080/api/petrol';
-
-  constructor(private http: HttpClient, private messageService: MessageService) {}
+  constructor(
+    private petrolService: PetrolService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
     this.getBulkPetrolCredits({ page: 0, rows: this.bulkLimit });
-  }
-
-  // -------- Helpers --------
-  private getToken(): string {
-    return localStorage.getItem('authToken') || '';
   }
 
   /** Normalize PrimeNG pagination event to 1-based page & rows */
@@ -70,22 +66,12 @@ export class PetrolApprovalComponent implements OnInit {
   // -------- Bulk + Single (inline) --------
   getBulkPetrolCredits(event: any) {
     this.bulkLoading = true;
-
     const { page1, rows } = this.getPage1AndLimit(event, this.bulkLimit);
     this.bulkPage = page1;
     this.bulkLimit = rows;
 
-    const params = new HttpParams()
-      .set('page', String(this.bulkPage))
-      .set('limit', String(this.bulkLimit))
-      .set('search', this.bulkSearchText || '');
-
-    this.http.get(`${this.BASE}/all/listforpetrolBulkApproval`, {
-      headers: { Authorization: `Bearer ${this.getToken()}` },
-      params
-    }).subscribe({
+    this.petrolService.getBulkPetrolCredits(this.bulkPage, this.bulkLimit, this.bulkSearchText).subscribe({
       next: (res: any) => {
-        // server returns: { data: [{ userId, user_name, ..., claims: [] }], total, page, limit }
         this.bulkClaims = res.data || [];
         this.bulkTotal = res.total || 0;
         this.bulkLoading = false;
@@ -112,15 +98,9 @@ export class PetrolApprovalComponent implements OnInit {
 
   submitAction() {
     const approveBy = localStorage.getItem('userId') || '';
-    const payload = {
-      approveBy,
-      remarks: this.remarks || '',
-      approved: this.actionType === 'approve'
-    };
+    const payload = { approveBy, remarks: this.remarks || '', approved: this.actionType === 'approve' };
 
-    this.http.put(`${this.BASE}/approve/${this.selectedClaimId}`, payload, {
-      headers: { Authorization: `Bearer ${this.getToken()}` }
-    }).subscribe({
+    this.petrolService.approveClaim(this.selectedClaimId, payload).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -128,8 +108,6 @@ export class PetrolApprovalComponent implements OnInit {
           detail: `Claim ${this.actionType}d successfully`
         });
         this.displayRemarksDialog = false;
-
-        // reload current page so counts/claims refresh
         this.getBulkPetrolCredits({ page: this.bulkPage - 1, rows: this.bulkLimit });
       },
       error: () => {
@@ -146,13 +124,9 @@ export class PetrolApprovalComponent implements OnInit {
     const approveBy = localStorage.getItem('userId') || '';
     const userId = typeof user === 'object' ? (user.userId || user._id) : user;
 
-    this.http.post(`${this.BASE}/bulkApprove`,
-      { userId, approveBy, remarks: this.remarks || 'Bulk Approved' },
-      { headers: { Authorization: `Bearer ${this.getToken()}` } }
-    ).subscribe({
+    this.petrolService.approveAllClaims(userId, { approveBy, remarks: this.remarks || 'Bulk Approved' }).subscribe({
       next: (res: any) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Bulk approval done' });
-        // refresh current page
         this.getBulkPetrolCredits({ page: this.bulkPage - 1, rows: this.bulkLimit });
       },
       error: () => {

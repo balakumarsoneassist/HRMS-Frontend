@@ -54,7 +54,7 @@ export class DailyreportComponent implements OnInit {
     this.loading = true;
     const page = event.page !== undefined ? event.page + 1 : 1;
 
-    this.attendanceService.getDailyreport(page, this.limit, this.searchText).subscribe({
+    this.attendanceService.getDailyReport(page, this.limit, this.searchText).subscribe({
       next: (res) => {
         this.attendanceList = res.data;
         this.total = res.total;
