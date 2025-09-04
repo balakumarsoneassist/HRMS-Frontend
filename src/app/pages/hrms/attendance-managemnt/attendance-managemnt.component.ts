@@ -223,12 +223,15 @@ export class AttendanceManagemntComponent implements OnInit {
     return isNaN(+dt) ? null : dt;
   }
 
-  private toISO(d: Date): string {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${dd}`;
-  }
+
+
+   private toISO(date: Date): string {
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
 
   private isHolidayLocal(target: 'start' | 'end', date: Date | null): boolean {
     if (!date) return false;

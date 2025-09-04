@@ -62,6 +62,13 @@ export class AttendanceService {
 
   // ---------- My Attendance ----------
   getMyAttendance(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/allmyattendance/${userId}`, { headers: this.authHeaders() });
+    return this.http.get<any>(`${this.apiUrl}/allmyattendance`, { headers: this.authHeaders() });
   }
+
+  getMonthlyPivot(year: number, month: number): Observable<any> {
+  return this.http.get<any>(`${environment.apiUrl}/api/userattendancereport/pivot/month/${year}/${month}`, {
+    headers: this.authHeaders()
+  });
+}
+
 }
