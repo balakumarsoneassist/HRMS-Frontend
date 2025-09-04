@@ -31,7 +31,7 @@ export const appRoutes: Routes = [
       { path: 'home/viewuser', component: ViewUsersComponent, canActivate: [AuthGuard], data: { permission: 'View Users' } },
       { path: 'home/petrolreimbursment', component: PetrolReimbursmentComponent, canActivate: [AuthGuard], data: { permission: 'Petrol Reimbursment' } },
       { path: 'home/dailyreport', component: DailyAttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Daily Report' } },
-      { path: 'home/monthlyreport', component: MonthlyAttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Monthly Report' } },
+      { path: 'home/monthlyreport', component: MonthlyreportComponent, canActivate: [AuthGuard], data: { permission: 'Monthly Report' } },
       { path: 'home/attendance', component: AttendanceReportComponent, canActivate: [AuthGuard], data: { permission: 'Attendance' } },
       { path: 'home/leaverequest', component: AttendanceManagemntComponent, canActivate: [AuthGuard], data: { permission: 'Leave Request' } },
       { path: 'home/leaveapproval', component: EmployeeleaveApprovalComponent, canActivate: [AuthGuard], data: { permission: 'Employee Leave Approval' } },

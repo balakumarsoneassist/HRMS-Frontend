@@ -1,117 +1,103 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { FormsModule } from '@angular/forms';
 import { AttendanceService } from '../services/attendance/attendance.service';
+import * as XLSX from 'xlsx';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-monthlyreport',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    DialogModule,
-    ButtonModule,
-    InputTextModule,
-    DropdownModule,
-    ToastModule
-  ],
+  imports: [CommonModule, TableModule, DropdownModule, FormsModule,ButtonModule],
   templateUrl: './monthlyreport.component.html',
-  styleUrl: './monthlyreport.component.scss',
-  providers: [MessageService]
+  styleUrls: ['./monthlyreport.component.scss']
 })
 export class MonthlyreportComponent implements OnInit {
-  attendanceList: any[] = [];
-  total: number = 0;
-  limit: number = 10;
-  loading = false;
-  searchText: string = '';
+  cols: string[] = [];
+  attendanceData: any[] = [];
+  year = new Date().getFullYear();
+  month = new Date().getMonth() + 1;
 
-  approvalDialog: boolean = false;
-  selectedAttendance: any = null;
+  monthOptions = [
+    { label: 'January', value: 1 }, { label: 'February', value: 2 },
+    { label: 'March', value: 3 }, { label: 'April', value: 4 },
+    { label: 'May', value: 5 }, { label: 'June', value: 6 },
+    { label: 'July', value: 7 }, { label: 'August', value: 8 },
+    { label: 'September', value: 9 }, { label: 'October', value: 10 },
+    { label: 'November', value: 11 }, { label: 'December', value: 12 }
+  ];
 
-  constructor(private attendanceService: AttendanceService, private messageService: MessageService) {}
+  constructor(private attendanceService: AttendanceService) {}
 
   ngOnInit(): void {
-    this.loadAttendance({ page: 0, rows: this.limit });
+    this.loadPivotReport();
   }
 
-  loadAttendance(event: any) {
-    this.loading = true;
-    const page = event.page !== undefined ? event.page + 1 : 1;
-
-    this.attendanceService.getMonthlyReport(page, this.limit, this.searchText).subscribe({
+  loadPivotReport() {
+    this.attendanceService.getMonthlyPivot(this.year, this.month).subscribe({
       next: (res) => {
-        this.attendanceList = res.data;
-        this.total = res.total;
-        this.loading = false;
+        if (res.success) {
+          this.cols = ['_totals', 'user_name', ...res.dates];
+          this.attendanceData = Object.keys(res.users).map(user => ({
+            user_name: user,
+            ...res.users[user]
+          }));
+        }
       },
-      error: () => {
-        this.loading = false;
-      }
+      error: (err) => console.error('Pivot load error', err)
     });
   }
 
-  onSearch() {
-    this.loadAttendance({ page: 0, rows: this.limit });
+  onMonthChange() {
+    this.loadPivotReport();
   }
 
-  openApprovalDialog(attendance: any) {
-    this.selectedAttendance = attendance;
-    this.approvalDialog = true;
+  getCellClass(value: string | null): string {
+    if (!value) return 'cell-null';
+    switch (value.toLowerCase()) {
+      case 'present': return 'cell-present';
+      case 'absent': return 'cell-absent';
+      case 'holiday': return 'cell-holiday';
+      case 'loading': return 'cell-loading';
+      default: return 'cell-default';
+    }
   }
 
-approveAttendance() {
-  if (!this.selectedAttendance || !this.selectedAttendance._id) return;
+  // ✅ Export as CSV
+  exportCSV() {
+    const rows = this.attendanceData.map(row => {
+      const r: any = {};
+      this.cols.forEach(col => r[col] = row[col] || '');
+      return r;
+    });
 
-  this.attendanceService.approveAttendance(this.selectedAttendance._id, true).subscribe({
-    next: () => {
-      this.selectedAttendance.approved = true;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Approved',
-        detail: 'Attendance approved successfully'
-      });
-      this.approvalDialog = false;
-    },
-    error: () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to approve attendance'
-      });
-    }
-  });
-}
+    const csvContent = [
+      this.cols.join(','),
+      ...rows.map(r => this.cols.map(c => `"${r[c]}"`).join(','))
+    ].join('\n');
 
-rejectAttendance() {
-  if (!this.selectedAttendance || !this.selectedAttendance._id) return;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `attendance_${this.year}_${this.month}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
-  this.attendanceService.approveAttendance(this.selectedAttendance._id, false).subscribe({
-    next: () => {
-      this.selectedAttendance.approved = false;
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Rejected',
-        detail: 'Attendance rejected'
-      });
-      this.approvalDialog = false;
-    },
-    error: () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to reject attendance'
-      });
-    }
-  });
-}
+  // ✅ Export as Excel
+  exportExcel() {
+    const rows = this.attendanceData.map(row => {
+      const r: any = {};
+      this.cols.forEach(col => r[col] = row[col] || '');
+      return r;
+    });
 
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance');
+    XLSX.writeFile(workbook, `attendance_${this.year}_${this.month}.xlsx`);
+  }
 }
