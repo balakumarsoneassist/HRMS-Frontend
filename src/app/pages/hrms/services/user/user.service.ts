@@ -71,7 +71,7 @@ export class UserService {
   // -------- Password --------
   changePassword(currentPassword: string, newPassword: string): Observable<any> {
     return this.http.post(
-      `${environment.apiUrl}/api/auth/change-password`,
+      `${environment.apiUrl}/api/user/change-password`,
       { currentPassword, newPassword },
       { headers: this.authHeaders() }
     );
