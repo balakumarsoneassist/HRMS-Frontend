@@ -55,6 +55,7 @@ export class AppMenuPanel implements OnInit {
             'Dashboard': '/',
             'Add User': '/home/adduser',
             'View Users': '/home/viewuser',
+            'ViewEdit Users': '/home/viewedituser',
             'Daily Report': '/home/dailyreport',
             'Monthly Report': '/home/monthlyreport',
             'Leave Request': '/home/leaverequest',
@@ -66,7 +67,10 @@ export class AppMenuPanel implements OnInit {
             'Access': '/home/access',
             'Access Define': '/home/accessdefine',
             'Yearly Leave Policy': '/home/yearlyleavyplocy',
-            'Holiday Planning':'/home/holidayplanning'
+            'Holiday Planning': '/home/holidayplanning',
+            'Letter of Appointment': '/home/loa',
+            'Letters of Appointment': '/home/loas',
+            'Payslip': '/home/payslip'
 
             // Add more as needed
         };

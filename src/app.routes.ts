@@ -19,6 +19,9 @@ import { LeavePolicyAdminComponent } from './app/pages/hrms/leave-policy-admin/l
 import { HolidayPlannerComponent } from './app/pages/hrms/holiday-planner/holiday-planner.component';
 import { DailyAttendanceReportComponent } from './app/pages/hrms/daily-attendance-report/daily-attendance-report.component';
 import { MonthlyAttendanceReportComponent } from './app/monthly-attendance-report/monthly-attendance-report.component';
+import { ViewEditUserComponent } from './app/pages/hrms/view-edit-user/view-edit-user.component';
+import { LoaComponent } from './app/pages/hrms/loa/loa.component';
+import { PayslipComponent } from './app/pages/hrms/payslip/payslip.component';
 
 export const appRoutes: Routes = [
   {
@@ -40,6 +43,11 @@ export const appRoutes: Routes = [
       { path: 'home/accessdefine', component: AccessdefineComponent, canActivate: [AuthGuard], data: { permission: 'Access Define' } },
       { path: 'home/yearlyleavyplocy', component: LeavePolicyAdminComponent, canActivate: [AuthGuard], data: { permission: 'Yearly Leave Policy' } },
       { path: 'home/holidayplanning', component: HolidayPlannerComponent, canActivate: [AuthGuard], data: { permission: 'Holiday Planning' } },
+      { path: 'home/viewedituser', component: ViewEditUserComponent, canActivate: [AuthGuard], data: { permission: 'ViewEdit Users' } },
+      { path: 'home/loa', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letter of Appointment' } },
+      { path: 'home/loas', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letters of Appointment' } },
+      { path: 'home/payslip', component: PayslipComponent, canActivate: [AuthGuard], data: { permission: 'Payslip' } },
+
 
       { path: 'notfound', component: Notfound }
     ]

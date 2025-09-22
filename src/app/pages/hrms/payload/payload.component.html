@@ -1,0 +1,118 @@
+<p-toast></p-toast>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-fluid formgrid grid">
+ <!-- ✅ user ID -->
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input id="user_id" type="text" pInputText formControlName="user_id" />
+      <label for="user_id">user ID</label>
+    </p-floatLabel>
+    <small *ngIf="userForm.get('user_id')?.hasError('required') && userForm.get('user_id')?.touched" class="p-error">
+      user ID is required
+    </small>
+  </div>
+
+ <!-- ✅ CTC -->
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input id="ctc" type="number" pInputText formControlName="ctc" />
+      <label for="ctc">CTC</label>
+    </p-floatLabel>
+    <small *ngIf="userForm.get('ctc')?.hasError('required') && userForm.get('ctc')?.touched" class="p-error">
+      CTC is required
+    </small>
+  </div>
+
+
+ <div class="col-12">
+  <h3>Allowances</h3>
+  <div class="field-checkbox">
+    <p-checkbox formControlName="basicEnabled" binary="true" inputId="basic"></p-checkbox>
+    <label for="basic">Basic Salary</label>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox formControlName="hraEnabled" binary="true" inputId="hra"></p-checkbox>
+    <label for="hra">House Rent Allowance (HRA)</label>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox formControlName="daEnabled" binary="true" inputId="da"></p-checkbox>
+    <label for="da">Dearness Allowance (DA)</label>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox formControlName="taEnabled" binary="true" inputId="ta"></p-checkbox>
+    <label for="ta">Travel Allowance (TA)</label>
+  </div>
+</div>
+
+
+ <div class="col-12">
+  <h3>Deductions</h3>
+  <div class="field-checkbox">
+    <p-checkbox formControlName="pfEnabled" binary="true" inputId="pf"></p-checkbox>
+    <label for="pf">Provident Fund (PF)</label>
+    <input *ngIf="userForm.get('pfEnabled')?.value"
+           type="number"
+           pInputText
+           formControlName="pfPercent"
+           placeholder="Enter % PF"
+           class="ml-2 w-3" />
+    <small *ngIf="userForm.get('pfPercent')?.hasError('min') && userForm.get('pfPercent')?.touched" class="p-error">
+      Percentage must be at least 0
+    </small>
+    <small *ngIf="userForm.get('pfPercent')?.hasError('max') && userForm.get('pfPercent')?.touched" class="p-error">
+      Percentage cannot exceed 100
+    </small>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox formControlName="ptEnabled" binary="true" inputId="pt"></p-checkbox>
+    <label for="pt">Professional Tax (PT)</label>
+    <input *ngIf="userForm.get('ptEnabled')?.value"
+           type="number"
+           pInputText
+           formControlName="ptPercent"
+           placeholder="Enter % PT"
+           class="ml-2 w-3" />
+    <small *ngIf="userForm.get('ptPercent')?.hasError('min') && userForm.get('ptPercent')?.touched" class="p-error">
+      Percentage must be at least 0
+    </small>
+    <small *ngIf="userForm.get('ptPercent')?.hasError('max') && userForm.get('ptPercent')?.touched" class="p-error">
+      Percentage cannot exceed 100
+    </small>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox formControlName="tdsEnabled" binary="true" inputId="tds"></p-checkbox>
+    <label for="tds">Income Tax (TDS)</label>
+    <input *ngIf="userForm.get('tdsEnabled')?.value"
+           type="number"
+           pInputText
+           formControlName="tdsPercent"
+           placeholder="Enter % TDS"
+           class="ml-2 w-3" />
+    <small *ngIf="userForm.get('tdsPercent')?.hasError('min') && userForm.get('tdsPercent')?.touched" class="p-error">
+      Percentage must be at least 0
+    </small>
+    <small *ngIf="userForm.get('tdsPercent')?.hasError('max') && userForm.get('tdsPercent')?.touched" class="p-error">
+      Percentage cannot exceed 100
+    </small>
+  </div>
+</div>
+
+
+  <!-- Submit -->
+  <div class="field col-12 mt-4">
+    <button pButton type="submit" label="Submit" [disabled]="userForm.invalid" class="w-full"></button>
+  </div>
+</form>
+
+
+
+
+
+
+
+

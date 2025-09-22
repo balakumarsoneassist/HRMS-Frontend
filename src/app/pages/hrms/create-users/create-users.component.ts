@@ -1,38 +1,46 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
-import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CalendarModule } from 'primeng/calendar';
+import { FileUploadModule } from 'primeng/fileupload';
+import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 
 import { UserService } from '../services/user/user.service';
 import { AccessService } from '../services/access/access.service';
 
 type RoleOption = { _id: string; role: string };
-type PolicyOption = { label: string; value: string };  // for dropdown
+type PolicyOption = { label: string; value: string };
+
+type PrevCompany = {
+  companyName: string;
+  relieving?: File;
+  experience?: File;
+  payslips: File[];
+};
 
 @Component({
   selector: 'app-create-users',
   standalone: true,
   imports: [
-    FormsModule,
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     InputTextModule,
     DropdownModule,
-    CheckboxModule,
     ButtonModule,
     ToastModule,
     FloatLabelModule,
-    CalendarModule
+    CalendarModule,
+    FileUploadModule,
+    CheckboxModule
   ],
   templateUrl: './create-users.component.html',
   styleUrls: ['./create-users.component.scss'],
@@ -40,20 +48,55 @@ type PolicyOption = { label: string; value: string };  // for dropdown
 })
 export class CreateUsersComponent implements OnInit {
   userForm!: FormGroup;
+  payloadForm!: FormGroup;
+
   roles: RoleOption[] = [];
-  leavePolicies: PolicyOption[] = [];   // dropdown options as {label,value}
-  currentUserId = '678b163cbffdb207e1d7c848'; // TODO: read from token
-  currentUser: string = '';
-  selectedRoleName: string = '';
+  leavePolicies: PolicyOption[] = [];
+  selectedRoleName = '';
+  currentUser: any;
+  empId: string | null = null;
+
+  isSubmittingUser = false;
+  isSubmittingUploads = false;
+
+  // Document list
+  documents = [
+    { name: 'photo', label: 'Photo', accept: 'image/*' },
+    { name: 'marksheet10', label: '10th Marksheet', accept: '.pdf' },
+    { name: 'marksheet12', label: '12th Marksheet', accept: '.pdf' },
+    { name: 'transferCertificate', label: 'Transfer Certificate', accept: '.pdf' }
+  ];
+
+  // File storage
+  files: Record<string, File | null> = {};
+
+  // Previous employment
+  prevCompanies: PrevCompany[] = [{ companyName: '', payslips: [] }];
+
+  // UG/PG certificate + marksheet
+  pgCertificates: { certificate?: File | null; marksheet?: File | null }[] = [
+    { certificate: null, marksheet: null }
+  ];
+  ugCertificates: { certificate?: File | null; marksheet?: File | null }[] = [
+    { certificate: null, marksheet: null }
+  ];
 
   constructor(
-    private userService: UserService,
     private fb: FormBuilder,
     private messageService: MessageService,
-    private accesService: AccessService
+    private userService: UserService,
+    private accessService: AccessService
   ) {}
 
   ngOnInit(): void {
+    this.currentUser = localStorage.getItem('userId');
+    this.initUserForm();
+    this.fetchRoles();
+    this.fetchLeavePolicies();
+  }
+
+  // ✅ Initialize User Form
+  private initUserForm() {
     this.userForm = this.fb.group({
       user_name: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
       mobile_no: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
@@ -63,11 +106,10 @@ export class CreateUsersComponent implements OnInit {
       position: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
       designation: [''],
       department: ['', [Validators.pattern(/^[A-Za-z ]*$/)]],
-      policyName: [null, Validators.required],   // store the string value (e.g., "junior")
+      policyName: [null, Validators.required],
       doj: ['', Validators.required],
     });
 
-    // Admin designation requirement
     this.userForm.get('role')?.valueChanges.subscribe(val => {
       this.selectedRoleName = this.resolveRoleName(val);
       const desigCtrl = this.userForm.get('designation');
@@ -78,98 +120,138 @@ export class CreateUsersComponent implements OnInit {
       }
       desigCtrl?.updateValueAndValidity({ emitEvent: false });
     });
-
-    this.fetchRoles();
-    this.fetchLeavePolicies();
   }
 
   private resolveRoleName(val: any): string {
-    const found = this.roles.find(r => r._id === val);
-    if (found?.role) return found.role;
-    if (typeof val === 'string' && ['Admin', 'Employee', 'Intern'].includes(val)) return val;
-    return '';
+    return this.roles.find(r => r._id === val)?.role ?? '';
   }
 
+  // ✅ Fetch roles & leave policies
   fetchRoles() {
-    this.currentUser = String(localStorage.getItem('userRole') || '');
-
-    if (this.currentUser === 'Super Admin') {
-      this.roles = [
-        { _id: 'Admin', role: 'Admin' },
-        { _id: 'Employee', role: 'Employee' },
-        { _id: 'Intern', role: 'Intern' },
-      ];
-    } else {
-      this.roles = [
-        { _id: '6896e80b9c8f8101f0439813', role: 'Intern' },
-        { _id: '6884cc051725e1465c06c2b1', role: 'Employee' },
-      ];
-    }
-
+    this.roles = [
+      { _id: 'Admin', role: 'Admin' },
+      { _id: 'Employee', role: 'Employee' },
+      { _id: 'Intern', role: 'Intern' }
+    ];
     this.userForm.patchValue({ role: this.roles[0]._id });
     this.selectedRoleName = this.roles[0].role;
   }
 
   fetchLeavePolicies() {
-    // API returns string array: ["junior","senior"]
-    this.accesService.getLeavePoliciesByRolesStrings().subscribe({
+    this.accessService.getLeavePoliciesByRolesStrings().subscribe({
       next: (res: string[]) => {
-        // Map to PrimeNG dropdown option format {label, value}
         this.leavePolicies = (res ?? []).map(p => ({ label: this.toTitle(p), value: p }));
-        // Optional: set a default selection
-        if (this.leavePolicies.length && !this.userForm.get('policyName')?.value) {
-          this.userForm.patchValue({ policyName: this.leavePolicies[0].value });
-        }
       },
       error: () => {
-        this.leavePolicies = [];
         this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Could not load leave policies' });
       }
     });
   }
 
-  // helper to show "Junior" instead of "junior"
   private toTitle(s: string): string {
-    return (s || '').replace(/(^|\\s)\\w/g, m => m.toUpperCase());
+    return (s || '').replace(/(^|\s)\w/g, m => m.toUpperCase());
   }
 
-  onSubmit() {
+  // ✅ Pick file handler
+  pickFile(field: string, event: any) {
+    const file = event.files?.[0];
+    if (file) this.files[field] = file;
+  }
+
+  // ✅ Add/Remove company & certificates
+  addCompany() {
+    this.prevCompanies.push({ companyName: '', payslips: [] });
+  }
+  removeCompany(i: number) {
+    this.prevCompanies.splice(i, 1);
+  }
+  addPgCertificate() {
+    this.pgCertificates.push({ certificate: null, marksheet: null });
+  }
+  removePgCertificate(i: number) {
+    this.pgCertificates.splice(i, 1);
+  }
+  addUgCertificate() {
+    this.ugCertificates.push({ certificate: null, marksheet: null });
+  }
+  removeUgCertificate(i: number) {
+    this.ugCertificates.splice(i, 1);
+  }
+
+  // ===============================
+  // ✅ Submit User Info (Form 1)
+  // ===============================
+  onSubmitUser() {
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
 
-    const formValue = {
-      ...this.userForm.value,
-      user_name: this.userForm.value.user_name.trim().toUpperCase(),
-      position: this.userForm.value.position.trim().toUpperCase(),
-      designation: (this.userForm.value.designation || '').toString().trim().toUpperCase(),
-      department: (this.userForm.value.department || '').toString().trim().toUpperCase(),
-      // policyName is already the selected string (e.g., "junior" or "senior")
-      createdby: this.currentUserId,
-      status: true,
-      logcal: 0,
-    };
+    this.isSubmittingUser = true;
+    const userPayload = this.userForm.value;
 
-    this.userService.createUser(formValue, this.currentUser).subscribe({
-      next: () => {
-
+    this.userService.createUser(userPayload, this.currentUser).subscribe({
+      next: (res: any) => {
+        this.isSubmittingUser = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User created successfully!' });
-        this.userForm.reset();
-        this.fetchRoles();
-        this.fetchLeavePolicies();
+        this.empId = res?.user?._id; // Store returned ID
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create user' });
+        this.isSubmittingUser = false;
         console.error('Create User Error:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create user' });
       }
     });
   }
 
-  toUppercase(controlName: string, _e?: FocusEvent) {
-    const control = this.userForm.get(controlName);
-    if (control && typeof control.value === 'string') {
-      control.setValue(control.value.toUpperCase());
+  // ===============================
+  // ✅ Submit Uploads (Form 2)
+  // ===============================
+  onSubmitUploads() {
+    if (!this.empId) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Create user first before uploading documents!' });
+      return;
     }
+
+    this.isSubmittingUploads = true;
+    const fd = new FormData();
+    fd.append('user_id', this.empId);
+
+    // Attach simple documents
+    for (const key of Object.keys(this.files)) {
+      const f = this.files[key];
+      if (f) fd.append(key, f);
+    }
+
+    // Attach previous companies
+    this.prevCompanies.forEach((c, i) => {
+      if (c.companyName) fd.append(`prev[${i}][companyName]`, c.companyName);
+      if (c.relieving) fd.append(`prev[${i}][relieving]`, c.relieving);
+      if (c.experience) fd.append(`prev[${i}][experience]`, c.experience);
+      (c.payslips || []).forEach(p => fd.append(`prev[${i}][payslips]`, p));
+    });
+
+    // Attach PG & UG
+    this.pgCertificates.forEach((pg, i) => {
+      if (pg.certificate) fd.append(`pg[${i}][certificate]`, pg.certificate);
+      if (pg.marksheet) fd.append(`pg[${i}][marksheet]`, pg.marksheet);
+    });
+
+    this.ugCertificates.forEach((ug, i) => {
+      if (ug.certificate) fd.append(`ug[${i}][certificate]`, ug.certificate);
+      if (ug.marksheet) fd.append(`ug[${i}][marksheet]`, ug.marksheet);
+    });
+
+    this.userService.uploadUserDocs(fd).subscribe({
+      next: () => {
+        this.isSubmittingUploads = false;
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Documents uploaded successfully!' });
+      },
+      error: (err) => {
+        this.isSubmittingUploads = false;
+        console.error('Upload Error:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload documents' });
+      }
+    });
   }
 }
