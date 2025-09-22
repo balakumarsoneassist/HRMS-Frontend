@@ -1,0 +1,50 @@
+.letter-oneassist-modern, .letter-oneassist-formal {
+  background: #fff;
+  padding: 2rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.8;
+}
+
+.letter-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .company-logo {
+    height: 50px;
+    width: auto;
+  }
+
+  .company-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007ad9;
+    margin: 0;
+  }
+}
+
+.template-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.date {
+  text-align: right;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+ul {
+  margin: 0.5rem 0 1.5rem 1.5rem;
+}
+
+.download-button {
+  text-align: center;
+  margin-top: 1rem;
+}

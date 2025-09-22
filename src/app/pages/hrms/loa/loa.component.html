@@ -1,0 +1,118 @@
+<div class="loa-wrapper p-fluid">
+  <!-- Template Selector -->
+  <div class="template-switcher">
+    <label for="templateSelect"><strong>Select Template:</strong></label>
+    <p-dropdown
+      [options]="templates"
+      [(ngModel)]="selectedTemplate"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Choose Template"
+      styleClass="w-15rem">
+    </p-dropdown>
+  </div>
+
+  <!-- Modern Template -->
+  <div #letterContainer class="loa-container letter-oneassist-modern" *ngIf="selectedTemplate === 'modern'">
+    <div class="letter-header">
+      <img [src]="companyLogo" alt="Company Logo" class="company-logo" />
+      <h2 class="company-name">{{ companyName }}</h2>
+    </div>
+
+    <h3 class="template-title">Appointment Letter</h3>
+    <p class="date">Date: {{ today | date:'dd MMM yyyy' }}</p>
+
+    <p>Dear <strong>{{ loaData?.user_name }}</strong>,</p>
+
+    <p>
+      We are pleased to inform you that you have been appointed to
+      the <strong>{{ loaData?.designation }}</strong> position
+      in the <strong>{{ loaData?.department }}</strong> department
+      at <strong>{{ companyName }}</strong>.
+    </p>
+
+    <p>Your qualifications, experience, and interview performance were highly impressive, and we are confident that you will thrive in this role.</p>
+
+    <h4>Appointment Details:</h4>
+    <ul>
+      <li><strong>Job Title:</strong> {{ loaData?.designation }}</li>
+      <li><strong>Department:</strong> {{ loaData?.department }}</li>
+      <li><strong>Reporting To:</strong> {{ loaData?.reportingManager || '[Manager Name]' }}</li>
+      <li><strong>Start Date:</strong> {{ loaData?.doj | date:'dd MMM yyyy' }}</li>
+      <li><strong>Compensation:</strong> {{ loaData?.salary || '[Salary / Compensation Details]' }}</li>
+    </ul>
+
+    <h4>Benefits and Perks:</h4>
+    <p>{{ loaData?.benefits || 'As per company policy' }}</p>
+
+    <p>
+      Please report to <strong>{{ loaData?.officeLocation || '[Location/Branch Name]' }}</strong>
+      on <strong>{{ loaData?.doj | date:'dd MMM yyyy' }}</strong> at
+      <strong>{{ loaData?.reportingTime || '[Reporting Time]' }}</strong>.
+      Your appointment is subject to the terms and conditions outlined in the company’s policies,
+      a copy of which will be provided to you for your reference.
+    </p>
+
+    <p>We look forward to your valuable contributions and professional growth within our organization.</p>
+
+    <p>Sincerely,</p>
+    <p><strong>{{ hrName }}</strong><br>{{ hrTitle }}<br>{{ hrContact }}</p>
+  </div>
+
+  <!-- Formal Template -->
+  <div class="loa-container letter-oneassist-formal" *ngIf="selectedTemplate === 'formal'">
+    <h2 class="template-title">Appointment Letter Format</h2>
+    <p class="date">Date: {{ today | date:'dd MMM yyyy' }}</p>
+
+    <p>To,</p>
+    <p><strong>{{ loaData?.user_name }}</strong></p>
+    <p>{{ loaData?.address || '[Employee Address]' }}</p>
+
+    <p><strong>Subject:</strong> Offer of Appointment</p>
+
+    <p>Dear <strong>{{ loaData?.user_name }}</strong>,</p>
+
+    <p>
+      We are delighted to extend an offer of employment to you for the position of
+      <strong>{{ loaData?.designation }}</strong> at <strong>{{ companyName }}</strong>.
+      We were impressed with your qualifications and believe that your skills and experience
+      make you an excellent fit for our organization.
+    </p>
+
+    <p>
+      Your employment will begin on <strong>{{ loaData?.doj | date:'dd MMM yyyy' }}</strong>.
+      You will report to <strong>{{ loaData?.reportingManager || '[Manager Name]' }}</strong>
+      at <strong>{{ loaData?.officeLocation || '[Office Location]' }}</strong>.
+    </p>
+
+    <h4>Employment Terms:</h4>
+    <ul>
+      <li><strong>Position:</strong> {{ loaData?.designation }}</li>
+      <li><strong>Start Date:</strong> {{ loaData?.doj | date:'dd MMM yyyy' }}</li>
+      <li><strong>Salary:</strong> {{ loaData?.salary }}</li>
+      <li><strong>Work Schedule:</strong> {{ loaData?.workSchedule }}</li>
+      <li><strong>Benefits:</strong> As per company policy</li>
+      <li><strong>Reporting to:</strong> {{ loaData?.reportingManager }}</li>
+    </ul>
+
+    <p>
+      We are excited to welcome you to our team and believe that your contributions
+      will be valuable to our success. For any clarifications, feel free to reach out.
+    </p>
+
+    <p>Congratulations once again on your appointment.</p>
+
+    <p>Sincerely,</p>
+    <p><strong>{{ hrName }}</strong><br>{{ hrTitle }}<br>{{ companyName }}</p>
+  </div>
+
+  <!-- Download Button -->
+  <div class="download-button">
+    <p-button
+      label="Download as PDF"
+      icon="pi pi-download"
+      (onClick)="downloadPDF()"
+      styleClass="p-button-primary">
+    </p-button>
+  </div>
+</div>

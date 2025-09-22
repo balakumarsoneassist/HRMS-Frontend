@@ -11,9 +11,12 @@ import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { PasswordModule } from 'primeng/password';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '../services/user/user.service';
+import { HolidayCalendarViewComponent } from "../holiday-calendar-view/holiday-calendar-view.component";
+import { AccessViewComponent } from "../access-view/access-view.component";
+import { ConfirmDialog } from "primeng/confirmdialog";
 
 type AttendanceSummary = { presentDays: number; absentDays: number; lateMarks?: number; isHoliday?: boolean; };
 type LeaveBalance = { type: string; balance: number; color?: string; };
@@ -32,11 +35,14 @@ type EmployeeProfile = {
     CommonModule, NgOptimizedImage, ReactiveFormsModule,
     CardModule, AvatarModule, ButtonModule, TagModule, ChipModule,
     DividerModule, TabViewModule, TableModule, ToastModule,
-    DialogModule, PasswordModule
-  ],
+    DialogModule, PasswordModule,
+    HolidayCalendarViewComponent,
+    AccessViewComponent,
+    ConfirmDialog
+],
   templateUrl: './employee-profile.component.html',
   styleUrls: ['./employee-profile.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService,ConfirmationService]
 })
 export class EmployeeProfileComponent implements OnInit {
   @Input() userId?: string;
@@ -67,7 +73,8 @@ export class EmployeeProfileComponent implements OnInit {
   constructor(
     private userService: UserService,
     private toast: MessageService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -151,6 +158,21 @@ export class EmployeeProfileComponent implements OnInit {
         () => { this.toast.add({ severity: 'warn', summary: 'Location Error', detail: 'Please enable GPS/location' }); this.loading = false; }
       );
     }
+  }
+
+  confirmClockOut() {
+    this.confirmationService.confirm({
+      message: this.isHoliday ?
+        'You are clocking out on a holiday. Do you want to proceed?' :
+        'Are you sure you want to clock out?',
+      header: 'Confirm Clock Out',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Yes, Clock Out',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-secondary p-button-text',
+      accept: () => this.clockOut(), // ✅ Call clockOut only if confirmed
+    });
   }
 
   openChangePassword() {

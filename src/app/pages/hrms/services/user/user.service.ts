@@ -7,6 +7,7 @@ import { environment } from '../../../../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
+
   private readonly apiUrl = `${environment.apiUrl}/api/user`;
 
   constructor(private http: HttpClient) {}
@@ -75,5 +76,9 @@ export class UserService {
       { currentPassword, newPassword },
       { headers: this.authHeaders() }
     );
+  }
+
+  uploadUserDocs(fd: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upload-docs`, fd);
   }
 }
