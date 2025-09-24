@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
 
 import { UserService } from '../services/user/user.service';
 import { AccessService } from '../services/access/access.service';
+import { PayloadComponent } from "../payload/payload.component";
 
 type RoleOption = { _id: string; role: string };
 type PolicyOption = { label: string; value: string };
@@ -40,8 +41,9 @@ type PrevCompany = {
     FloatLabelModule,
     CalendarModule,
     FileUploadModule,
-    CheckboxModule
-  ],
+    CheckboxModule,
+    PayloadComponent
+],
   templateUrl: './create-users.component.html',
   styleUrls: ['./create-users.component.scss'],
   providers: [MessageService]
@@ -189,12 +191,12 @@ export class CreateUsersComponent implements OnInit {
 
     this.isSubmittingUser = true;
     const userPayload = this.userForm.value;
-
+    this.userForm.value.createdby = this.currentUser
     this.userService.createUser(userPayload, this.currentUser).subscribe({
       next: (res: any) => {
         this.isSubmittingUser = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User created successfully!' });
-        this.empId = res?.user?._id; // Store returned ID
+        this.empId = res?.data.user?._id; // Store returned ID
       },
       error: (err) => {
         this.isSubmittingUser = false;
@@ -207,51 +209,83 @@ export class CreateUsersComponent implements OnInit {
   // ===============================
   // ✅ Submit Uploads (Form 2)
   // ===============================
-  onSubmitUploads() {
-    if (!this.empId) {
-      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Create user first before uploading documents!' });
-      return;
-    }
+async onSubmitUploads() {
+  this.empId = "689c70731dc29c75b27ea4b6"; // For testing, remove hardcode later
 
-    this.isSubmittingUploads = true;
+  if (!this.empId) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Create user first before uploading documents!'
+    });
+    return;
+  }
+
+  this.isSubmittingUploads = true;
+
+  try {
     const fd = new FormData();
-    fd.append('user_id', this.empId);
+    fd.append("user_id", this.empId);
 
-    // Attach simple documents
+    // ✅ Attach simple files (photo, aadhar front/back, pan front/back)
     for (const key of Object.keys(this.files)) {
-      const f = this.files[key];
-      if (f) fd.append(key, f);
+      if (this.files[key]) {
+        fd.append(key, this.files[key]!);
+      }
     }
 
-    // Attach previous companies
+    // ✅ Previous Companies
     this.prevCompanies.forEach((c, i) => {
       if (c.companyName) fd.append(`prev[${i}][companyName]`, c.companyName);
       if (c.relieving) fd.append(`prev[${i}][relieving]`, c.relieving);
       if (c.experience) fd.append(`prev[${i}][experience]`, c.experience);
-      (c.payslips || []).forEach(p => fd.append(`prev[${i}][payslips]`, p));
+      (c.payslips || []).forEach((p) => fd.append(`prev[${i}][payslips]`, p));
     });
 
-    // Attach PG & UG
+    // ✅ PG Certificates
     this.pgCertificates.forEach((pg, i) => {
       if (pg.certificate) fd.append(`pg[${i}][certificate]`, pg.certificate);
       if (pg.marksheet) fd.append(`pg[${i}][marksheet]`, pg.marksheet);
     });
 
+    // ✅ UG Certificates
     this.ugCertificates.forEach((ug, i) => {
       if (ug.certificate) fd.append(`ug[${i}][certificate]`, ug.certificate);
       if (ug.marksheet) fd.append(`ug[${i}][marksheet]`, ug.marksheet);
     });
 
+    console.log("Uploading FormData...");
+
     this.userService.uploadUserDocs(fd).subscribe({
       next: () => {
         this.isSubmittingUploads = false;
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Documents uploaded successfully!' });
+        this.messageService.add({
+          severity: "success",
+          summary: "Success",
+          detail: "Documents uploaded successfully!"
+        });
       },
       error: (err) => {
         this.isSubmittingUploads = false;
-        console.error('Upload Error:', err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload documents' });
+        console.error("Upload Error:", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to upload documents"
+        });
       }
     });
+  } catch (err) {
+    this.isSubmittingUploads = false;
+    console.error("FormData processing failed:", err);
+    this.messageService.add({
+      severity: "error",
+      summary: "Error",
+      detail: "Failed to process files before upload"
+    });
   }
+}
+
+
+
 }
