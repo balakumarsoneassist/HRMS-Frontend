@@ -32,7 +32,7 @@ type EmployeeProfile = {
   selector: 'app-employee-profile',
   standalone: true,
   imports: [
-    CommonModule, NgOptimizedImage, ReactiveFormsModule,
+    CommonModule, ReactiveFormsModule,
     CardModule, AvatarModule, ButtonModule, TagModule, ChipModule,
     DividerModule, TabViewModule, TableModule, ToastModule,
     DialogModule, PasswordModule,

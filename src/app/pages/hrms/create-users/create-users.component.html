@@ -3,109 +3,121 @@
 <!-- ===========================
    FORM 1: USER INFORMATION
 =========================== -->
-<form [formGroup]="userForm" (ngSubmit)="onSubmitUser()" class="p-fluid formgrid grid gap-3">
   <h3 class="col-12 text-xl font-semibold">User Information</h3>
 
+<form [formGroup]="userForm" (ngSubmit)="onSubmitUser()" class="p-fluid formgrid grid">
   <!-- Username -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
-      <input id="user_name" type="text" pInputText formControlName="user_name" />
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input id="user_name" type="text" pInputText formControlName="user_name"  />
       <label for="user_name">User Name</label>
     </p-floatLabel>
-    <small *ngIf="userForm.get('user_name')?.hasError('required') && userForm.get('user_name')?.touched" class="p-error">
-      Username is required
-    </small>
-    <small *ngIf="userForm.get('user_name')?.hasError('pattern') && userForm.get('user_name')?.touched" class="p-error">
-      Only alphabets are allowed
-    </small>
+    <small *ngIf="userForm.get('user_name')?.hasError('required') && userForm.get('user_name')?.touched" class="p-error">Username is required</small>
+    <small *ngIf="userForm.get('user_name')?.hasError('pattern') && userForm.get('user_name')?.touched" class="p-error">Only alphabets are allowed</small>
   </div>
 
-  <!-- Mobile -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
+  <!-- Mobile No -->
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
       <input id="mobile_no" type="text" pInputText formControlName="mobile_no" />
       <label for="mobile_no">Mobile No</label>
     </p-floatLabel>
-    <small *ngIf="userForm.get('mobile_no')?.hasError('required') && userForm.get('mobile_no')?.touched" class="p-error">
-      Mobile number is required
-    </small>
-    <small *ngIf="userForm.get('mobile_no')?.hasError('pattern') && userForm.get('mobile_no')?.touched" class="p-error">
-      Enter a valid 10-digit number
-    </small>
+    <small *ngIf="userForm.get('mobile_no')?.hasError('required') && userForm.get('mobile_no')?.touched" class="p-error">Mobile number is required</small>
+    <small *ngIf="userForm.get('mobile_no')?.hasError('pattern') && userForm.get('mobile_no')?.touched" class="p-error">Enter a valid 10-digit number</small>
   </div>
 
   <!-- Email -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
       <input id="email" type="email" pInputText formControlName="email" />
       <label for="email">Email</label>
     </p-floatLabel>
-    <small *ngIf="userForm.get('email')?.hasError('required') && userForm.get('email')?.touched" class="p-error">
-      Email is required
-    </small>
-    <small *ngIf="userForm.get('email')?.hasError('email') && userForm.get('email')?.touched" class="p-error">
-      Enter a valid email
-    </small>
+    <small *ngIf="userForm.get('email')?.hasError('required') && userForm.get('email')?.touched" class="p-error">Email is required</small>
+    <small *ngIf="userForm.get('email')?.hasError('email') && userForm.get('email')?.touched" class="p-error">Enter a valid email</small>
   </div>
 
   <!-- Password -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
       <input id="password" type="password" pInputText formControlName="password" />
       <label for="password">Password</label>
     </p-floatLabel>
-    <small *ngIf="userForm.get('password')?.hasError('required') && userForm.get('password')?.touched" class="p-error">
-      Password is required
-    </small>
+    <small *ngIf="userForm.get('password')?.hasError('required') && userForm.get('password')?.touched" class="p-error">Password is required</small>
   </div>
 
   <!-- Position -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
-      <input id="position" type="text" pInputText formControlName="position" />
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input id="position" type="text" pInputText formControlName="position"  />
       <label for="position">Position</label>
     </p-floatLabel>
+    <small *ngIf="userForm.get('position')?.hasError('required') && userForm.get('position')?.touched" class="p-error">Position is required</small>
+    <small *ngIf="userForm.get('position')?.hasError('pattern') && userForm.get('position')?.touched" class="p-error">Only alphabets are allowed</small>
   </div>
 
   <!-- Role Dropdown -->
-  <div class="field col-12 md:col-4">
-    <label for="role" class="block text-sm font-medium mb-1">Role</label>
-    <p-dropdown inputId="role" [options]="roles" optionLabel="role" optionValue="_id" formControlName="role"></p-dropdown>
+  <div class="field col-12 md:col-4 mb-4">
+    <!-- <p-floatLabel variant="on"> -->
+      <label for="role">Role</label>
+      <p-dropdown
+        inputId="role"
+        [options]="roles"
+        optionLabel="role"
+        optionValue="_id"
+        formControlName="role">
+      </p-dropdown>
+    <!-- </p-floatLabel> -->
+    <small *ngIf="userForm.get('role')?.hasError('required') && userForm.get('role')?.touched" class="p-error">Role is required</small>
   </div>
 
-  <!-- Designation (Admin only) -->
-  <div class="field col-12 md:col-4" *ngIf="userForm.value.role === 'Admin' || selectedRoleName === 'Admin'">
-    <p-floatLabel>
-      <input id="designation" type="text" pInputText formControlName="designation" />
-      <label for="designation">Designation</label>
+  <!-- Designation (only when role === 'Admin') -->
+  <div class="field col-12 md:col-4 mb-4" *ngIf="userForm.value.role === 'Admin' || selectedRoleName === 'Admin'">
+    <p-floatLabel variant="on">
+      <input id="designation" type="text" pInputText formControlName="designation"  />
+      <label for="designation">Designation (for Admin)</label>
     </p-floatLabel>
+    <small *ngIf="userForm.get('designation')?.hasError('required') && userForm.get('designation')?.touched" class="p-error">Designation is required for Admin</small>
+    <small *ngIf="userForm.get('designation')?.hasError('pattern') && userForm.get('designation')?.touched" class="p-error">Only alphabets are allowed</small>
   </div>
 
   <!-- Department -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
-      <input id="department" type="text" pInputText formControlName="department" />
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input id="department" type="text" pInputText formControlName="department"  />
       <label for="department">Department</label>
     </p-floatLabel>
+    <small *ngIf="userForm.get('department')?.hasError('pattern') && userForm.get('department')?.touched" class="p-error">Only alphabets are allowed</small>
   </div>
 
-  <!-- Policy Name -->
-  <div class="field col-12 md:col-4">
-    <label for="policyName" class="block text-sm font-medium mb-1">Policy Name</label>
-    <p-dropdown inputId="policyName" [options]="leavePolicies" formControlName="policyName" [showClear]="true" placeholder="Select Policy"></p-dropdown>
+  <!-- Policy Name (AFTER Department) -->
+  <div class="field col-12 md:col-4 mb-4">
+    <!-- <p-floatLabel variant="on"> -->
+         <label for="policyName">Policy Name: </label>
+      <p-dropdown
+        inputId="policyName"
+        [options]="leavePolicies"
+        formControlName="policyName"
+        [showClear]="true"
+        placeholder="Select policy">
+      </p-dropdown>
+
+    <!-- </p-floatLabel> -->
+    <small *ngIf="userForm.get('policyName')?.hasError('required') && userForm.get('policyName')?.touched" class="p-error">
+      Policy is required
+    </small>
   </div>
 
   <!-- DOJ -->
-  <div class="field col-12 md:col-4">
-    <p-floatLabel>
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
       <p-calendar id="doj" formControlName="doj" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
       <label for="doj">Date of Joining</label>
     </p-floatLabel>
+    <small *ngIf="userForm.get('doj')?.hasError('required') && userForm.get('doj')?.touched" class="p-error">Date of joining is required</small>
   </div>
-
-  <!-- Submit user form -->
-  <div class="field col-12 mt-3">
-    <button pButton type="submit" label="Create User" [loading]="isSubmittingUser" [disabled]="userForm.invalid" class="w-full"></button>
+  <!-- Submit -->
+  <div class="field col-12 mt-4">
+    <button pButton type="submit" label="Create User" [disabled]="userForm.invalid" class="w-full"></button>
   </div>
 </form>
 
@@ -115,7 +127,42 @@
    FORM 2: DOCUMENT UPLOADS
 =========================== -->
 <form (ngSubmit)="onSubmitUploads()" class="p-fluid formgrid grid gap-3">
- <h5 class="col-12 mt-6 font-semibold text-lg">Previous Employment</h5>
+ <h5 class="col-12 font-semibold text-lg">Upload Documents</h5>
+
+  <!-- Photo -->
+  <div class="field col-12 md:col-4">
+    <label>Profile Photo</label>
+    <p-fileUpload mode="basic" accept="image/*" chooseLabel="Upload"
+      (onSelect)="pickFile('photo', $event)"></p-fileUpload>
+  </div>
+
+  <!-- Aadhar Front -->
+  <div class="field col-12 md:col-4">
+    <label>Aadhar Front</label>
+    <p-fileUpload mode="basic" accept="image/*" chooseLabel="Upload"
+      (onSelect)="pickFile('aadhar_front', $event)"></p-fileUpload>
+  </div>
+
+  <!-- Aadhar Back -->
+  <div class="field col-12 md:col-4">
+    <label>Aadhar Back</label>
+    <p-fileUpload mode="basic" accept="image/*" chooseLabel="Upload"
+      (onSelect)="pickFile('aadhar_back', $event)"></p-fileUpload>
+  </div>
+
+  <!-- PAN Front -->
+  <div class="field col-12 md:col-4">
+    <label>PAN Front</label>
+    <p-fileUpload mode="basic" accept="image/*" chooseLabel="Upload"
+      (onSelect)="pickFile('pan_front', $event)"></p-fileUpload>
+  </div>
+
+  <!-- PAN Back -->
+  <div class="field col-12 md:col-4">
+    <label>PAN Back</label>
+    <p-fileUpload mode="basic" accept="image/*" chooseLabel="Upload"
+      (onSelect)="pickFile('pan_back', $event)"></p-fileUpload>
+  </div>
 
 <div *ngFor="let c of prevCompanies; let i = index" class="col-12 border rounded-xl p-5 mb-4 shadow-sm bg-white">
   <div class="p-fluid grid gap-4">
@@ -228,3 +275,4 @@
     <button pButton type="submit" label="Upload Documents" [loading]="isSubmittingUploads" class="w-full"></button>
   </div>
 </form>
+<app-payload></app-payload>

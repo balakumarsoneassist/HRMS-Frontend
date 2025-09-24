@@ -27,7 +27,7 @@ export class UserService {
   }
 
   createUser(data: any, currentUser: string): Observable<any> {
-    if (currentUser === 'Super Admin') {
+    if (currentUser === '6884d238fbb2351b8786d26f') {
       return this.http.post(`${this.apiUrl}/superad`, data, { headers: this.authHeaders() });
     } else {
       return this.http.post(this.apiUrl, data, { headers: this.authHeaders() });
@@ -79,6 +79,6 @@ export class UserService {
   }
 
   uploadUserDocs(fd: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/upload-docs`, fd);
+    return this.http.post(`${this.apiUrl}/upload-docs/upload`, fd);
   }
 }
