@@ -1,11 +1,22 @@
 <p-toast></p-toast>
 
-<!-- ===========================
-   FORM 1: USER INFORMATION
-=========================== -->
-  <h3 class="col-12 text-xl font-semibold">User Information</h3>
+<div class="card flex justify-center">
+  <p-stepper [value]="activeStep" class="basis-[70rem]">
+    <!-- STEP HEADERS -->
+    <p-step-list>
+      <p-step [value]="1">User Info</p-step>
+      <p-step [value]="2">Documents</p-step>
+      <p-step [value]="3">Payload</p-step>
+    </p-step-list>
 
-<form [formGroup]="userForm" (ngSubmit)="onSubmitUser()" class="p-fluid formgrid grid">
+    <p-step-panels>
+      <!-- STEP 1: USER FORM -->
+      <p-step-panel [value]="1">
+        <ng-template #content let-activateCallback="activateCallback">
+          <h3 class="text-xl font-semibold mb-3">User Information</h3>
+          <form [formGroup]="userForm" class="p-fluid formgrid grid">
+            <!-- === ALL YOUR USER FORM FIELDS HERE === -->
+
   <!-- Username -->
   <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
@@ -116,18 +127,24 @@
     <small *ngIf="userForm.get('doj')?.hasError('required') && userForm.get('doj')?.touched" class="p-error">Date of joining is required</small>
   </div>
   <!-- Submit -->
-  <div class="field col-12 mt-4">
-    <button pButton type="submit" label="Create User" [disabled]="userForm.invalid" class="w-full"></button>
-  </div>
-</form>
 
-<hr class="my-4" />
+            <div class="field col-12 mt-4 flex justify-end">
+              <p-button label="Create User"
+                        [disabled]="userForm.invalid"
+                        [loading]="isSubmittingUser"
+                        (onClick)="onSubmitUser(activateCallback)">
+              </p-button>
+            </div>
+          </form>
+        </ng-template>
+      </p-step-panel>
 
-<!-- ===========================
-   FORM 2: DOCUMENT UPLOADS
-=========================== -->
-<form (ngSubmit)="onSubmitUploads()" class="p-fluid formgrid grid gap-3">
- <h5 class="col-12 font-semibold text-lg">Upload Documents</h5>
+      <!-- STEP 2: DOCUMENT UPLOADS -->
+      <p-step-panel [value]="2">
+        <ng-template #content let-activateCallback="activateCallback">
+          <h3 class="text-xl font-semibold mb-3">Upload Documents</h3>
+          <form class="p-fluid formgrid grid">
+            <!-- === YOUR DOCUMENT UPLOAD FIELDS === -->
 
   <!-- Photo -->
   <div class="field col-12 md:col-4">
@@ -266,13 +283,26 @@
 </div>
 
 
-  <!-- Submit -->
-  <!-- <div class="field col-12 mt-4">
-    <button pButton type="submit" label="Submit" [disabled]="userForm.invalid" class="w-full"></button>
-  </div> -->
-  <!-- Submit uploads -->
-  <div class="field col-12 mt-3">
-    <button pButton type="submit" label="Upload Documents" [loading]="isSubmittingUploads" class="w-full"></button>
-  </div>
-</form>
-<app-payload></app-payload>
+            <div class="field col-12 mt-4 flex justify-between">
+              <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)"></p-button>
+              <p-button label="Upload Documents"
+                        [loading]="isSubmittingUploads"
+                        (onClick)="onSubmitUploads(activateCallback)">
+              </p-button>
+            </div>
+          </form>
+        </ng-template>
+      </p-step-panel>
+
+      <!-- STEP 3: PAYLOAD -->
+      <p-step-panel [value]="3">
+        <ng-template #content let-activateCallback="activateCallback">
+          <app-payload></app-payload>
+          <div class="flex justify-start mt-4">
+            <p-button label="Back" icon="pi pi-arrow-left" (onClick)="activateCallback(2)"></p-button>
+          </div>
+        </ng-template>
+      </p-step-panel>
+    </p-step-panels>
+  </p-stepper>
+</div>

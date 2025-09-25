@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { UserService } from '../services/user/user.service';
 import { AccessService } from '../services/access/access.service';
 import { PayloadComponent } from "../payload/payload.component";
+import { StepperModule } from 'primeng/stepper';
 
 type RoleOption = { _id: string; role: string };
 type PolicyOption = { label: string; value: string };
@@ -42,7 +43,8 @@ type PrevCompany = {
     CalendarModule,
     FileUploadModule,
     CheckboxModule,
-    PayloadComponent
+    PayloadComponent,
+    StepperModule
 ],
   templateUrl: './create-users.component.html',
   styleUrls: ['./create-users.component.scss'],
@@ -60,6 +62,7 @@ export class CreateUsersComponent implements OnInit {
 
   isSubmittingUser = false;
   isSubmittingUploads = false;
+  activeStep = 1; // Stepper value
 
   // Document list
   documents = [
@@ -183,7 +186,7 @@ export class CreateUsersComponent implements OnInit {
   // ===============================
   // ✅ Submit User Info (Form 1)
   // ===============================
-  onSubmitUser() {
+  onSubmitUser(nextStep: Function){
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
@@ -197,6 +200,7 @@ export class CreateUsersComponent implements OnInit {
         this.isSubmittingUser = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User created successfully!' });
         this.empId = res?.data.user?._id; // Store returned ID
+         nextStep(2);
       },
       error: (err) => {
         this.isSubmittingUser = false;
@@ -209,7 +213,8 @@ export class CreateUsersComponent implements OnInit {
   // ===============================
   // ✅ Submit Uploads (Form 2)
   // ===============================
-async onSubmitUploads() {
+  onSubmitUploads(nextStep: Function) {
+
   this.empId = "689c70731dc29c75b27ea4b6"; // For testing, remove hardcode later
 
   if (!this.empId) {
@@ -264,6 +269,8 @@ async onSubmitUploads() {
           summary: "Success",
           detail: "Documents uploaded successfully!"
         });
+        nextStep(3);
+
       },
       error: (err) => {
         this.isSubmittingUploads = false;
