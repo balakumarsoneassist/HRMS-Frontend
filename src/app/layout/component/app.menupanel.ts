@@ -65,13 +65,14 @@ export class AppMenuPanel implements OnInit {
             'Employee Leave Approval': '/home/leaveapproval',
             'Employee Petrol Approval': '/home/petrolapproval',
             'Access': '/home/access',
+            'Access2': '/home/access2',
+
             'Access Define': '/home/accessdefine',
             'Yearly Leave Policy': '/home/yearlyleavyplocy',
             'Holiday Planning': '/home/holidayplanning',
             'Letter of Appointment': '/home/loa',
             'Letters of Appointment': '/home/loas',
             'Payslip': '/home/payslip'
-
             // Add more as needed
         };
         return routeMap[submenuName] || '/notfound';

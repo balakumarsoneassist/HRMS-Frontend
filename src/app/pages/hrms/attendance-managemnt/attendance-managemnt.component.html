@@ -10,7 +10,8 @@
             id="leaveType"
             [options]="leaveTypes"
             formControlName="leaveType"
-            styleClass="w-full">
+            styleClass="w-full"
+            (onChange)="onLeaveTypeChange($event)">
           </p-dropdown>
           <label for="leaveType">Leave Type</label>
         </p-floatLabel>
@@ -25,7 +26,7 @@
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             styleClass="w-full"
-            [minDate]="tomorrow"
+            [minDate]="minStartDate"
             [disabledDates]="disabledDatesStart"
             appendTo="body"
             (onMonthChange)="onStartMonthChange($event)"
@@ -44,7 +45,7 @@
             dateFormat="dd/mm/yy"
             [showIcon]="true"
             styleClass="w-full"
-            [minDate]="leaveForm.value.startDate || tomorrow"
+            [minDate]="leaveForm.value.startDate || minStartDate"
             [disabledDates]="disabledDatesEnd"
             appendTo="body"
             (onMonthChange)="onEndMonthChange($event)"
@@ -66,6 +67,20 @@
           </textarea>
           <label for="reason">Reason</label>
         </p-floatLabel>
+      </div>
+
+      <!-- ✅ Optional Medical Certificate (only for Sick Leave) -->
+      <div class="field col-12 md:col-6" *ngIf="leaveForm.value.leaveType === 'Sick Leave'">
+        <label class="block mb-2 font-semibold">Medical Certificate (optional)</label>
+        <p-fileUpload
+          mode="basic"
+          name="medicalCertificate"
+          accept=".pdf,.jpg,.jpeg,.png"
+          [auto]="false"
+          chooseLabel="Attach File"
+          (onSelect)="onFileSelect($event)">
+        </p-fileUpload>
+        <small class="text-color-secondary">Attach your medical certificate if available.</small>
       </div>
 
       <!-- Submit Button -->

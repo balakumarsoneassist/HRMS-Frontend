@@ -10,11 +10,11 @@
       <button pButton label="Live Report" icon="pi pi-refresh"
               (click)="loadLive()" class="p-button-info"></button>
 
-      <!-- <button pButton label="Append Report" icon="pi pi-save"
+      <button pButton label="Append Report" icon="pi pi-save"
               (click)="appendReport()" class="p-button-success"></button>
 
       <button pButton label="Monthly Report" icon="pi pi-calendar"
-              (click)="loadMonthly()" class="p-button-warning"></button> -->
+              (click)="loadMonthly()" class="p-button-warning"></button>
     </div>
   </div>
 
@@ -37,6 +37,8 @@
         <th>Remarks</th>
         <th>Approved</th>
         <th>Changed By</th>
+        <th>changedRemarks</th>
+        <th>resonforLOP</th>
         <th>Holiday</th>
         <th>Action</th>
       </tr>
@@ -65,6 +67,9 @@
           </div>
           <ng-template #noChange>-</ng-template>
         </td>
+        <td>{{att.changedRemarks}}</td>
+
+        <td>{{att.resonforLOP}}</td>
        <td>
   <ng-container *ngIf="att.isHoliday === null || att.isHoliday === true; else workingDay">
     <button pButton label="Holiday" class="p-button-sm"

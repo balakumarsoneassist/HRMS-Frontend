@@ -8,57 +8,96 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class PayloadService {
-  private apiUrl = `${environment.apiUrl.replace(/\/+$/, '')}/api/payload`;
+  // ✅ Base API URL (consistent with backend: /api/payloads)
+  private apiUrl = `${environment.apiUrl.replace(/\/+$/, '')}/api/payloads`;
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * ✅ Utility: Attach auth headers (with token from localStorage)
+   */
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken') || '';
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
     if (token) {
-      // Remove 'Bearer ' prefix if it exists, then add it back
+      // Normalize token: remove existing 'Bearer ' prefix, then re-add
       const cleanToken = token.startsWith('Bearer ') ? token.slice(7) : token;
       headers = headers.set('Authorization', `Bearer ${cleanToken}`);
     }
+
     return headers;
   }
 
-  // Create Payload (POST API)
-
+  /**
+   * ✅ Create a new Payload (POST)
+   */
   createPayload(data: any): Observable<any> {
-    const userId = localStorage.getItem('user_id');
-    console.log(userId);
+    const payloadData = {
+      ...data // attach logged-in user
+    };
+
+    return this.http.post<any>(this.apiUrl, payloadData, {
+      headers: this.authHeaders(),
+    });
+  }
+
+
+  downloadPayslip(userId: string, year: number, month: number) {
+  const url = `${this.apiUrl}/salary-pdf/${userId}/${year}/${month}`;
+  return this.http.get(url, {
+    headers: this.authHeaders(),
+    responseType: 'blob' // ✅ Important for PDF download
+  });
+}
+
+  /**
+   * ✅ Get all payloads (GET)
+   */
+  getPayloads(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  /**
+   * ✅ Get all payloads for current logged-in user
+   */
+  getPayloadsByUser(): Observable<any[]> {
+    const userId = localStorage.getItem('userId')
+
     if (!userId) {
-      throw new Error("user_id not found in localStorage");
+      throw new Error('user_id not found in localStorage');
     }
 
-    const payloadData = {
-      ...data,
-      user_id: userId   // attach user_id here
-    };
-    return this.http.post<any>(this.apiUrl, payloadData, { headers: this.authHeaders() });
-  }
-
-  // Get all Payloads - to check what's saved in database
-  getPayloads(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, { headers: this.authHeaders() })
-
-  }
-
-  getPayloadsByUser(): Observable<any> {
-    const userId = localStorage.getItem('user_id'); // get from localStorage
-  if (!userId) {
-    throw new Error("user_id not found in localStorage");
-  }
     const url = `${this.apiUrl}?user_id=${encodeURIComponent(userId)}`;
-    return this.http.get<any>(url, { headers: this.authHeaders() });
+    return this.http.get<any[]>(url, { headers: this.authHeaders() });
   }
 
-
-
-  // (optional) Get Payload by id
+  /**
+   * ✅ Get a specific payload by ID (GET)
+   */
   getPayloadById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.authHeaders() });
+    return this.http.get<any>(`${this.apiUrl}/${id}`, {
+      headers: this.authHeaders(),
+    });
   }
 
+  /**
+   * ✅ Update existing payload (PUT)
+   */
+  updatePayload(id: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, data, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  /**
+   * ✅ Delete payload (DELETE)
+   */
+  deletePayload(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, {
+      headers: this.authHeaders(),
+    });
+  }
 }

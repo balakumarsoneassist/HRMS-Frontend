@@ -199,7 +199,7 @@ export class CreateUsersComponent implements OnInit {
       next: (res: any) => {
         this.isSubmittingUser = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User created successfully!' });
-        this.empId = res?.data.user?._id; // Store returned ID
+        this.empId = res?.data?._id; // Store returned ID
          nextStep(2);
       },
       error: (err) => {
@@ -214,9 +214,6 @@ export class CreateUsersComponent implements OnInit {
   // ✅ Submit Uploads (Form 2)
   // ===============================
   onSubmitUploads(nextStep: Function) {
-
-  this.empId = "689c70731dc29c75b27ea4b6"; // For testing, remove hardcode later
-
   if (!this.empId) {
     this.messageService.add({
       severity: 'warn',
@@ -258,6 +255,12 @@ export class CreateUsersComponent implements OnInit {
       if (ug.certificate) fd.append(`ug[${i}][certificate]`, ug.certificate);
       if (ug.marksheet) fd.append(`ug[${i}][marksheet]`, ug.marksheet);
     });
+// ✅ Others Certificates
+this.others.forEach((o, i) => {
+  if (o.certificatename) fd.append(`others[${i}][certificatename]`, o.certificatename);
+  if (o.certificate) fd.append(`others[${i}][certificate]`, o.certificate);
+  if (o.marksheet) fd.append(`others[${i}][marksheet]`, o.marksheet);
+});
 
     console.log("Uploading FormData...");
 
@@ -293,6 +296,17 @@ export class CreateUsersComponent implements OnInit {
   }
 }
 
+addOther() {
+  this.others.push({ certificatename: '', certificate: null, marksheet: null });
+}
+
+removeOther(i: number) {
+  this.others.splice(i, 1);
+}
+// Others Certificates
+others: { certificatename?: string; certificate?: File | null; marksheet?: File | null }[] = [
+  { certificatename: '', certificate: null, marksheet: null }
+];
 
 
 }

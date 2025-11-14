@@ -22,6 +22,9 @@ import { MonthlyAttendanceReportComponent } from './app/monthly-attendance-repor
 import { ViewEditUserComponent } from './app/pages/hrms/view-edit-user/view-edit-user.component';
 import { LoaComponent } from './app/pages/hrms/loa/loa.component';
 import { PayslipComponent } from './app/pages/hrms/payslip/payslip.component';
+import { DeletedUserComponent } from './app/pages/hrms/deleted-user/deleted-user.component';
+import { FeedComponent } from './app/pages/hrms/feed/feed.component';
+import { IdCardComponent } from './app/pages/hrms/id-card/id-card.component';
 
 export const appRoutes: Routes = [
   {
@@ -40,6 +43,8 @@ export const appRoutes: Routes = [
       { path: 'home/leaveapproval', component: EmployeeleaveApprovalComponent, canActivate: [AuthGuard], data: { permission: 'Employee Leave Approval' } },
       { path: 'home/petrolapproval', component: PetrolApprovalComponent, canActivate: [AuthGuard], data: { permission: 'Employee Petrol Approval' } },
       { path: 'home/access', component: AccessComponent, canActivate: [AuthGuard], data: { permission: 'Access' } },
+      { path: 'home/access2', component: AccessComponent, canActivate: [AuthGuard], data: { permission: 'Access2' } },
+
       { path: 'home/accessdefine', component: AccessdefineComponent, canActivate: [AuthGuard], data: { permission: 'Access Define' } },
       { path: 'home/yearlyleavyplocy', component: LeavePolicyAdminComponent, canActivate: [AuthGuard], data: { permission: 'Yearly Leave Policy' } },
       { path: 'home/holidayplanning', component: HolidayPlannerComponent, canActivate: [AuthGuard], data: { permission: 'Holiday Planning' } },
@@ -47,9 +52,9 @@ export const appRoutes: Routes = [
       { path: 'home/loa', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letter of Appointment' } },
       { path: 'home/loas', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letters of Appointment' } },
       { path: 'home/payslip', component: PayslipComponent, canActivate: [AuthGuard], data: { permission: 'Payslip' } },
+      { path: 'notfound', component: IdCardComponent },
+      { path: 'newsfeed', component: FeedComponent }
 
-
-      { path: 'notfound', component: Notfound }
     ]
   },
   { path: 'login', loadChildren: () => import('./app/pages/hrms/login/login-routing.module') },

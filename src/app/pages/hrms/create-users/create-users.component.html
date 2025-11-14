@@ -281,6 +281,76 @@
 <div class="col-12">
   <button pButton type="button" label="Add UG" icon="pi pi-plus" class="mt-3" (click)="addUgCertificate()"></button>
 </div>
+<!-- Others Certificates -->
+<h5 class="col-12 mt-6 font-semibold text-lg">Other Certificates</h5>
+<div *ngFor="let o of others; let i = index" class="col-12 border rounded-xl p-5 mb-4 shadow-sm bg-white">
+  <div class="p-fluid grid gap-4">
+    <!-- Certificate Name -->
+    <div class="col-12 md:col-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Certificate Name</label>
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="o.certificatename"
+          placeholder="Enter certificate name"
+          name="certificatename{{ i }}"
+          class="p-inputtext w-full border rounded-lg px-3 py-2 bg-gray-50 focus:border-blue-400 focus:ring-2 focus:ring-blue-300"
+        />
+      </div>
+    </div>
+
+    <!-- Certificate File -->
+    <div class="col-12 md:col-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Certificate</label>
+        <p-fileUpload
+          mode="basic"
+          (onSelect)="o.certificate = $event.files[0]"
+          chooseLabel="Upload"
+          class="w-full border rounded-lg"
+        ></p-fileUpload>
+      </div>
+    </div>
+
+    <!-- Marksheet File -->
+    <div class="col-12 md:col-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">Marksheet</label>
+        <p-fileUpload
+          mode="basic"
+          (onSelect)="o.marksheet = $event.files[0]"
+          chooseLabel="Upload"
+          class="w-full border rounded-lg"
+        ></p-fileUpload>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        class="p-button-text text-red-500 hover:text-red-700 mt-2"
+        *ngIf="i > 0"
+        (click)="removeOther(i)"
+      >
+        Remove
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="col-12">
+  <button
+    pButton
+    type="button"
+    label="Add Other"
+    icon="pi pi-plus"
+    class="mt-3"
+    (click)="addOther()"
+  ></button>
+</div>
 
 
             <div class="field col-12 mt-4 flex justify-between">
@@ -297,7 +367,7 @@
       <!-- STEP 3: PAYLOAD -->
       <p-step-panel [value]="3">
         <ng-template #content let-activateCallback="activateCallback">
-          <app-payload></app-payload>
+          <app-payload [empId]="empId"></app-payload>
           <div class="flex justify-start mt-4">
             <p-button label="Back" icon="pi pi-arrow-left" (onClick)="activateCallback(2)"></p-button>
           </div>
