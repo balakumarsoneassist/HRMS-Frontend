@@ -1,50 +1,29 @@
-.letter-oneassist-modern, .letter-oneassist-formal {
-  background: #fff;
-  padding: 2rem 3rem;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  font-family: 'Segoe UI', sans-serif;
-  line-height: 1.8;
-}
+.provisional-offer {
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  color: #333;
 
-.letter-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-
-  .company-logo {
-    height: 50px;
-    width: auto;
+  h3, h4, h5 {
+    color: #1a1a1a;
+    margin-top: 1.5rem;
   }
 
-  .company-name {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #007ad9;
-    margin: 0;
+  .salary-table th, .salary-table td {
+    border: 1px solid #ccc;
   }
-}
 
-.template-title {
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
+  .signature {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 2rem;
+  }
 
-.date {
-  text-align: right;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
+  .logo {
+    max-height: 80px;
+  }
 
-ul {
-  margin: 0.5rem 0 1.5rem 1.5rem;
-}
-
-.download-button {
-  text-align: center;
-  margin-top: 1rem;
+  .sign-img {
+    max-height: 60px;
+  }
 }

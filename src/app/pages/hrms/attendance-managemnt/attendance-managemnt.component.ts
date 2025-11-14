@@ -12,6 +12,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TableModule } from 'primeng/table';
 import { AttendanceService } from '../services/attendance/attendance.service';
+import { FileUploadModule } from 'primeng/fileupload'; // ✅ add this import
 
 type OccurrenceResponse = { dates?: string[]; items?: Array<{ date: string; name?: string }> };
 type HolidayCheck = { isHoliday: boolean; name?: string };
@@ -21,6 +22,7 @@ type HolidayCheck = { isHoliday: boolean; name?: string };
   standalone: true,
   imports: [
     CommonModule,
+    FileUploadModule,
     ReactiveFormsModule,
     DropdownModule,
     DatePickerModule,
@@ -38,7 +40,8 @@ type HolidayCheck = { isHoliday: boolean; name?: string };
 })
 export class AttendanceManagemntComponent implements OnInit {
   tomorrow: Date = new Date();
-
+ minStartDate: Date = new Date(); // ✅ dynamic for sick leave
+  selectedFile: File | null = null; // ✅ store selected file
   leaveForm!: FormGroup;
   leaveRequests: any[] = [];
   currentUserId: any = '';
@@ -60,10 +63,27 @@ export class AttendanceManagemntComponent implements OnInit {
     private attendanceService: AttendanceService,
     private messageService: MessageService
   ) {}
+ onLeaveTypeChange(event: any) {
+    const selectedType = event?.value;
 
+    if (selectedType === 'Sick Leave') {
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      this.minStartDate = oneMonthAgo; // allow 1 month back
+    } else {
+      this.minStartDate = new Date();
+      this.minStartDate.setDate(this.minStartDate.getDate() + 1);
+    }
+  }
+
+  // ✅ handle file select (only for Sick Leave)
+  onFileSelect(event: any) {
+    this.selectedFile = event?.files?.[0] || null;
+  }
   ngOnInit(): void {
     this.tomorrow = new Date();
     this.tomorrow.setDate(this.tomorrow.getDate() + 1);
+    this.minStartDate = this.tomorrow; // default
 
     this.currentUserId = localStorage.getItem('userId') || '';
 
@@ -155,7 +175,7 @@ export class AttendanceManagemntComponent implements OnInit {
       return;
     }
 
-    this.attendanceService.checkHoliday(this.toISO(date)).subscribe({
+    this.attendanceService.checkHoliday(this.toISOholi(date)).subscribe({
       next: (res: HolidayCheck) => {
         if (res?.isHoliday) {
           this.blockStartSelection(date, res.name || 'Holiday');
@@ -175,7 +195,7 @@ export class AttendanceManagemntComponent implements OnInit {
       return;
     }
 
-    this.attendanceService.checkHoliday(this.toISO(date)).subscribe({
+    this.attendanceService.checkHoliday(this.toISOholi(date)).subscribe({
       next: (res: HolidayCheck) => {
         if (res?.isHoliday) {
           this.blockEndSelection(date, res.name || 'Holiday');
@@ -233,9 +253,17 @@ export class AttendanceManagemntComponent implements OnInit {
       return `${day}/${month}/${year}`;
     };
 
+     private toISOholi(date: Date): string {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   private isHolidayLocal(target: 'start' | 'end', date: Date | null): boolean {
     if (!date) return false;
-    const iso = this.toISO(date);
+    const iso = this.toISOholi(date);
     return target === 'start' ? this.startHolidaySet.has(iso) : this.endHolidaySet.has(iso);
   }
 }

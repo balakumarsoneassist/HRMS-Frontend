@@ -1,0 +1,21 @@
+<h1>Welcome to One Assist</h1>
+<div class="feed-container">
+  <div *ngFor="let post of posts" class="post-card">
+    <div class="post-header">
+      <img [src]="post.avatar" class="avatar" alt="User Avatar" />
+      <div class="user-info">
+        <strong>{{ post.username }}</strong>
+        <span class="time">{{ post.time }}</span>
+      </div>
+    </div>
+
+    <img [src]="post.image" class="post-image" alt="Post Image" />
+
+    <div class="post-body">
+      <p>{{ post.caption }}</p>
+      <div class="post-actions">
+        💬 {{ post.comments }} comments
+      </div>
+    </div>
+  </div>
+</div>

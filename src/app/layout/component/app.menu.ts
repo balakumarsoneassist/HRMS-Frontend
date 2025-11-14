@@ -67,7 +67,9 @@ export class AppMenu implements OnInit {
             'Employee Petrol Approval': '/home/petrolapproval',
             'access/': '/home/access',
             'Access': '/home/access',
-            'Access Define': 'home/accessdefine'
+            'Access Define': 'home/accessdefine',
+            'Access2': '/home/access2',
+
             // Add more as needed
         };
 

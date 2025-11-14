@@ -26,6 +26,13 @@ export class UserService {
     return this.http.get<any>(this.apiUrl, { params, headers: this.authHeaders() });
   }
 
+  getUserById(id: string): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/${id}`, {
+    headers: this.authHeaders()
+  });
+}
+
+
   createUser(data: any, currentUser: string): Observable<any> {
     if (currentUser === '6884d238fbb2351b8786d26f') {
       return this.http.post(`${this.apiUrl}/superad`, data, { headers: this.authHeaders() });
@@ -81,4 +88,40 @@ export class UserService {
   uploadUserDocs(fd: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/upload-docs/upload`, fd);
   }
+
+
+
+   // 🔹 Get all deleted users
+  getDeletedUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/deleted-users`, {
+      headers: this.authHeaders()
+    });
+  }
+
+
+  deleteUser(id: string, deletedBy: string, reason: string): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/${id}`, {
+    headers: this.authHeaders(),
+    body: { deletedBy, reason }
+  });
+}
+
+
+// 🔹 Get uploaded documents by userId
+getUserDocsByUserId(userId: string): Observable<any> {
+  return this.http.get(`${environment.apiUrl}/api/user/upload-docs/userId/${userId}`, {
+    headers: this.authHeaders()
+  });
+}
+
+
+// 🔹 Restore user by ID
+restoreUser(deletedUserId: string): Observable<any> {
+  return this.http.post(
+    `${environment.apiUrl}/api/user/restore/${deletedUserId}`,
+    {}, // empty body
+    { headers: this.authHeaders() }
+  );
+}
+
 }

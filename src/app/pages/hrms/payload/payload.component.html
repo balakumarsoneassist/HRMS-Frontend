@@ -1,118 +1,138 @@
 <p-toast></p-toast>
 
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-fluid formgrid grid">
- <!-- ✅ user ID -->
-  <div class="field col-12 md:col-4 mb-4">
+
+  <!-- USER ID (invisible, but part of form) -->
+<div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
-      <input id="user_id" type="text" pInputText formControlName="user_id" />
-      <label for="user_id">user ID</label>
+      <input id="user_id" [hidden]="false" type="text" pInputText formControlName="user_id" />
+      <!-- <label for="user_id">User ID</label> -->
     </p-floatLabel>
-    <small *ngIf="userForm.get('user_id')?.hasError('required') && userForm.get('user_id')?.touched" class="p-error">
-      user ID is required
-    </small>
   </div>
 
- <!-- ✅ CTC -->
+  <!-- CTC + Month Range -->
   <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
       <input id="ctc" type="number" pInputText formControlName="ctc" />
-      <label for="ctc">CTC</label>
+      <label for="ctc">Monthly CTC (₹)</label>
     </p-floatLabel>
-    <small *ngIf="userForm.get('ctc')?.hasError('required') && userForm.get('ctc')?.touched" class="p-error">
-      CTC is required
-    </small>
   </div>
 
-
- <div class="col-12">
-  <h3>Allowances</h3>
-  <div class="field-checkbox">
-    <p-checkbox formControlName="basicEnabled" binary="true" inputId="basic"></p-checkbox>
-    <label for="basic">Basic Salary</label>
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input type="month" pInputText formControlName="createdMonth" />
+      <label for="createdMonth">Created Month</label>
+    </p-floatLabel>
   </div>
 
-  <div class="field-checkbox">
-    <p-checkbox formControlName="hraEnabled" binary="true" inputId="hra"></p-checkbox>
-    <label for="hra">House Rent Allowance (HRA)</label>
+  <div class="field col-12 md:col-4 mb-4">
+    <p-floatLabel variant="on">
+      <input type="month" pInputText formControlName="untilMonth" />
+      <label for="untilMonth">Until Month</label>
+    </p-floatLabel>
   </div>
 
-  <div class="field-checkbox">
-    <p-checkbox formControlName="daEnabled" binary="true" inputId="da"></p-checkbox>
-    <label for="da">Dearness Allowance (DA)</label>
+  <!-- Allowances -->
+  <div class="col-12">
+    <h3>Allowances</h3>
+    <div class="field-checkbox" *ngFor="let item of [
+      { key: 'basic', label: 'Basic Salary' },
+      { key: 'hra', label: 'House Rent Allowance (HRA)' },
+      { key: 'da', label: 'Dearness Allowance (DA)' },
+      { key: 'ta', label: 'Travel Allowance (TA)' },
+      { key: 'conveyance', label: 'Conveyance Allowance' },
+      { key: 'medical', label: 'Medical Reimbursement' },
+      { key: 'special', label: 'Special Allowance' }
+    ]">
+      <p-checkbox [formControlName]="item.key + 'Enabled'" binary="true" [inputId]="item.key"></p-checkbox>
+      <label [for]="item.key">{{ item.label }}</label>
+      <input
+        *ngIf="userForm.get(item.key + 'Enabled')?.value"
+        type="number"
+        pInputText
+        [formControlName]="item.key + 'Percent'"
+        placeholder="%"
+        class="ml-2 w-3"
+      />
+    </div>
   </div>
 
-  <div class="field-checkbox">
-    <p-checkbox formControlName="taEnabled" binary="true" inputId="ta"></p-checkbox>
-    <label for="ta">Travel Allowance (TA)</label>
-  </div>
-</div>
-
-
- <div class="col-12">
-  <h3>Deductions</h3>
-  <div class="field-checkbox">
-    <p-checkbox formControlName="pfEnabled" binary="true" inputId="pf"></p-checkbox>
-    <label for="pf">Provident Fund (PF)</label>
-    <input *ngIf="userForm.get('pfEnabled')?.value"
-           type="number"
-           pInputText
-           formControlName="pfPercent"
-           placeholder="Enter % PF"
-           class="ml-2 w-3" />
-    <small *ngIf="userForm.get('pfPercent')?.hasError('min') && userForm.get('pfPercent')?.touched" class="p-error">
-      Percentage must be at least 0
-    </small>
-    <small *ngIf="userForm.get('pfPercent')?.hasError('max') && userForm.get('pfPercent')?.touched" class="p-error">
-      Percentage cannot exceed 100
-    </small>
+  <!-- Deductions -->
+  <div class="col-12 mt-3">
+    <h3>Deductions</h3>
+    <div class="field-checkbox" *ngFor="let item of [
+      { key: 'pf', label: 'Provident Fund (PF)' },
+      { key: 'pt', label: 'Professional Tax (PT)' },
+      { key: 'tds', label: 'Income Tax (TDS)' }
+    ]">
+      <p-checkbox [formControlName]="item.key + 'Enabled'" binary="true" [inputId]="item.key"></p-checkbox>
+      <label [for]="item.key">{{ item.label }}</label>
+      <input
+        *ngIf="userForm.get(item.key + 'Enabled')?.value"
+        type="number"
+        pInputText
+        [formControlName]="item.key + 'Percent'"
+        placeholder="%"
+        class="ml-2 w-3"
+      />
+    </div>
   </div>
 
-  <div class="field-checkbox">
-    <p-checkbox formControlName="ptEnabled" binary="true" inputId="pt"></p-checkbox>
-    <label for="pt">Professional Tax (PT)</label>
-    <input *ngIf="userForm.get('ptEnabled')?.value"
-           type="number"
-           pInputText
-           formControlName="ptPercent"
-           placeholder="Enter % PT"
-           class="ml-2 w-3" />
-    <small *ngIf="userForm.get('ptPercent')?.hasError('min') && userForm.get('ptPercent')?.touched" class="p-error">
-      Percentage must be at least 0
-    </small>
-    <small *ngIf="userForm.get('ptPercent')?.hasError('max') && userForm.get('ptPercent')?.touched" class="p-error">
-      Percentage cannot exceed 100
-    </small>
+  <!-- Total -->
+  <div
+    class="col-12 mt-3 font-semibold text-lg"
+    [ngStyle]="{ color: totalPercent === 100 ? 'green' : 'red' }"
+  >
+    Total % (Allowances + Deductions): {{ totalPercent }}%
   </div>
 
-  <div class="field-checkbox">
-    <p-checkbox formControlName="tdsEnabled" binary="true" inputId="tds"></p-checkbox>
-    <label for="tds">Income Tax (TDS)</label>
-    <input *ngIf="userForm.get('tdsEnabled')?.value"
-           type="number"
-           pInputText
-           formControlName="tdsPercent"
-           placeholder="Enter % TDS"
-           class="ml-2 w-3" />
-    <small *ngIf="userForm.get('tdsPercent')?.hasError('min') && userForm.get('tdsPercent')?.touched" class="p-error">
-      Percentage must be at least 0
-    </small>
-    <small *ngIf="userForm.get('tdsPercent')?.hasError('max') && userForm.get('tdsPercent')?.touched" class="p-error">
-      Percentage cannot exceed 100
-    </small>
-  </div>
-</div>
+  <!-- Buttons -->
+  <div class="col-12 flex flex-wrap gap-3 mt-4 justify-content-end">
+    <button
+      pButton
+      type="button"
+      label="Calculate & Preview"
+      icon="pi pi-calculator"
+      class="p-button-info"
+      (click)="onCalculatePreview()"
+    ></button>
 
-
-  <!-- Submit -->
-  <div class="field col-12 mt-4">
-    <button pButton type="submit" label="Submit" [disabled]="userForm.invalid" class="w-full"></button>
+    <button
+      pButton
+      type="submit"
+      label="Submit"
+      icon="pi pi-check"
+      [disabled]="userForm.invalid || totalPercent !== 100"
+      class="p-button-success"
+    ></button>
   </div>
 </form>
 
+<!-- Preview Table -->
+<div *ngIf="showPreview" class="mt-5">
+  <p-table [value]="salaryBreakdown">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Component</th>
+        <th>%</th>
+        <th>Monthly (₹)</th>
+        <th>Annual (₹)</th>
+      </tr>
+    </ng-template>
 
-
-
-
-
-
-
+    <ng-template pTemplate="body" let-item>
+      <tr
+        [ngClass]="{
+          'allowance-row': item.type === 'allowance',
+          'deduction-row': item.type === 'deduction',
+          'total-row': item.type === 'total'
+        }"
+      >
+        <td>{{ item.component }}</td>
+        <td>{{ item.percent }}%</td>
+        <td>{{ item.monthly | number: '1.0-0' }}</td>
+        <td>{{ item.annual | number: '1.0-0' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

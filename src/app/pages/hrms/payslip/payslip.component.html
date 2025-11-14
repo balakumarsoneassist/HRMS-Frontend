@@ -1,160 +1,30 @@
-
 <div class="payslip-container">
-  <!-- Selection Form -->
- <div class="selection-form">
-  <h2>Generate Payslip</h2>
+  <div class="selection-form">
+    <h2>Generate Payslip</h2>
 
-  <div class="form-row">
-    <div class="form-group">
-      <label for="monthPicker">Select Month:</label>
-      <p-calendar
-        id="monthPicker"
-        [(ngModel)]="selectedMonth"
-        view="month"
-        dateFormat="MM yy"
-        [showIcon]="true"
-        [yearNavigator]="true"
-        [yearRange]="'2020:2030'">
-      </p-calendar>
-    </div>
-
-    <div class="form-group">
-      <p-button
-        label="Generate Payslip"
-        icon="pi pi-file-pdf"
-        (onClick)="generatePayslip()"
-        [loading]="loading"
-        [disabled]="!selectedMonth">
-      </p-button>
-    </div>
-  </div>
-</div>
-
-
-  <!-- Payslip Display -->
-  <div class="payslip-page" *ngIf="payslipData" id="payslip-content">
-    <div class="page">
-      <!-- Company Header -->
-      <div class="company-header">
-        <div class="company-logo">
-          <div class="logo-circle">A</div>
-          <span class="logo-text">ONE ASSIST TECHNOLOGIES</span>
-        </div>
-        <h1 class="company-name">One Assist Technologies LLP</h1>
-        <div class="company-address">553 NVN LAYOUT TATABAD, GANDHIPURAM, Coimbatore, Tamil Nadu – 641012</div>
-        <div class="payslip-title">Payslip for the Month of {{ payslipData.month }}, {{ payslipData.year }}</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="monthPicker">Select Month:</label>
+        <p-calendar
+          id="monthPicker"
+          [(ngModel)]="selectedMonth"
+          view="month"
+          dateFormat="MM yy"
+          [showIcon]="true"
+          [yearNavigator]="true"
+          [yearRange]="'2020:2030'">
+        </p-calendar>
       </div>
 
-      <!-- Employee Details Table -->
-      <div class="employee-details">
-        <table class="employee-table">
-          <tr>
-            <td class="label">Name:</td>
-            <td class="value">{{ payslipData.name }}</td>
-            <td class="label">Employee ID:</td>
-            <td class="value">{{ payslipData.employeeId }}</td>
-          </tr>
-          <tr>
-            <td class="label">Designation:</td>
-            <td class="value">{{ payslipData.designation }}</td>
-            <td class="label">Bank Name:</td>
-            <td class="value">{{ payslipData.bankName || '' }}</td>
-          </tr>
-          <tr>
-            <td class="label">Department:</td>
-            <td class="value">{{ payslipData.department }}</td>
-            <td class="label">Bank Account No.:</td>
-            <td class="value">{{ payslipData.bankAccount || '' }}</td>
-          </tr>
-          <tr>
-            <td class="label">Location:</td>
-            <td class="value">{{ payslipData.location }}</td>
-            <td class="label">PAN No.:</td>
-            <td class="value">{{ payslipData.panNumber || 'None' }}</td>
-          </tr>
-          <tr>
-            <td class="label">Effective Work Days:</td>
-            <td class="value">{{ payslipData.effectiveWorkDays }}</td>
-            <td class="label">LOP:</td>
-            <td class="value">{{ payslipData.lop }}</td>
-          </tr>
-
-        </table>
-      </div>
-
-      <!-- Earnings & Deductions Table -->
-      <div class="earnings-deductions">
-        <table class="earnings-table">
-          <thead>
-            <tr>
-              <th class="earnings-header">Earnings</th>
-              <th class="amount-header">Amount (₹)</th>
-              <th class="deductions-header">Deductions</th>
-              <th class="amount-header">Amount (₹)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let earning of getEarningsArray(); let i = index">
-              <tr>
-                <td class="earnings-cell">{{ earning.label }}</td>
-                <td class="amount-cell">{{ formatCurrency(earning.amount) }}</td>
-                <td class="deductions-cell">{{ i < getDeductionsArray().length ? getDeductionsArray()[i].label : '' }}</td>
-                <td class="amount-cell">{{ i < getDeductionsArray().length ? formatCurrency(getDeductionsArray()[i].amount) : '' }}</td>
-              </tr>
-            </ng-container>
-
-            <!-- Fill remaining deduction rows if there are more deductions than earnings -->
-            <ng-container *ngIf="getDeductionsArray().length > getEarningsArray().length">
-              <ng-container *ngFor="let deduction of getDeductionsArray(); let i = index">
-                <tr *ngIf="i >= getEarningsArray().length">
-                  <td class="earnings-cell"></td>
-                  <td class="amount-cell"></td>
-                  <td class="deductions-cell">{{ deduction.label }}</td>
-                  <td class="amount-cell">{{ formatCurrency(deduction.amount) }}</td>
-                </tr>
-              </ng-container>
-            </ng-container>
-
-           <!-- Fill remaining earning rows if there are more earnings than deductions -->
-
-
-          </tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td class="total-label">Total Earnings (Rs)</td>
-              <td class="total-amount">{{ formatCurrency(payslipData.totalEarnings) }}</td>
-              <td class="total-label">Total Deductions (Rs)</td>
-              <td class="total-amount">{{ formatCurrency(payslipData.totalDeductions) }}</td>
-            </tr>
-            <tr class="net-pay-row">
-              <td class="net-pay-label">Net Pay For The year</td>
-              <td class="net-pay-amount" colspan="3">{{ formatCurrency(payslipData.netPay) }}</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div class="amount-in-words">
-          ({{ numberToWords(payslipData.netPay) }})
-        </div>
-
-        <div class="footer-note">
-          This is a system generated payslip and does not require signature.
-        </div>
+      <div class="form-group">
+        <p-button
+          label="Generate Payslip"
+          icon="pi pi-file-pdf"
+          (onClick)="generatePayslip()"
+          [loading]="loading"
+          [disabled]="!selectedMonth">
+        </p-button>
       </div>
     </div>
   </div>
-
-  <!-- No Data Message -->
-  <div *ngIf="!payslipData && !loading" class="no-data">
-    <p>Select an employee and month to generate payslip</p>
-  </div>
-
-      <!-- ✅ Download Button -->
-    <div class="download-btn" style="margin-top:20px; text-align:center;">
-      <p-button
-        label="Download Payslip"
-        icon="pi pi-download"
-        (onClick)="downloadPayslip()">
-      </p-button>
-    </div>
 </div>
