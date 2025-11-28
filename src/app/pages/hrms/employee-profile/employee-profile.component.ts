@@ -19,7 +19,9 @@ import { AccessViewComponent } from "../access-view/access-view.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
 
 type AttendanceSummary = { presentDays: number; absentDays: number; lateMarks?: number; isHoliday?: boolean; };
-type LeaveBalance = { type: string; balance: number; color?: string; };
+type LeaveBalance = {
+tag: any; type: string; balance: number; color?: string;
+};
 type Project = { name: string; role: string; status: 'Active' | 'On Hold' | 'Completed'; };
 type EmployeeProfile = {
   _id: string; user_name: string; empId: string; email: string;
@@ -100,10 +102,60 @@ export class EmployeeProfileComponent implements OnInit {
       error: () => { this._attendance.set({ presentDays: 0, absentDays: 0, lateMarks: 0, isHoliday: false }); this.isHoliday = false; }
     });
 
-    this.userService.getLeaveTiles(id).subscribe({
-      next: (res) => this._leaves.set(res.map(x => ({ type: x.label, balance: x.value, color: x.color }))),
-      error: () => this._leaves.set([])
+ this.userService.getLeaveTiles(id).subscribe({
+  next: (list) => {
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-11
+    const currentYear = now.getFullYear();
+
+    const transformed = list.map(l => {
+
+      // find year bucket
+      const bucket = (l.remaining || []).find((b: any) => b.year === currentYear);
+
+      if (!bucket) {
+        return {
+          type: l.label,
+          balance: 0,
+          tag: '(no bucket)'
+        };
+      }
+
+      const accrual = (l.accrualType || '').toLowerCase();
+      let balance = 0;
+      let tag = '';
+
+      // MONTHLY -----------------------------------------------------
+      if (accrual === 'monthly') {
+        balance = bucket.months[currentMonth] ?? 0;
+        tag = '/ monthly (this month)';
+      }
+
+      // ANNUAL ------------------------------------------------------
+      else if (accrual === 'annual') {
+        balance = bucket.annualValue ?? l.value ?? 0;
+        tag = '/ annual';
+      }
+
+      // FIXED -------------------------------------------------------
+      else if (accrual === 'fixed') {
+        const dojMonth = l.doj ? new Date(l.doj).getMonth() : currentMonth;
+        balance = bucket.months[dojMonth] ?? l.value ?? 0;
+        tag = '/ fixed';
+      }
+
+      return {
+        type: l.label,
+        balance: balance,
+        tag: tag
+      };
     });
+
+    this._leaves.set(transformed);
+  },
+  error: () => this._leaves.set([])
+});
+
 
     this.userService.getPetrolBalance(id).subscribe({
       next: (petrol) => this._petrolBalance.set(petrol?.totalAmount || 0),
@@ -210,4 +262,8 @@ export class EmployeeProfileComponent implements OnInit {
     const safeName = encodeURIComponent(this.profile()?.user_name || 'Employee');
     return `https://ui-avatars.com/api/?name=${safeName}&background=random&size=64&bold=true`;
   }
+
+
+
+
 }

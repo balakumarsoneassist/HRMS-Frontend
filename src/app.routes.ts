@@ -25,6 +25,7 @@ import { PayslipComponent } from './app/pages/hrms/payslip/payslip.component';
 import { DeletedUserComponent } from './app/pages/hrms/deleted-user/deleted-user.component';
 import { FeedComponent } from './app/pages/hrms/feed/feed.component';
 import { IdCardComponent } from './app/pages/hrms/id-card/id-card.component';
+import { InternshipCertificateCardComponent } from './app/pages/hrms/internshipletter/internship-certificate-card/internship-certificate-card.component';
 
 export const appRoutes: Routes = [
   {
@@ -44,7 +45,6 @@ export const appRoutes: Routes = [
       { path: 'home/petrolapproval', component: PetrolApprovalComponent, canActivate: [AuthGuard], data: { permission: 'Employee Petrol Approval' } },
       { path: 'home/access', component: AccessComponent, canActivate: [AuthGuard], data: { permission: 'Access' } },
       { path: 'home/access2', component: AccessComponent, canActivate: [AuthGuard], data: { permission: 'Access2' } },
-
       { path: 'home/accessdefine', component: AccessdefineComponent, canActivate: [AuthGuard], data: { permission: 'Access Define' } },
       { path: 'home/yearlyleavyplocy', component: LeavePolicyAdminComponent, canActivate: [AuthGuard], data: { permission: 'Yearly Leave Policy' } },
       { path: 'home/holidayplanning', component: HolidayPlannerComponent, canActivate: [AuthGuard], data: { permission: 'Holiday Planning' } },
@@ -53,8 +53,8 @@ export const appRoutes: Routes = [
       { path: 'home/loas', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letters of Appointment' } },
       { path: 'home/payslip', component: PayslipComponent, canActivate: [AuthGuard], data: { permission: 'Payslip' } },
       { path: 'notfound', component: IdCardComponent },
+      { path: 'intern', component: InternshipCertificateCardComponent },
       { path: 'newsfeed', component: FeedComponent }
-
     ]
   },
   { path: 'login', loadChildren: () => import('./app/pages/hrms/login/login-routing.module') },

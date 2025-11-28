@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { IdCardComponent } from './id-card.component';
 
 describe('IdCardComponent', () => {
@@ -8,9 +9,21 @@ describe('IdCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IdCardComponent]
+      imports: [IdCardComponent, FormsModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParamMap: {
+                get: (key: string) => 'test@example.com'
+              }
+            }
+          }
+        }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(IdCardComponent);
     component = fixture.componentInstance;
@@ -19,5 +32,14 @@ describe('IdCardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize user data', () => {
+    expect(component.user).toBeDefined();
+    expect(component.user.email).toBe('bala@vmm.org'); // Based on hardcoded data
+  });
+
+  it('should get email from query params', () => {
+    expect(component.emailFromQuery).toBe('test@example.com');
   });
 });
