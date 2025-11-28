@@ -1,5 +1,21 @@
 <h1>Welcome to One Assist</h1>
 <div class="feed-container">
+  <!-- Create Post Section -->
+  <div class="create-post-card">
+    <div class="create-post-header">
+      <img src="https://randomuser.me/api/portraits/men/1.jpg" class="avatar-small" alt="User" />
+      <textarea 
+        [(ngModel)]="newPostContent" 
+        placeholder="What's on your mind?" 
+        rows="3">
+      </textarea>
+    </div>
+    <div class="create-post-actions">
+      <button class="btn-post" (click)="createPost()" [disabled]="!newPostContent.trim()">Post</button>
+    </div>
+  </div>
+
+  <!-- Posts Feed -->
   <div *ngFor="let post of posts" class="post-card">
     <div class="post-header">
       <img [src]="post.avatar" class="avatar" alt="User Avatar" />
@@ -9,12 +25,27 @@
       </div>
     </div>
 
-    <img [src]="post.image" class="post-image" alt="Post Image" />
+    <div class="post-content">
+      <p class="caption">{{ post.caption }}</p>
+      <img *ngIf="post.image" [src]="post.image" class="post-image" alt="Post Image" />
+    </div>
 
-    <div class="post-body">
-      <p>{{ post.caption }}</p>
-      <div class="post-actions">
-        💬 {{ post.comments }} comments
+    <div class="post-footer">
+      <div class="stats">
+        <span>{{ post.likes }} Likes</span>
+        <span>{{ post.comments }} Comments</span>
+      </div>
+      <hr />
+      <div class="actions">
+        <button class="action-btn" [class.liked]="post.liked" (click)="toggleLike(post)">
+          <i class="icon-heart"></i> Like
+        </button>
+        <button class="action-btn">
+          <i class="icon-comment"></i> Comment
+        </button>
+        <button class="action-btn">
+          <i class="icon-share"></i> Share
+        </button>
       </div>
     </div>
   </div>

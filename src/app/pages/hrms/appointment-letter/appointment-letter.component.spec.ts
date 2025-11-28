@@ -10,7 +10,7 @@ describe('AppointmentLetterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppointmentLetterComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(AppointmentLetterComponent);
     component = fixture.componentInstance;
