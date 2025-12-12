@@ -1,12 +1,10 @@
 <p-toast></p-toast>
 
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-fluid formgrid grid">
-
-  <!-- USER ID (invisible, but part of form) -->
-<div class="field col-12 md:col-4 mb-4">
+  <!-- USER ID (hidden) -->
+  <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
       <input id="user_id" [hidden]="false" type="text" pInputText formControlName="user_id" />
-      <!-- <label for="user_id">User ID</label> -->
     </p-floatLabel>
   </div>
 
@@ -14,38 +12,45 @@
   <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
       <input id="ctc" type="number" pInputText formControlName="ctc" />
-      <label for="ctc">Monthly CTC (₹)</label>
+      <label for="ctc">Configured Monthly CTC (₹)</label>
     </p-floatLabel>
   </div>
 
   <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
-      <input type="month" pInputText formControlName="createdMonth" />
+      <input id="createdMonth" type="month" pInputText formControlName="createdMonth" />
       <label for="createdMonth">Created Month</label>
     </p-floatLabel>
   </div>
 
   <div class="field col-12 md:col-4 mb-4">
     <p-floatLabel variant="on">
-      <input type="month" pInputText formControlName="untilMonth" />
+      <input id="untilMonth" type="month" pInputText formControlName="untilMonth" />
       <label for="untilMonth">Until Month</label>
     </p-floatLabel>
   </div>
 
   <!-- Allowances -->
   <div class="col-12">
-    <h3>Allowances</h3>
-    <div class="field-checkbox" *ngFor="let item of [
-      { key: 'basic', label: 'Basic Salary' },
-      { key: 'hra', label: 'House Rent Allowance (HRA)' },
-      { key: 'da', label: 'Dearness Allowance (DA)' },
-      { key: 'ta', label: 'Travel Allowance (TA)' },
-      { key: 'conveyance', label: 'Conveyance Allowance' },
-      { key: 'medical', label: 'Medical Reimbursement' },
-      { key: 'special', label: 'Special Allowance' }
-    ]">
-      <p-checkbox [formControlName]="item.key + 'Enabled'" binary="true" [inputId]="item.key"></p-checkbox>
-      <label [for]="item.key">{{ item.label }}</label>
+    <h3>Allowances (as % of Gross – Basic auto ≥ 40%)</h3>
+    <div
+      class="field-checkbox"
+      *ngFor="let item of [
+        { key: 'basic', label: 'Basic Salary' },
+        { key: 'hra', label: 'House Rent Allowance (HRA)' },
+        { key: 'da', label: 'Dearness Allowance (DA)' },
+        { key: 'ta', label: 'Travel Allowance (TA)' },
+        { key: 'conveyance', label: 'Conveyance Allowance' },
+        { key: 'medical', label: 'Medical Reimbursement' },
+        { key: 'special', label: 'Special Allowance' }
+      ]"
+    >
+      <p-checkbox
+        [formControlName]="item.key + 'Enabled'"
+        binary="true"
+        [inputId]="item.key"
+      ></p-checkbox>
+      <label [for]="item.key" class="ml-2">{{ item.label }}</label>
       <input
         *ngIf="userForm.get(item.key + 'Enabled')?.value"
         type="number"
@@ -57,33 +62,69 @@
     </div>
   </div>
 
-  <!-- Deductions -->
+  <!-- Deductions & Contributions -->
   <div class="col-12 mt-3">
-    <h3>Deductions</h3>
-    <div class="field-checkbox" *ngFor="let item of [
-      { key: 'pf', label: 'Provident Fund (PF)' },
-      { key: 'pt', label: 'Professional Tax (PT)' },
-      { key: 'tds', label: 'Income Tax (TDS)' }
-    ]">
-      <p-checkbox [formControlName]="item.key + 'Enabled'" binary="true" [inputId]="item.key"></p-checkbox>
-      <label [for]="item.key">{{ item.label }}</label>
+    <h3>Deductions & Statutory Contributions</h3>
+
+    <!-- PF - Auto govt rule -->
+    <div class="field-checkbox">
+      <p-checkbox formControlName="pfEnabled" binary="true" inputId="pf"></p-checkbox>
+      <label for="pf" class="ml-2">
+        Provident Fund (PF) – Auto (12% of Basic, capped at ₹1800 if Basic &gt; ₹15,000)
+      </label>
+    </div>
+
+    <!-- PT -->
+    <div class="field-checkbox">
+      <p-checkbox formControlName="ptEnabled" binary="true" inputId="pt"></p-checkbox>
+      <label for="pt" class="ml-2">Professional Tax (PT)</label>
       <input
-        *ngIf="userForm.get(item.key + 'Enabled')?.value"
+        *ngIf="userForm.get('ptEnabled')?.value"
         type="number"
         pInputText
-        [formControlName]="item.key + 'Percent'"
-        placeholder="%"
+        formControlName="ptPercent"
+        placeholder="% of CTC"
         class="ml-2 w-3"
       />
     </div>
+
+    <!-- TDS -->
+    <div class="field-checkbox">
+      <p-checkbox formControlName="tdsEnabled" binary="true" inputId="tds"></p-checkbox>
+      <label for="tds" class="ml-2">Income Tax (TDS)</label>
+      <input
+        *ngIf="userForm.get('tdsEnabled')?.value"
+        type="number"
+        pInputText
+        formControlName="tdsPercent"
+        placeholder="% of CTC"
+        class="ml-2 w-3"
+      />
+    </div>
+
+    <!-- ESIC Employer -->
+    <div class="field-checkbox">
+      <p-checkbox formControlName="esicEmployerEnabled" binary="true" inputId="esicEmployer"></p-checkbox>
+      <label for="esicEmployer" class="ml-2">
+        Employer ESIC Contribution (3.25% of Gross if Gross &lt; ₹21,000)
+      </label>
+    </div>
+
+    <!-- ESIC Employee -->
+    <div class="field-checkbox">
+      <p-checkbox formControlName="esicEmployeeEnabled" binary="true" inputId="esicEmployee"></p-checkbox>
+      <label for="esicEmployee" class="ml-2">
+        Employee ESIC Contribution (0.75% of Gross if Gross &lt; ₹21,000)
+      </label>
+    </div>
   </div>
 
-  <!-- Total -->
+  <!-- Total Allowance % -->
   <div
     class="col-12 mt-3 font-semibold text-lg"
     [ngStyle]="{ color: totalPercent === 100 ? 'green' : 'red' }"
   >
-    Total % (Allowances + Deductions): {{ totalPercent }}%
+    Total Allowances % (Basic + HRA + DA + others): {{ totalPercent }}%
   </div>
 
   <!-- Buttons -->
@@ -125,14 +166,30 @@
         [ngClass]="{
           'allowance-row': item.type === 'allowance',
           'deduction-row': item.type === 'deduction',
+          'employer-row': item.type === 'employer',
           'total-row': item.type === 'total'
         }"
       >
         <td>{{ item.component }}</td>
-        <td>{{ item.percent }}%</td>
+        <td>{{ item.percent !== null ? (item.percent | number : '1.0-2') + '%' : '-' }}</td>
         <td>{{ item.monthly | number: '1.0-0' }}</td>
         <td>{{ item.annual | number: '1.0-0' }}</td>
       </tr>
     </ng-template>
   </p-table>
+
+  <!-- Optional compact summary -->
+  <div *ngIf="netSalarySummary" class="mt-4">
+    <h4>Summary</h4>
+    <p><strong>Configured CTC (Input):</strong> {{ netSalarySummary.configuredCtc | number: '1.0-0' }}</p>
+    <p><strong>Gross Salary (Monthly):</strong> {{ netSalarySummary.gross | number: '1.0-0' }}</p>
+    <p><strong>Total Employee Deductions:</strong> {{ netSalarySummary.totalEmployeeDeductions | number: '1.0-0' }}</p>
+    <p><strong>Net Salary (Take-home):</strong> {{ netSalarySummary.net | number: '1.0-0' }}</p>
+    <p><strong>Employer PF:</strong> {{ netSalarySummary.employerPf | number: '1.0-0' }}</p>
+    <p><strong>Employer ESIC:</strong> {{ netSalarySummary.employerEsic | number: '1.0-0' }}</p>
+    <p>
+      <strong>Computed Employer Cost (CTC style):</strong>
+      {{ netSalarySummary.computedEmployerCost | number: '1.0-0' }}
+    </p>
+  </div>
 </div>

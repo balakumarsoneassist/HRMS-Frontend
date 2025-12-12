@@ -72,7 +72,8 @@ export class AppMenuPanel implements OnInit {
             'Holiday Planning': '/home/holidayplanning',
             'Letter of Appointment': '/home/loa',
             'Letters of Appointment': '/home/loas',
-            'Payslip': '/home/payslip'
+            'Payslip': '/home/payslip',
+            'Id-card':'/home/idcard'
             // Add more as needed
         };
         return routeMap[submenuName] || '/notfound';

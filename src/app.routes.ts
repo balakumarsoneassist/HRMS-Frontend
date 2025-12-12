@@ -52,7 +52,9 @@ export const appRoutes: Routes = [
       { path: 'home/loa', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letter of Appointment' } },
       { path: 'home/loas', component: LoaComponent, canActivate: [AuthGuard], data: { permission: 'Letters of Appointment' } },
       { path: 'home/payslip', component: PayslipComponent, canActivate: [AuthGuard], data: { permission: 'Payslip' } },
+      { path: 'home/idcard', component: IdCardComponent, canActivate: [AuthGuard], data: { permission: 'Id-card' } },
       { path: 'notfound', component: IdCardComponent },
+
       { path: 'intern', component: InternshipCertificateCardComponent },
       { path: 'newsfeed', component: FeedComponent }
     ]
