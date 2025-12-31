@@ -35,7 +35,7 @@ import { LoginService } from '../../pages/hrms/services/login/login.service';
                 <i class="pi pi-bars"></i>
             </button>
             <a class="layout-topbar-logo" routerLink="/home">
-              <span>HRMS</span>
+              <span>OA -HRMS</span>
             </a>
         </div>
 
