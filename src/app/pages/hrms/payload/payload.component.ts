@@ -1,5 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -33,41 +39,28 @@ export class PayloadComponent implements OnInit {
 
   userForm!: FormGroup;
 
-  // Total of *input* allowance % (for validation)
   totalPercent = 0;
-
   showPreview = false;
+
   salaryBreakdown: any[] = [];
+  netSalarySummary: any | null = null;
 
-  netSalarySummary:any | {
-    gross: number;
-    totalEmployeeDeductions: number;
-    net: number;
-    employerEsic: number;
-    employerPf: number;
-    employeePf: number;
-    pt: number;
-    tds: number;
-    employeeEsic: number;
-    configuredCtc: number;
-    computedEmployerCost: number;
-  } | null = null;
-
-  currentUserId = '678b163cbffdb207e1d7c848'; // replace with logged-in user id
+  currentUserId = '678b163cbffdb207e1d7c848';
 
   constructor(
     private payloadService: PayloadService,
     private messageService: MessageService
   ) {}
 
+  // --------------------------------------------------
+  // INIT
+  // --------------------------------------------------
   ngOnInit(): void {
     this.userForm = new FormGroup({
-      user_id: new FormControl({ value: this.empId, disabled: true }, Validators.required),
+      user_id: new FormControl({ value: this.empId, disabled: true }),
 
-      // Monthly CTC (configured)
       ctc: new FormControl('', [Validators.required, Validators.min(0)]),
 
-      // Allowances (percentages of Gross in effective calc)
       basicEnabled: new FormControl(false),
       basicPercent: new FormControl(0),
       hraEnabled: new FormControl(false),
@@ -83,354 +76,227 @@ export class PayloadComponent implements OnInit {
       specialEnabled: new FormControl(false),
       specialPercent: new FormControl(0),
 
-      // PF – auto rule, no % in UI
       pfEnabled: new FormControl(false),
 
-      // PT & TDS – percentage of CTC
       ptEnabled: new FormControl(false),
       ptPercent: new FormControl(0),
       tdsEnabled: new FormControl(false),
       tdsPercent: new FormControl(0),
 
-      // ESIC toggles (0.75% & 3.25% of Gross)
       esicEmployerEnabled: new FormControl(false),
       esicEmployeeEnabled: new FormControl(false),
 
-      // Duration
       createdMonth: new FormControl('', Validators.required),
       untilMonth: new FormControl('', Validators.required)
     });
 
-    // Re-compute original allowance % total on any change
-    this.userForm.valueChanges.subscribe(() => this.calculateTotalPercent());
+    this.userForm.valueChanges.subscribe(() =>
+      this.calculateTotalPercent()
+    );
   }
 
-  // ✅ Sum of *input* allowance % (for validation only)
+  // --------------------------------------------------
+  // ALLOWANCE % VALIDATION
+  // --------------------------------------------------
   calculateTotalPercent(): void {
-    const val = this.userForm.value;
-    const allowanceKeys = [
-      'basic',
-      'hra',
-      'da',
-      'ta',
-      'conveyance',
-      'medical',
-      'special'
-    ];
+    const v = this.userForm.value;
+    const keys = ['basic', 'hra', 'da', 'ta', 'conveyance', 'medical', 'special'];
 
     this.totalPercent = 0;
-
-    allowanceKeys.forEach(key => {
-      if (val[`${key}Enabled`]) {
-        this.totalPercent += Number(val[`${key}Percent`]) || 0;
+    keys.forEach(k => {
+      if (v[`${k}Enabled`]) {
+        this.totalPercent += Number(v[`${k}Percent`] || 0);
       }
     });
   }
 
-onCalculatePreview(): void {
-  if (!this.userForm.get('ctc')?.value) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Validation Error',
-      detail: 'Please enter CTC before calculating.'
-    });
-    return;
-  }
-
-  if (this.totalPercent !== 100) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Allowance percentage must total exactly 100%.'
-    });
-    this.showPreview = false;
-    return;
-  }
-
-  const ctc = Number(this.userForm.value.ctc);
-  const val = this.userForm.value;
-
-  // -------------------------------
-  // STEP 1: EFFECTIVE % CALCULATION
-  // -------------------------------
-  const allowanceKeys = [
-    'basic', 'hra', 'da', 'ta', 'conveyance', 'medical', 'special'
-  ];
-
-  const effectivePercent: Record<string, number> = {};
-  const enabledKeys = allowanceKeys.filter(k => val[`${k}Enabled`]);
-
-  if (enabledKeys.length === 0) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'At least one allowance must be enabled.'
-    });
-    return;
-  }
-
-  let basicInput = val.basicEnabled ? Number(val.basicPercent) || 0 : 0;
-
-  if (!val.basicEnabled || basicInput <= 0) {
-    basicInput = 40;
-  }
-
-  const otherKeys = enabledKeys.filter(k => k !== 'basic');
-  const sumOthersInput = otherKeys.reduce((sum, k) =>
-    sum + (Number(val[`${k}Percent`]) || 0), 0
-  );
-
-  if (sumOthersInput <= 0) {
-    effectivePercent['basic'] = 100;
-    otherKeys.forEach(k => (effectivePercent[k] = 0));
-  } else if (basicInput >= 40) {
-    effectivePercent['basic'] = basicInput;
-    otherKeys.forEach(k => {
-      effectivePercent[k] = Number(val[`${k}Percent`]) || 0;
-    });
-  } else {
-    effectivePercent['basic'] = 40;
-    const remaining = 60;
-    otherKeys.forEach(k => {
-      const orig = Number(val[`${k}Percent`]) || 0;
-      effectivePercent[k] = (orig / sumOthersInput) * remaining;
-    });
-  }
-
-  // -------------------------------
-  // STEP 2: TEMP GROSS (your old iterative logic stays as is)
-  // -------------------------------
-  let gross = ctc;
-  let prevGross = 0;
-  const maxIterations = 50;
-
-  let iteration = 0;
-  while (Math.abs(gross - prevGross) > 1 && iteration < maxIterations) {
-    iteration++;
-    prevGross = gross;
-
-    const basicFromGross = gross * (effectivePercent['basic'] || 0) / 100;
-
-    const employeePfTemp = val.pfEnabled
-      ? (basicFromGross > 15000 ? 1800 : basicFromGross * 0.12)
-      : 0;
-
-    const employeeEsicTemp = (gross < 21000 && val.esicEmployeeEnabled)
-      ? gross * 0.0075
-      : 0;
-
-    const pt = val.ptEnabled ? (ctc * (Number(val.ptPercent) || 0) / 100) : 0;
-    const tds = val.tdsEnabled ? (ctc * (Number(val.tdsPercent) || 0) / 100) : 0;
-
-    const totalEmployeeDeductions = employeePfTemp + employeeEsicTemp + pt + tds;
-
-    gross = ctc - totalEmployeeDeductions;
-  }
-
-  if (gross < 0) gross = 0;
-
-  // -------------------------------
-  // STEP 3: Allowance breakup
-  // -------------------------------
-  this.salaryBreakdown = [];
-  this.netSalarySummary = null;
-
-  let basicFinalOldGross = 0;
-
-  const allowanceConfig = [
-    { key: 'basic', label: 'Basic Salary' },
-    { key: 'hra', label: 'House Rent Allowance (HRA)' },
-    { key: 'da', label: 'Dearness Allowance (DA)' },
-    { key: 'ta', label: 'Travel Allowance (TA)' },
-    { key: 'conveyance', label: 'Conveyance Allowance' },
-    { key: 'medical', label: 'Medical Reimbursement' },
-    { key: 'special', label: 'Special Allowance' }
-  ];
-
-  allowanceConfig.forEach(a => {
-    const pct = effectivePercent[a.key] || 0;
-
-    if (pct > 0) {
-      const amount = gross * (pct / 100);
-
-      if (a.key === 'basic') basicFinalOldGross = amount;
-
-      this.salaryBreakdown.push({
-        component: a.label,
-        percent: pct,
-        monthly: amount,
-        annual: amount * 12,
-        type: "allowance"
-      });
-    }
-  });
-
-  // -------------------------------
-  // STEP 4: TEMP PF/ESIC (just for old logic)
-  // -------------------------------
-  const employerPfTemp = val.pfEnabled
-    ? (basicFinalOldGross > 15000 ? 1800 : basicFinalOldGross * 0.12)
-    : 0;
-
-  const employerEsicTemp = (gross < 21000 && val.esicEmployerEnabled)
-    ? gross * 0.0325
-    : 0;
-
-  // -------------------------------
-  // ⭐ STEP 5 — APPLY YOUR FORMULAS (NEW LOGIC)
-  // -------------------------------
-
-  // ⭐ 1: NEW GROSS FORMULA
-  const grossFinal = ctc - (employerPfTemp + employerEsicTemp);
-
-  // ⭐ 2: RECALCULATE BASIC FROM NEW GROSS
-  const basicNew = grossFinal * (effectivePercent['basic'] / 100);
-
-  // ⭐ 3: PF & ESIC RECALCULATED BASED ON NEW BASIC + NEW GROSS
-  const employeePf = val.pfEnabled
-    ? (basicNew > 15000 ? 1800 : basicNew * 0.12)
-    : 0;
-
-  const employerPf = val.pfEnabled
-    ? (basicNew > 15000 ? 1800 : basicNew * 0.12)
-    : 0;
-
-  const employeeEsic =
-    (val.esicEmployeeEnabled || val.esicEmployerEnabled) &&
-    grossFinal < 21000
-      ? grossFinal * 0.0075
-      : 0;
-
-  const employerEsic =
-    val.esicEmployerEnabled && grossFinal < 21000
-      ? grossFinal * 0.0325
-      : 0;
-
-  // ⭐ 4: NEW NET SALARY FORMULA
-  const netSalary = grossFinal - (employeePf + employeeEsic);
-
-  // -------------------------------
-  // STEP 6: OUTPUT THE UPDATED VALUES
-  // -------------------------------
-  this.salaryBreakdown.push({
-    component: "GROSS SALARY (Updated Formula)",
-    percent: null,
-    monthly: grossFinal,
-    annual: grossFinal * 12,
-    type: "total"
-  });
-
-  this.salaryBreakdown.push({
-    component: "NET SALARY (Updated Formula)",
-    percent: null,
-    monthly: netSalary,
-    annual: netSalary * 12,
-    type: "total"
-  });
-
-  // Employer rows
-  this.salaryBreakdown.push({
-    component: "Employer PF (12%)",
-    percent: null,
-    monthly: employerPf,
-    annual: employerPf * 12,
-    type: "employer"
-  });
-
-  this.salaryBreakdown.push({
-    component: "Employer ESIC (3.25%)",
-    percent: null,
-    monthly: employerEsic,
-    annual: employerEsic * 12,
-    type: "employer"
-  });
-
-  const totalEmployeeDeductions = employeePf + employeeEsic;
-
-  const computedEmployerCost = grossFinal + totalEmployeeDeductions + employerPf + employerEsic;
-
-  this.netSalarySummary = {
-    gross: grossFinal,
-    totalEmployeeDeductions,
-    net: netSalary,
-    employerEsic,
-    employerPf,
-    employeePf,
-    employeeEsic,
-    configuredCtc: ctc,
-    computedEmployerCost
-  };
-
-  this.showPreview = true;
-}
-
-
-
-
-  // ✅ Submit config (still stores *input* percentages + flags)
-  onSubmit(): void {
-    if (this.userForm.invalid || this.totalPercent !== 100) {
+  // --------------------------------------------------
+  // PREVIEW
+  // --------------------------------------------------
+  onCalculatePreview(): void {
+    if (!this.userForm.get('ctc')?.value) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Please ensure allowance total = 100% and all required fields are filled.'
+        detail: 'Please enter CTC.'
       });
       return;
     }
 
-    const form = this.userForm.value;
+    if (this.totalPercent !== 100) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Allowance percentage must total 100%.'
+      });
+      return;
+    }
 
-    const payload: any = {
-      user_id: this.empId,
-      ctc: form.ctc,
+    const payroll = this.calculatePayslipFrontend(this.userForm.value);
 
-      // Allowances config (raw config)
-      basic: { enabled: form.basicEnabled, percent: form.basicPercent },
-      hra: { enabled: form.hraEnabled, percent: form.hraPercent },
-      da: { enabled: form.daEnabled, percent: form.daPercent },
-      ta: { enabled: form.taEnabled, percent: form.taPercent },
-      conveyance: { enabled: form.conveyanceEnabled, percent: form.conveyancePercent },
-      medical: { enabled: form.medicalEnabled, percent: form.medicalPercent },
-      special: { enabled: form.specialEnabled, percent: form.specialPercent },
+    this.salaryBreakdown = [
+      { component: 'Basic Salary', monthly: payroll.basic },
+      { component: 'HRA', monthly: payroll.hra },
+      { component: 'DA', monthly: payroll.da },
+      { component: 'TA', monthly: payroll.ta },
+      { component: 'Conveyance', monthly: payroll.conveyance },
+      { component: 'Medical', monthly: payroll.medical },
+      { component: 'Special', monthly: payroll.special },
+      { component: 'Gross Salary', monthly: payroll.gross },
+      { component: 'Net Salary', monthly: payroll.netSalary }
+    ];
 
-      // PF auto rule (no percent)
-      pf: { enabled: form.pfEnabled, mode: 'auto_12_or_1800' },
-
-      // PT & TDS config
-      pt: { enabled: form.ptEnabled, percent: form.ptPercent },
-      tds: { enabled: form.tdsEnabled, percent: form.tdsPercent },
-
-      // ESIC config
-      esicEmployer: { enabled: form.esicEmployerEnabled },
-      esicEmployee: { enabled: form.esicEmployeeEnabled },
-
-      totalAllowancePercent: this.totalPercent,
-      createdMonth: form.createdMonth,
-      untilMonth: form.untilMonth,
-      createdBy: this.currentUserId,
-      status: true
-    };
-
-    this.payloadService.createPayload(payload).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Saved',
-          detail: 'Salary structure saved successfully.'
-        });
-        this.userForm.reset();
-        this.totalPercent = 0;
-        this.showPreview = false;
-        this.netSalarySummary = null;
-      },
-      error: (err) => {
-        console.error('Save Error:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save salary structure.'
-        });
-      }
-    });
+    this.netSalarySummary = payroll;
+    this.showPreview = true;
   }
+
+  // --------------------------------------------------
+  // CORE PAYROLL LOGIC (BACKEND EQUIVALENT)
+  // --------------------------------------------------
+  calculatePayslipFrontend(emp: any) {
+    const fx = (n: number) => Number((n || 0).toFixed(2));
+    const ctc = Number(emp.ctc || 0);
+
+    const keys = ['basic', 'hra', 'da', 'ta', 'conveyance', 'medical', 'special'];
+    const enabled = keys.filter(k => emp[`${k}Enabled`]);
+
+    let basicInput = emp.basicEnabled ? Number(emp.basicPercent) : 40;
+    if (basicInput < 40) basicInput = 40;
+
+    const others = enabled.filter(k => k !== 'basic');
+    const sumOthers = others.reduce((s, k) => s + Number(emp[`${k}Percent`] || 0), 0);
+
+    const pct: any = {};
+    pct.basic = basicInput;
+
+    others.forEach(k => {
+      pct[k] = sumOthers > 0
+        ? (Number(emp[`${k}Percent`] || 0) / sumOthers) * (100 - pct.basic)
+        : 0;
+    });
+
+    // TEMP GROSS ITERATION
+    let gross = ctc;
+    let prev = 0;
+
+    for (let i = 0; i < 50 && Math.abs(gross - prev) > 1; i++) {
+      prev = gross;
+
+      const basicTemp = gross * (pct.basic / 100);
+      const empPfTemp = emp.pfEnabled
+        ? basicTemp > 15000 ? 1800 : basicTemp * 0.12
+        : 0;
+
+      const empEsicTemp =
+        emp.esicEmployeeEnabled && gross < 21000 ? gross * 0.0075 : 0;
+
+      const pt = emp.ptEnabled ? ctc * (emp.ptPercent / 100) : 0;
+      const tds = emp.tdsEnabled ? ctc * (emp.tdsPercent / 100) : 0;
+
+      gross = ctc - (empPfTemp + empEsicTemp + pt + tds);
+    }
+
+    const basicTemp = gross * (pct.basic / 100);
+    const employerPf = emp.pfEnabled
+      ? basicTemp > 15000 ? 1800 : basicTemp * 0.12
+      : 0;
+
+    const employerEsic =
+      emp.esicEmployerEnabled && gross < 21000 ? gross * 0.0325 : 0;
+
+    const grossFinal = ctc - (employerPf + employerEsic);
+    const basicFinal = grossFinal * (pct.basic / 100);
+
+    const employeePf = emp.pfEnabled
+      ? basicFinal > 15000 ? 1800 : basicFinal * 0.12
+      : 0;
+
+    const employeeEsic =
+      emp.esicEmployeeEnabled && grossFinal < 21000
+        ? grossFinal * 0.0075
+        : 0;
+
+    const netSalary = grossFinal - (employeePf + employeeEsic);
+
+    return {
+      basic: fx(basicFinal),
+      hra: fx(grossFinal * (pct.hra || 0) / 100),
+      da: fx(grossFinal * (pct.da || 0) / 100),
+      ta: fx(grossFinal * (pct.ta || 0) / 100),
+      conveyance: fx(grossFinal * (pct.conveyance || 0) / 100),
+      medical: fx(grossFinal * (pct.medical || 0) / 100),
+      special: fx(grossFinal * (pct.special || 0) / 100),
+
+      gross: fx(grossFinal),
+      netSalary: fx(netSalary),
+
+      employeePf: fx(employeePf),
+      employeeEsic: fx(employeeEsic),
+      employerPf: fx(employerPf),
+      employerEsic: fx(employerEsic),
+
+      configuredCtc: fx(ctc),
+      computedEmployerCost: fx(grossFinal + employeePf + employeeEsic + employerPf + employerEsic)
+    };
+  }
+
+  // --------------------------------------------------
+  // SUBMIT
+  // --------------------------------------------------
+  onSubmit(): void {
+  if (this.userForm.invalid || this.totalPercent !== 100) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Validation Error',
+      detail: 'Fix form errors before saving.'
+    });
+    return;
+  }
+
+  const v = this.userForm.getRawValue(); // important (includes disabled controls)
+
+  const payload = {
+    user_id: this.empId,
+    ctc: Number(v.ctc),
+
+    basic: { enabled: !!v.basicEnabled, percent: Number(v.basicPercent || 0) },
+    hra: { enabled: !!v.hraEnabled, percent: Number(v.hraPercent || 0) },
+    da: { enabled: !!v.daEnabled, percent: Number(v.daPercent || 0) },
+    ta: { enabled: !!v.taEnabled, percent: Number(v.taPercent || 0) },
+    conveyance: { enabled: !!v.conveyanceEnabled, percent: Number(v.conveyancePercent || 0) },
+    medical: { enabled: !!v.medicalEnabled, percent: Number(v.medicalPercent || 0) },
+    special: { enabled: !!v.specialEnabled, percent: Number(v.specialPercent || 0) },
+
+    pf: { enabled: !!v.pfEnabled },
+
+    pt: { enabled: !!v.ptEnabled, percent: Number(v.ptPercent || 0) },
+    tds: { enabled: !!v.tdsEnabled, percent: Number(v.tdsPercent || 0) },
+
+    esicEmployer: { enabled: !!v.esicEmployerEnabled },
+    esicEmployee: { enabled: !!v.esicEmployeeEnabled },
+
+    createdMonth: v.createdMonth,
+    untilMonth: v.untilMonth,
+
+    totalAllowancePercent: this.totalPercent,
+    createdBy: this.currentUserId,
+    status: true
+  };
+
+  this.payloadService.createPayload(payload).subscribe({
+    next: () => {
+      this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Salary structure saved.' });
+      this.userForm.reset();
+      this.showPreview = false;
+    },
+    error: (err) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err?.error?.message || 'Failed to save salary structure.'
+      });
+    }
+  });
+}
+
 }
