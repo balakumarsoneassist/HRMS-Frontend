@@ -54,9 +54,8 @@ export const appRoutes: Routes = [
       { path: 'home/payslip', component: PayslipComponent, canActivate: [AuthGuard], data: { permission: 'Payslip' } },
       { path: 'home/idcard', component: IdCardComponent, canActivate: [AuthGuard], data: { permission: 'Id-card' } },
       { path: 'notfound', component: IdCardComponent },
-
       { path: 'intern', component: InternshipCertificateCardComponent },
-      { path: 'newsfeed', component: FeedComponent }
+      { path: 'home/feed', component: FeedComponent,  canActivate: [AuthGuard], data: { permission: 'Feed' }  }
     ]
   },
   { path: 'login', loadChildren: () => import('./app/pages/hrms/login/login-routing.module') },

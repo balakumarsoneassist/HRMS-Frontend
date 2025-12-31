@@ -69,7 +69,9 @@ export class AppMenu implements OnInit {
             'Access': '/home/access',
             'Access Define': 'home/accessdefine',
             'Access2': '/home/access2',
-            'Id-card':'/home/idcard'
+            'Id-card':'/home/idcard',
+            'Feed': '/home/feed'
+
 
 
             // Add more as needed
